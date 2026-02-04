@@ -3,13 +3,22 @@
   "builds": [
     {
       "src": "server/app.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "memory": 1024,
+        "timeout": 30
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "server/app.py"
+      "dest": "server/app.py",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"]
     }
-  ]
+  ],
+  "env": {
+    "PYTHON_VERSION": "3.9"
+  }
 }

@@ -9,11 +9,12 @@
 <body>
     <section id="con-sec">
         <div class="side-nav">
+            <h3>Profit Optimizer</h3>
             <nav>
                 <ul>
-                    <li><a href="./home.html">Home</a></li>
-                    <li><a href="/">Profit Optimizer</a></li>
-                    <li><a href="./finance.html">Finances</a></li>
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('optimizer') }}">Profit Optimizer</a></li>
+                    <li><a href="{{ url_for('finance') }}">Finances</a></li>
                     <li><a href="#">Invoice Generator</a></li>
                     <br/>
                     <li><a href="#">About</a></li>
@@ -176,7 +177,7 @@
 
                     <h2 class="card-title">Optimization</h2>
                     <form method="POST">
-                        <button type="submit" name="optimize" class="btn btn-success">Run Optimization</button>
+                        <button type="submit" name="optimize" class="btn btn-primary">Run Optimization</button>
                     </form>
                 </section>
                 

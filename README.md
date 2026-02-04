@@ -98,7 +98,7 @@ Profit-Optimizer/
 │   ├── config.py           # Configuration settings
 │   ├── optimizer_core.py   # Core optimization logic
 │   ├── templates/          # HTML templates
-│   │   ├── index.html      # Main interface
+│   │   ├── optimizer.html      # Main interface
 │   │   ├── home.html       # Home page
 │   │   ├── finance.html    # Finance page
 │   │   └── invoice.html    # Invoice generator

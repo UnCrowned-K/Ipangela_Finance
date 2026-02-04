@@ -38,8 +38,6 @@ def create_app(config_class=Config) -> Flask:
 app = create_app()
 budget = Config.DEFAULT_BUDGET
 
-app = create_app()
-
 def safe_filename(filename: str) -> str:
     """Generate a secure filename and ensure .json extension."""
     filename = secure_filename(filename)
@@ -48,12 +46,16 @@ def safe_filename(filename: str) -> str:
     return filename
 
 def handle_file_operation(operation: str, filepath: str, variables: Optional[list] = None) -> None:
-    """Handle file operations with error checking."""
+    """Handle file operations with error checking for serverless environment."""
     try:
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        
         if operation == 'save':
             with open(filepath, 'w') as f:
                 json.dump([var.to_dict() for var in variables or variables_list], f, indent=4)
         elif operation == 'load':
+            if not os.path.exists(filepath):
+                raise IOError(f"File not found: {filepath}")
             with open(filepath, 'r') as f:
                 data = json.load(f)
                 clear_variables()
@@ -62,7 +64,10 @@ def handle_file_operation(operation: str, filepath: str, variables: Optional[lis
                     var.validate()
                     variables_list.append(var)
     except Exception as e:
-        raise IOError(f"Error {operation}ing variables: {str(e)}")
+        error_msg = f"Error {operation}ing variables: {str(e)}"
+        if 'VERCEL' in os.environ:
+            error_msg += " (Serverless filesystem may be ephemeral)"
+        raise IOError(error_msg)
 
 def parse_variable_form() -> Tuple[Dict[str, Any], bool]:
     """Parse and validate variable form data."""
@@ -81,8 +86,8 @@ def parse_variable_form() -> Tuple[Dict[str, Any], bool]:
         return {}, False
 
 # Routes
-@app.route("/", methods=["GET", "POST"])
-def index():
+@app.route("/optimizer.html", methods=["GET", "POST"])
+def optimizer():
     """Handle main page and form submissions."""
     global budget
     max_profit = None
@@ -118,36 +123,52 @@ def index():
                 except OptimizationError as e:
                     flash(f"Optimization failed: {str(e)}", "error")
 
-    return render_template("index.html",variables=variables_list, max_profit=max_profit, result=result, budget=budget)
+    return render_template("optimizer.html",variables=variables_list, max_profit=max_profit, result=result, budget=budget)
 
-# @app.route("/home.html", methods=["GET"])
-# def home():
-#     return render_template("home.html")
+@app.route("/", methods=["GET"])
+def home():
+    return render_template("home.html")
+
+@app.route("/finance", methods=["GET"])
+def finance():
+    return render_template("finance.html")
+
+@app.route("/invoice",methods=["GET"])
+def invoice():
+    return render_template("invoice.html")
+
+@app.route("/about", methods=["GET"])
+def about():
+    return render_template("about.html")
+
+@app.route("/contact", methods=["GET"])
+def contact():
+    return render_template("contact.html")
 
 @app.route("/export", methods=["POST"])
 def export_variables():
     """Export variables to a JSON file in the exports folder."""
     try:
-        filename = safe_filename(request.form.get("filename", "variables.json")) # add user input here
+        filename = safe_filename(request.form.get("filename", "variables.json"))
         filepath = os.path.join(app.config['EXPORT_FOLDER'], filename)
         handle_file_operation('save', filepath)
         flash(f"Table exported successfully!", "success")
         # return send_file(filepath, as_attachment=True, export_name=filename)
     except Exception as e:
         flash(f"Export failed: {str(e)}", "error")
-    return redirect(url_for("index"))
+    return redirect(url_for("optimizer"))
 
 @app.route("/import", methods=["POST"])
 def import_variables():
     """Import variables from an uploaded JSON file."""
     if "file" not in request.files:
         flash("No file selected for importing.", "error")
-        return redirect(url_for("index"))
+        return redirect(url_for("optimizer"))
 
     file = request.files["file"]
     if not file.filename:
         flash("No file selected for importing.", "error")
-        return redirect(url_for("index"))
+        return redirect(url_for("optimizer"))
 
     try:
         filename = safe_filename(file.filename)
@@ -158,7 +179,7 @@ def import_variables():
     except Exception as e:
         flash(f"Import failed: {str(e)}", "error")
     
-    return redirect(url_for("index"))
+    return redirect(url_for("optimizer"))
 
 @app.route("/download", methods=["POST"])
 def download_variables():
@@ -170,7 +191,7 @@ def download_variables():
         return send_file(filepath, as_attachment=True, download_name=filename)
     except Exception as e:
         flash(f"Download failed: {str(e)}", "error")
-        return redirect(url_for("index"))
+        return redirect(url_for("optimizer"))
 
 @app.route("/delete_variable/<name>", methods=["POST"])
 def delete_variable(name):
@@ -183,7 +204,7 @@ def delete_variable(name):
     except Exception as e:
         flash(f"Error deleting variable: {str(e)}", "error")
     
-    return redirect(url_for("index"))
+    return redirect(url_for("optimizer"))
 
 @app.route("/update_variable", methods=["POST"])
 def update_variable():
@@ -235,6 +256,55 @@ def run_app(port: int = 5000, debug: bool = True):
         threading.Thread(target=open_browser).start()
     
     app.run(debug=debug, use_reloader=False, port=port)
+
+# Vercel Serverless Function Entry Point
+def vercel_serverless(request):
+    """
+    Entry point for Vercel serverless function.
+    Handles the request and returns a response compatible with Vercel's serverless environment.
+    """
+    from flask import Request
+    
+    # Create a Flask request object from the Vercel request
+    if isinstance(request, dict):
+        # Handle Vercel HTTP request format
+        environ = {
+            'REQUEST_METHOD': request.get('method', 'GET'),
+            'PATH_INFO': request.get('path', '/'),
+            'QUERY_STRING': request.get('query', ''),
+            'SERVER_NAME': 'localhost',
+            'SERVER_PORT': '80',
+            'wsgi.input': request.get('body', b''),
+            'CONTENT_TYPE': request.get('headers', {}).get('content-type', ''),
+            'CONTENT_LENGTH': str(len(request.get('body', b'')))
+        }
+        # Add headers to environ
+        for key, value in request.get('headers', {}).items():
+            if key.upper().startswith('HTTP_'):
+                environ[key.upper()] = value
+        
+        flask_request = Request(environ)
+    else:
+        # Handle direct Flask request (for testing)
+        flask_request = request
+    
+    # Process the request through the Flask app
+    with app.test_request_context(
+        path=flask_request.path,
+        method=flask_request.method,
+        headers=flask_request.headers,
+        data=flask_request.data,
+        query_string=flask_request.query_string
+    ):
+        # Dispatch the request to the appropriate route
+        response = app.full_dispatch_request()
+        
+        # Convert Flask response to Vercel-compatible format
+        return {
+            'statusCode': response.status_code,
+            'headers': dict(response.headers),
+            'body': response.get_data(as_text=True)
+        }
 
 if __name__ == "__main__":
     run_app()

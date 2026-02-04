@@ -3,18 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profit Optimizer</title>
+    <title>Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homestyle.css') }}">
 </head>
 <body>
-    <h1>Hello world</h1>
+    <!-- Header -->
+    <header class="main-header">
+        <a href="{{ url_for('home') }}" class="logo">
+            <span>Ipangela Finance</span>
+        </a>
+        <nav class="header-nav">
+            <a href="{{ url_for('home') }}" class="active">Home</a>
+            <a href="{{ url_for('optimizer') }}">Services</a>
+            <a href="{{ url_for('about') }}">About Us</a>
+            <a href="{{ url_for('contact')}}">Contact</a>
+        </nav>
+    </header>
 
-    <nav>
-        <ol>
-            <li><a href="\">Home</a></li>
-            <li><a href="optimizer.html">Profit Optimizer</a></li>
-            <li><a href="finance.html">Finances</a></li>
-        </ol>
-    </nav>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Maximize Your <span>Profits</span> Intelligently</h1>
+            <p>Transform your business decisions with powerful integer linear programming. Set your budget, define your variables, and let our algorithm find the optimal solution for maximum returns.</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('optimizer') }}" class="btn btn-primary">
+                    Start Optimizing
+                </a>
+                <a href="#how-it-works" class="btn btn-outline">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Optimal Solutions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Variables Support</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Hidden Fees</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Available</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Navigation Cards -->
+        <section class="nav-cards">
+            <a href="{{ url_for('optimizer') }}" class="nav-card optimizer">
+                <h3>Profit Optimizer</h3>
+                <p>Solve integer linear programming problems to maximize profits under budget constraints. Add variables, set budgets, and get optimal solutions instantly.</p>
+                <span class="nav-card-btn">Open Optimizer →</span>
+            </a>
+            <a href="{{ url_for('finance') }}" class="nav-card finance">
+                <h3>Financial Dashboard</h3>
+                <p>Track your finances, analyze spending patterns, and get insights into your business performance with comprehensive financial tools.</p>
+                <span class="nav-card-btn">View Dashboard →</span>
+            </a>
+            <a href="#" class="nav-card invoice">
+                <h3>Invoice Generator</h3>
+                <p>Create professional invoices quickly and easily. Manage clients, track payments, and streamline your billing process.</p>
+                <span class="nav-card-btn">Create Invoice →</span>
+            </a>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title">Powerful Features</h2>
+            <p class="section-subtitle">Everything you need to make smarter business decisions</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>Advanced ILP Solver</h3>
+                    <p>Powered by PuLP with CBC solver for accurate, reliable optimization results every time.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Import & Export</h3>
+                    <p>Save your work and load it later. Export variables or download as JSON files for backup.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Precise Constraints</h3>
+                    <p>Set minimum and maximum bounds, costs, profits, and multipliers for complete control.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Real-time Results</h3>
+                    <p>Get instant feedback and detailed breakdowns of optimal quantities and projected profits.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Mobile Friendly</h3>
+                    <p>Access your optimizer from any device with our responsive, mobile-optimized interface.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Secure & Reliable</h3>
+                    <p>Your data is protected with secure file handling and comprehensive input validation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-it-works" id="how-it-works">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Get started in 4 simple steps</p>
+            <div class="steps-grid">
+                <div class="step-item">
+                    <h3>Add Variables</h3>
+                    <p>Define your items with names, costs, profits, and constraints. Set minimum and maximum quantities.</p>
+                </div>
+                <div class="step-item">
+                    <h3>Set Budget</h3>
+                    <p>Enter your available budget. This becomes the constraint for your optimization problem.</p>
+                </div>
+                <div class="step-item">
+                    <h3>Run Optimization</h3>
+                    <p>Click "Run Optimization" and let our algorithm find the best solution for maximum profit.</p>
+                </div>
+                <div class="step-item">
+                    <h3>View Results</h3>
+                    <p>See your projected profit and optimal quantities for each item. Export or save your results.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Ready to Optimize Your Profits?</h2>
+                <p>Start making smarter business decisions today. It's free, fast, and easy to get started.</p>
+                <a href="{{ url_for('optimizer') }}" class="btn">
+                    Get Started Now
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Profit Optimizer</h4>
+                <p>Smart solutions for maximizing business profits through advanced optimization algorithms.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('optimizer') }}">Optimizer</a></li>
+                    <li><a href="{{ url_for('finance') }}">Finance</a></li>
+                    <li><a href="#">Invoice</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">License</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Profit Optimizer. Built with Flask & PuLP.</p>
+        </div>
+    </footer>
 </body>
 </html>

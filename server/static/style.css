@@ -1,6 +1,7 @@
 /* Base styles */
 :root {
-    --primary-color: #007bff;
+    --primary-color: #007a55;
+    --complementary-color: #ffa500;
     --success-color: #28a745;
     --error-color: #dc3545;
     --text-color: #333;
@@ -12,7 +13,7 @@ body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
 }
@@ -59,6 +60,15 @@ hr {
 
 .btn-primary {
     background-color: var(--primary-color);
+}
+
+.btn-complementary {
+    background-color: var(--complementary-color);
+    color: #003d27;
+}
+
+.btn-complementary:hover {
+    background-color: #ff6b96;
 }
 
 .btn-success {
@@ -170,6 +180,7 @@ hr {
 }
 
 .section-title {
+    color: var(--primary-color);
     border-bottom: 2px solid var(--primary-color);
     padding-bottom: 0.5rem;
     margin-bottom: 1rem;
@@ -388,24 +399,84 @@ hr {
         margin: 10% auto;
         width: 95%;
     }
+
+    #con-sec {
+        display: block;
+    }
+
+    .side-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        margin-bottom: 1rem;
+        z-index: 100;
+    }
+
+    .container {
+        margin-left: 0;
+        max-width: 100%;
+    }
 }
 
 
 
 #con-sec {
     display: flex;
+    min-height: calc(100vh - 40px);
 }
 
 .side-nav {
-    flex: 15%;
-    background-color: var(--primary-color);
-    background: white;
-    border: 1px solid var(--border-color);
+    flex: 0 0 200px;
+    background: var(--primary-color);
+    border-radius: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.side-nav nav {
+    padding: 1rem;
+}
+
+.side-nav h3 {
+    color: var(--bg-color);
+    border-bottom: 2px solid var(--border-color);
+    padding: 1rem;
+}
+
+.side-nav ul {
+    padding: 0;
+    margin: 0;
+}
+
+.side-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.side-nav a {
+    color: var(--bg-color);
+    display: block;
+    padding: 0.5rem;
     border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.side-nav a:hover {
+    color: var(--primary-color);
+    background-color: var(--bg-color);
 }
 
 .container {
-    flex: 85%;
+    flex: 1;
+    margin-left: 200px;
+    max-width: calc(100% - 200px);
+    padding: 20px;
 }
 
 .total {
