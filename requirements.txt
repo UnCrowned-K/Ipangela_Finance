@@ -2,5 +2,3 @@ Flask==3.0.0
 pulp==2.8.0
 Werkzeug==3.0.1
 gunicorn==21.2.0
-# Serverless-specific dependencies
-vercel-python==0.3.0
