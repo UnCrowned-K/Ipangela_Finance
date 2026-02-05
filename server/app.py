@@ -829,53 +829,29 @@ def import_finance_data():
 # VERCEL SERVERLESS
 # ============================================================================
 
-def vercel_serverless(request):
+from werkzeug.wrappers import Response
+
+class VercelResponse(Response):
+    """Response class for Vercel serverless compatibility."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.headers['Access-Control-Allow-Origin'] = '*'
+        self.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH'
+        self.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+
+
+@app.route('/api/vercel-test')
+def vercel_test():
+    """Test endpoint to verify Vercel serverless is working."""
+    return {'status': 'ok', 'message': 'Vercel serverless is working!'}
+
+
+def handler(request):
     """
-    Entry point for Vercel serverless function.
-    Handles the request and returns a response compatible with Vercel's serverless environment.
+    Vercel serverless handler function.
+    This is the entry point for Vercel's Python runtime.
     """
-    from flask import Request
-    
-    # Create a Flask request object from the Vercel request
-    if isinstance(request, dict):
-        # Handle Vercel HTTP request format
-        environ = {
-            'REQUEST_METHOD': request.get('method', 'GET'),
-            'PATH_INFO': request.get('path', '/'),
-            'QUERY_STRING': request.get('query', ''),
-            'SERVER_NAME': 'localhost',
-            'SERVER_PORT': '80',
-            'wsgi.input': request.get('body', b''),
-            'CONTENT_TYPE': request.get('headers', {}).get('content-type', ''),
-            'CONTENT_LENGTH': str(len(request.get('body', b'')))
-        }
-        # Add headers to environ
-        for key, value in request.get('headers', {}).items():
-            if key.upper().startswith('HTTP_'):
-                environ[key.upper()] = value
-        
-        flask_request = Request(environ)
-    else:
-        # Handle direct Flask request (for testing)
-        flask_request = request
-    
-    # Process the request through the Flask app
-    with app.test_request_context(
-        path=flask_request.path,
-        method=flask_request.method,
-        headers=flask_request.headers,
-        data=flask_request.data,
-        query_string=flask_request.query_string
-    ):
-        # Dispatch the request to the appropriate route
-        response = app.full_dispatch_request()
-        
-        # Convert Flask response to Vercel-compatible format
-        return {
-            'statusCode': response.status_code,
-            'headers': dict(response.headers),
-            'body': response.get_data(as_text=True)
-        }
+    return app.full_dispatch_request()
 
 
 if __name__ == "__main__":
