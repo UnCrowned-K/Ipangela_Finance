@@ -854,5 +854,5 @@ def import_finance_data():
 #     return app.full_dispatch_request()
 
 
-if __name__ == "__main__":
-    run_app()
+# if __name__ == "__main__":
+#     run_app()
