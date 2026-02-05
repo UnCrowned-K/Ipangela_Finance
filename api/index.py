@@ -1,7 +1,8 @@
 """
 Profit Optimizer API - Vercel Serverless Entry Point
 
-This module provides both API endpoints and HTML page serving for Vercel deployment.
+This module provides API endpoints for the Profit Optimizer application.
+Compatible with Vercel's serverless environment.
 """
 
 import sys
@@ -10,10 +11,10 @@ import os
 # Add server/ to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'server'))
 
-from flask import Flask, jsonify, request, send_file, render_template
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-app = Flask(__name__, template_folder='../server/templates', static_folder='../server/static')
+app = Flask(__name__)
 CORS(app)
 
 # Import core modules
@@ -43,67 +44,15 @@ except ImportError as e:
 
 
 # =============================================================================
-# HTML PAGE ROUTES (for Vercel static serving)
+# API ROOT - Returns info about available endpoints
 # =============================================================================
 
 @app.route("/")
 def home():
-    """Home page."""
-    return render_template("home.html")
-
-
-@app.route("/optimizer.html")
-def optimizer_page():
-    """Optimizer page."""
-    return render_template("optimizer.html")
-
-
-@app.route("/finance")
-def finance_page():
-    """Finance page."""
-    return render_template("finance.html")
-
-
-@app.route("/invoice")
-def invoice_page():
-    """Invoice page."""
-    from datetime import date
-    today = date.today().isoformat()
-    return render_template("invoice.html", today_date=today)
-
-
-@app.route("/about")
-def about_page():
-    """About page."""
-    return render_template("about.html")
-
-
-@app.route("/contact")
-def contact_page():
-    """Contact page."""
-    return render_template("contact.html")
-
-
-# =============================================================================
-# STATIC FILES
-# =============================================================================
-
-@app.route("/static/<path:filename>")
-def static_files(filename):
-    """Serve static files."""
-    return send_file(f"../server/static/{filename}")
-
-
-# =============================================================================
-# API HEALTH CHECK
-# =============================================================================
-
-@app.route("/api")
-def api_info():
-    """API information endpoint."""
+    """API information and health check."""
     return jsonify({
+        "message": "Profit Optimizer API running on Vercel",
         "status": "ok",
-        "message": "Profit Optimizer API",
         "version": "1.0.0",
         "modules": {
             "optimizer": "available" if OPTIMIZER_AVAILABLE else "error",
@@ -111,10 +60,37 @@ def api_info():
             "invoice": "available" if INVOICE_AVAILABLE else "error"
         },
         "endpoints": {
-            "health": "/api",
-            "optimizer": "/api/optimizer/*",
-            "finance": "/api/finance/*",
-            "invoice": "/api/invoice/*"
+            "root": "/",
+            "api_info": "/api",
+            "optimizer": "/api/optimizer/",
+            "finance": "/api/finance/",
+            "invoice": "/api/invoice/"
+        },
+        "documentation": {
+            "optimizer": [
+                "GET /api/optimizer/variables - List all variables",
+                "POST /api/optimizer/variable - Add a variable",
+                "DELETE /api/optimizer/variable/<name> - Delete a variable",
+                "POST /api/optimizer/clear - Clear all variables",
+                "POST /api/optimizer/run - Run optimization"
+            ],
+            "finance": [
+                "GET /api/finance/data - Get dashboard data",
+                "POST /api/finance/transaction - Create transaction",
+                "GET /api/finance/transaction/<id> - Get transaction",
+                "DELETE /api/finance/transaction/<id> - Delete transaction",
+                "POST /api/finance/account - Create account",
+                "GET /api/finance/account/<id> - Get account",
+                "DELETE /api/finance/account/<id> - Delete account",
+                "POST /api/finance/budget - Create budget",
+                "POST /api/finance/report - Generate report"
+            ],
+            "invoice": [
+                "GET /api/invoice/list - List all invoices",
+                "POST /api/invoice - Create invoice",
+                "GET /api/invoice/<id> - Get invoice",
+                "DELETE /api/invoice/<id> - Delete invoice"
+            ]
         }
     })
 
