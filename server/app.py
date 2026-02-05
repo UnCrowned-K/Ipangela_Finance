@@ -829,29 +829,29 @@ def import_finance_data():
 # VERCEL SERVERLESS
 # ============================================================================
 
-from werkzeug.wrappers import Response
+# from werkzeug.wrappers import Response
 
-class VercelResponse(Response):
-    """Response class for Vercel serverless compatibility."""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.headers['Access-Control-Allow-Origin'] = '*'
-        self.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH'
-        self.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-
-
-@app.route('/api/vercel-test')
-def vercel_test():
-    """Test endpoint to verify Vercel serverless is working."""
-    return {'status': 'ok', 'message': 'Vercel serverless is working!'}
+# class VercelResponse(Response):
+#     """Response class for Vercel serverless compatibility."""
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.headers['Access-Control-Allow-Origin'] = '*'
+#         self.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH'
+#         self.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
 
 
-def handler(request):
-    """
-    Vercel serverless handler function.
-    This is the entry point for Vercel's Python runtime.
-    """
-    return app.full_dispatch_request()
+# @app.route('/api/vercel-test')
+# def vercel_test():
+#     """Test endpoint to verify Vercel serverless is working."""
+#     return {'status': 'ok', 'message': 'Vercel serverless is working!'}
+
+
+# def handler(request):
+#     """
+#     Vercel serverless handler function.
+#     This is the entry point for Vercel's Python runtime.
+#     """
+#     return app.full_dispatch_request()
 
 
 if __name__ == "__main__":
