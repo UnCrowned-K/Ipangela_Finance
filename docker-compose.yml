@@ -1,0 +1,55 @@
+# Profit Optimizer Docker Compose Configuration
+# Local development environment
+
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: profit-optimizer
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - PYTHONPATH=/app
+    volumes:
+      - ./server/data:/app/server/data
+      - ./server/exports:/app/server/exports
+      - ./server/uploads:/app/server/uploads
+      - ./server/invoices:/app/server/invoices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Development service with hot-reloading
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: profit-optimizer-dev
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - PYTHONPATH=/app
+    volumes:
+      - ./:/app
+      - ./server/data:/app/server/data
+      - ./server/exports:/app/server/exports
+      - ./server/uploads:/app/server/uploads
+      - ./server/invoices:/app/server/invoices
+    command: python server/app.py
+    restart: unless-stopped
+
+networks:
+  default:
+    name: profit-optimizer-network

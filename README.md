@@ -35,10 +35,13 @@ A comprehensive web-based application for business management, featuring integer
 - **Backend**: Python 3.8+, Flask 3.0.0
 - **Optimization**: PuLP 2.8.0 (CBC solver)
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript, Chart.js
-- **Deployment**: Gunicorn 21.2.0
+- **Deployment**: Gunicorn 21.2.0, Vercel Serverless
+- **Containerization**: Docker, Docker Compose
 - **File Handling**: Werkzeug 3.0.1
 
-## Installation
+## Quick Start
+
+### Local Development
 
 1. **Clone the repository:**
    ```bash
@@ -62,162 +65,168 @@ A comprehensive web-based application for business management, featuring integer
    python server/app.py
    ```
 
-The application will start at `http://localhost:5000` and automatically open in your browser.
+   The application will start at `http://localhost:5000` and automatically open in your browser.
 
-## Usage
+### Docker Development
 
-### Profit Optimization
+1. **Start with Docker Compose:**
+   ```bash
+   docker-compose up -d
+   ```
 
-#### Adding Variables
+2. **For hot-reloading development:**
+   ```bash
+   docker-compose -f docker-compose.yml up app-dev
+   ```
 
-1. Click "Add Item" to open the variable creation modal
-2. Fill in the following fields:
-   - **Item Name**: Unique identifier for the variable
-   - **Minimum Item(s)**: Lower bound (default: 0)
-   - **Maximum Item(s)**: Upper bound (optional, leave blank for unlimited)
-   - **Cost per Item**: Cost associated with each unit
-   - **Profit per Item**: Profit generated per unit
-   - **Number of Item(s)**: Multiplier for the variable
+### Vercel Deployment
 
-#### Setting Budget
+1. **Install Vercel CLI:**
+   ```bash
+   npm i -g vercel
+   ```
 
-1. Navigate to the "Budget" section
-2. Enter your budget constraint in rands
-3. Click "Update Budget" to save
+2. **Deploy to Vercel:**
+   ```bash
+   vercel --prod
+   ```
 
-#### Running Optimization
+   The API will be available at `https://your-project.vercel.app`
 
-1. Ensure you have added variables and set a budget
-2. Click "Run Optimization" in the Constraints section
-3. View results in the "Results" section showing:
-   - Projected profit
-   - Optimal quantities for each item
-   - Total cost breakdown
+## Environment Configuration
 
-### Invoice Generator
+### Environment Variables
 
-#### Creating an Invoice
+Copy `.env.example` to `.env` and configure:
 
-1. Navigate to the Invoice Generator page
-2. Fill in your business details (name, email, phone, address)
-3. Enter client information (name, email, company, tax ID)
-4. Set invoice details (currency, issue date, due date)
-5. Add line items with description, quantity, price, discount, and tax
-6. Optionally add notes, terms, and payment instructions
-7. Save as draft or send directly
+```bash
+# Application Settings
+ENVIRONMENT=development
+SECRET_KEY=your-secret-key
 
-#### Managing Invoices
+# Server Configuration
+HOST=0.0.0.0
+PORT=5000
+DEBUG=true
 
-- **View All Invoices**: Click "View All Invoices" to see all created invoices
-- **Edit Invoice**: Click the edit button on any invoice
-- **Delete Invoice**: Click the delete button (with confirmation)
-- **Download PDF**: Generate a professional PDF for printing
-- **Send Email**: Email the invoice directly to the client
+# File Upload Settings
+MAX_CONTENT_LENGTH=16777216  # 16MB
+```
 
-### Finance Dashboard
+### Environment-Specific Configurations
 
-#### Adding Accounts
+| Environment | DEBUG | Workers | Features |
+|-------------|-------|---------|----------|
+| development | true | 1 | Hot-reload, detailed logs |
+| staging | false | 2 | Limited logging |
+| production | false | 2-4 | Full optimization |
 
-1. Navigate to the Finance Dashboard
-2. Click "Add Account"
-3. Enter account details (name, type, balance, institution)
-4. Save the account
+## API Documentation
 
-#### Recording Transactions
+### Base URL
 
-1. Click "Add Transaction"
-2. Select transaction type (Income, Expense, Transfer)
-3. Enter amount, date, and description
-4. Select category and account
-5. Save the transaction
+- **Local**: `http://localhost:5000`
+- **Vercel**: `https://your-project.vercel.app`
 
-#### Managing Budgets
+### Endpoints
 
-1. Click "Create Budget"
-2. Enter budget name and allocate amount
-3. Select category and period (weekly, monthly, quarterly, yearly)
-4. Set alert threshold (default: 80%)
-5. Track spending against budget
+#### Health Check
+- `GET /` - Health check and module status
 
-#### Generating Reports
+#### Optimizer
+- `GET /api/optimizer/variables` - List all optimization variables
+- `POST /api/optimizer/variable` - Add a new variable
+- `DELETE /api/optimizer/variable/<name>` - Delete a variable
+- `POST /api/optimizer/clear` - Clear all variables
+- `POST /api/optimizer/run` - Run optimization
 
-1. Go to the Reports section
-2. Select report type (Summary, Income vs Expense, Category Breakdown, Budget Performance)
-3. Set date range
-4. Click "Generate"
-
-## API Endpoints
-
-### Optimization
-- `POST /optimize` - Run optimization with variables and budget
-
-### Invoice
-- `GET /invoice` - Invoice generator page
-- `POST /save_invoice` - Save a new invoice or update existing
-- `GET /list_invoices` - List all invoices
-- `GET /get_invoice` - Get invoice by ID
-- `POST /delete_invoice` - Delete an invoice
-- `POST /send_invoice_email` - Send invoice via email
-
-### Finance
-- `GET /finance` - Finance dashboard page
-- `GET /api/finance/data` - Get all finance data
-- `POST /api/finance/transaction` - Create/update transaction
+#### Finance
+- `GET /api/finance/data` - Get dashboard data
+- `POST /api/finance/transaction` - Create transaction
+- `GET /api/finance/transaction/<id>` - Get transaction
 - `DELETE /api/finance/transaction/<id>` - Delete transaction
-- `POST /api/finance/account` - Create/update account
+- `POST /api/finance/account` - Create account
+- `GET /api/finance/account/<id>` - Get account
 - `DELETE /api/finance/account/<id>` - Delete account
-- `POST /api/finance/budget` - Create/update budget
-- `DELETE /api/finance/budget/<id>` - Delete budget
-- `POST /api/finance/report` - Generate financial report
-- `POST /api/finance/export` - Export financial data
-- `POST /api/finance/export/csv` - Export transactions as CSV
-- `POST /api/finance/import` - Import financial data
+- `POST /api/finance/budget` - Create budget
+- `GET /api/finance/budget/<id>` - Get budget
+- `POST /api/finance/report` - Generate report
+
+#### Invoices
+- `GET /api/invoice/list` - List all invoices
+- `POST /api/invoice` - Create invoice
+- `GET /api/invoice/<id>` - Get invoice
+- `DELETE /api/invoice/<id>` - Delete invoice
 
 ## Project Structure
 
 ```
 Profit-Optimizer/
+├── api/
+│   └── index.py              # Vercel API entry point
 ├── server/
-│   ├── app.py              # Main Flask application
-│   ├── config.py           # Configuration settings
-│   ├── optimizer_core.py   # Core optimization logic (ILP)
-│   ├── invoice_core.py     # Invoice management system
-│   ├── finance_core.py     # Finance management system
-│   ├── data/
-│   │   ├── transactions.json
-│   │   ├── accounts.json
-│   │   ├── budgets.json
-│   │   ├── categories.json
-│   │   ├── alerts.json
-│   │   └── users.json
-│   ├── templates/
-│   │   ├── home.html       # Home page
-│   │   ├── about.html       # About page
-│   │   ├── contact.html    # Contact page
-│   │   ├── optimizer.html   # Profit optimizer page
-│   │   ├── finance.html    # Finance dashboard page
-│   │   └── invoice.html    # Invoice generator page
-│   ├── static/
-│   │   ├── style.css       # Main stylesheet
-│   │   ├── homestyle.css   # Home page styles
-│   │   ├── invoice.css     # Invoice page styles
-│   │   └── homestyle.css   # Home page styling
-│   ├── uploads/            # Uploaded files storage
-│   ├── exports/            # Exported files storage
-│   └── invoices/           # Saved invoices storage
+│   ├── app.py               # Main Flask application
+│   ├── config.py            # Configuration settings
+│   ├── optimizer_core.py    # Core optimization logic (ILP)
+│   ├── invoice_core.py      # Invoice management system
+│   ├── finance_core.py      # Finance management system
+│   ├── data/                # JSON data storage
+│   ├── templates/           # HTML templates
+│   ├── static/              # CSS and JavaScript
+│   ├── uploads/             # Uploaded files
+│   ├── exports/             # Exported files
+│   └── invoices/            # Saved invoices
+├── tests/
+│   └── test_api.py          # End-to-end tests
+├── vercel.json             # Vercel deployment config
+├── Dockerfile              # Production container
+├── Dockerfile.dev          # Development container
+├── docker-compose.yml      # Local development environment
+├── .env.example            # Environment template
 ├── requirements.txt        # Python dependencies
-├── vercel.json            # Vercel deployment config
-├── makefile              # Build commands
-└── README.md             # This file
+└── README.md              # This file
 ```
 
-## Dependencies
+## Running Tests
 
-- **Flask**: Web framework for Python
-- **PuLP**: Linear programming toolkit with CBC solver
-- **Werkzeug**: WSGI utilities for file handling
-- **Gunicorn**: WSGI HTTP server for production deployment
-- **Chart.js**: Interactive charts for finance dashboard
+```bash
+# Install test dependencies
+pip install pytest pytest-cov
+
+# Run tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=api --cov-report=html
+```
+
+## Deployment Options
+
+### Vercel (Serverless)
+- Automatic deployments from Git
+- API routes in `api/` directory
+- Configure in `vercel.json`
+
+### Docker (Container)
+```bash
+# Build image
+docker build -t profit-optimizer .
+
+# Run container
+docker run -p 5000:5000 profit-optimizer
+```
+
+### Heroku
+```bash
+# Create Heroku app
+heroku create
+
+# Set buildpack
+heroku buildpacks:set heroku/python
+
+# Deploy
+git push heroku main
+```
 
 ## Development Notes
 
@@ -228,6 +237,7 @@ Profit-Optimizer/
 - The interface is designed to be mobile-responsive
 - All financial data is persisted in JSON files in the `server/data/` directory
 - Invoice files are stored in the `server/invoices/` directory
+- CORS is enabled for cross-origin API access
 
 ## Contributing
 
