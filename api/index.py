@@ -1,8 +1,7 @@
 """
 Profit Optimizer API - Vercel Serverless Entry Point
 
-This module provides API endpoints for the Profit Optimizer application,
-compatible with Vercel's serverless environment.
+This module provides both API endpoints and HTML page serving for Vercel deployment.
 """
 
 import sys
@@ -11,10 +10,10 @@ import os
 # Add server/ to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'server'))
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file, render_template
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../server/templates', static_folder='../server/static')
 CORS(app)
 
 # Import core modules
@@ -44,19 +43,78 @@ except ImportError as e:
 
 
 # =============================================================================
-# HEALTH CHECK
+# HTML PAGE ROUTES (for Vercel static serving)
 # =============================================================================
 
 @app.route("/")
 def home():
-    """Health check endpoint."""
+    """Home page."""
+    return render_template("home.html")
+
+
+@app.route("/optimizer.html")
+def optimizer_page():
+    """Optimizer page."""
+    return render_template("optimizer.html")
+
+
+@app.route("/finance")
+def finance_page():
+    """Finance page."""
+    return render_template("finance.html")
+
+
+@app.route("/invoice")
+def invoice_page():
+    """Invoice page."""
+    from datetime import date
+    today = date.today().isoformat()
+    return render_template("invoice.html", today_date=today)
+
+
+@app.route("/about")
+def about_page():
+    """About page."""
+    return render_template("about.html")
+
+
+@app.route("/contact")
+def contact_page():
+    """Contact page."""
+    return render_template("contact.html")
+
+
+# =============================================================================
+# STATIC FILES
+# =============================================================================
+
+@app.route("/static/<path:filename>")
+def static_files(filename):
+    """Serve static files."""
+    return send_file(f"../server/static/{filename}")
+
+
+# =============================================================================
+# API HEALTH CHECK
+# =============================================================================
+
+@app.route("/api")
+def api_info():
+    """API information endpoint."""
     return jsonify({
         "status": "ok",
-        "message": "Profit Optimizer API running on Vercel",
+        "message": "Profit Optimizer API",
+        "version": "1.0.0",
         "modules": {
             "optimizer": "available" if OPTIMIZER_AVAILABLE else "error",
             "finance": "available" if FINANCE_AVAILABLE else "error",
             "invoice": "available" if INVOICE_AVAILABLE else "error"
+        },
+        "endpoints": {
+            "health": "/api",
+            "optimizer": "/api/optimizer/*",
+            "finance": "/api/finance/*",
+            "invoice": "/api/invoice/*"
         }
     })
 
