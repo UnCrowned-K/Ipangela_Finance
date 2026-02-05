@@ -825,4 +825,3 @@ def import_finance_data():
         return {'success': False, 'message': str(e)}, 500
 
 
-app = Flask(__name__)
