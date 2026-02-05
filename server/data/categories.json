@@ -1,0 +1,122 @@
+[
+  {
+    "id": "inc_salary",
+    "name": "Salary",
+    "type": "income",
+    "icon": "dollar-sign",
+    "color": "#28a745",
+    "is_system": true
+  },
+  {
+    "id": "inc_investment",
+    "name": "Investment Income",
+    "type": "income",
+    "icon": "trending-up",
+    "color": "#20c997",
+    "is_system": true
+  },
+  {
+    "id": "inc_other",
+    "name": "Other Income",
+    "type": "income",
+    "icon": "plus-circle",
+    "color": "#17a2b8",
+    "is_system": true
+  },
+  {
+    "id": "exp_housing",
+    "name": "Housing",
+    "type": "expense",
+    "icon": "home",
+    "color": "#dc3545",
+    "is_system": true
+  },
+  {
+    "id": "exp_food",
+    "name": "Food & Groceries",
+    "type": "expense",
+    "icon": "shopping-cart",
+    "color": "#fd7e14",
+    "is_system": true
+  },
+  {
+    "id": "exp_transport",
+    "name": "Transportation",
+    "type": "expense",
+    "icon": "car",
+    "color": "#6610f2",
+    "is_system": true
+  },
+  {
+    "id": "exp_utilities",
+    "name": "Utilities",
+    "type": "expense",
+    "icon": "zap",
+    "color": "#6f42c1",
+    "is_system": true
+  },
+  {
+    "id": "exp_healthcare",
+    "name": "Healthcare",
+    "type": "expense",
+    "icon": "heart",
+    "color": "#e83e8c",
+    "is_system": true
+  },
+  {
+    "id": "exp_entertainment",
+    "name": "Entertainment",
+    "type": "expense",
+    "icon": "film",
+    "color": "#20c997",
+    "is_system": true
+  },
+  {
+    "id": "exp_shopping",
+    "name": "Shopping",
+    "type": "expense",
+    "icon": "shopping-bag",
+    "color": "#fd7e14",
+    "is_system": true
+  },
+  {
+    "id": "exp_education",
+    "name": "Education",
+    "type": "expense",
+    "icon": "book",
+    "color": "#007bff",
+    "is_system": true
+  },
+  {
+    "id": "exp_insurance",
+    "name": "Insurance",
+    "type": "expense",
+    "icon": "shield",
+    "color": "#6c757d",
+    "is_system": true
+  },
+  {
+    "id": "exp_taxes",
+    "name": "Taxes",
+    "type": "expense",
+    "icon": "file-text",
+    "color": "#343a40",
+    "is_system": true
+  },
+  {
+    "id": "exp_other",
+    "name": "Other Expenses",
+    "type": "expense",
+    "icon": "ellipsis-circle",
+    "color": "#adb5bd",
+    "is_system": true
+  },
+  {
+    "id": "transfer",
+    "name": "Transfer",
+    "type": "transfer",
+    "icon": "repeat",
+    "color": "#6c757d",
+    "is_system": true
+  }
+]
