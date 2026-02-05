@@ -825,23 +825,3 @@ def import_finance_data():
         return {'success': False, 'message': str(e)}, 500
 
 
-# ============================================================================
-# VERCEL SERVERLESS
-# ============================================================================
-
-@app.route('/api/vercel-test')
-def vercel_test():
-    """Test endpoint to verify Vercel serverless is working."""
-    return {'status': 'ok', 'message': 'Vercel serverless is working!'}
-
-
-def handler(request):
-    """
-    Vercel serverless handler function.
-    This is the entry point for Vercel's Python runtime.
-    """
-    return app.full_dispatch_request()
-
-
-# if __name__ == "__main__":
-#     run_app()
