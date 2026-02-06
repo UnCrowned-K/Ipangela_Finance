@@ -4,7 +4,7 @@ install:
 	pip install -r requirements.txt
 
 build:
-	python3 server/app.py
+	python3 app.py
 
 test: 
 # 	testing will be placed here
