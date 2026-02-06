@@ -825,3 +825,5 @@ def import_finance_data():
         return {'success': False, 'message': str(e)}, 500
 
 
+if __name__ == "__main__":
+    run_app()
