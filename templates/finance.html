@@ -990,6 +990,26 @@
             }
         }
 
+        async function deleteAccount(id) {
+            if (!confirm('Are you sure you want to delete this account?')) return;
+
+            try {
+                const response = await fetch('/api/finance/account/' + id, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    loadFinanceData();
+                    showAlert('success', 'Account deleted');
+                } else {
+                    showAlert('error', result.message || 'Failed to delete account');
+                }
+            } catch (error) {
+                showAlert('error', 'Error deleting account');
+            }
+        }
+
         function resetAccountForm() {
             document.getElementById('account-form').reset();
             document.getElementById('account-id').value = '';

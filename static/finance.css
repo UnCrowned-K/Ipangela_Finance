@@ -441,30 +441,36 @@
 
 /* Modal */
 .modal-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 20px;
 }
 
 .modal-overlay.active {
-  display: flex;
+    display: flex;
 }
 
-.modal {
-  background: white;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: modalSlideIn 0.3s ease;
+.modal-overlay > .modal {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
+    z-index: 10000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    margin: auto;
 }
 
 @keyframes modalSlideIn {
@@ -704,3 +710,21 @@
 .modal-header [data-lucide] {
   margin-right: 0.5em;
 }
+
+/* Override global modal styles from style.css */
+.modal-overlay .modal-content,
+.modal-overlay > .modal {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  max-height: calc(100vh - 40px) !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+  z-index: 10000 !important;
+  overflow-y: auto !important;
+}
+
