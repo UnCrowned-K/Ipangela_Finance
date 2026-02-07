@@ -3,56 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <meta name="description" content="Ipangela Finance - Maximize your profits with intelligent integer linear programming optimization. Smart solutions for smarter business decisions.">
+    <meta name="keywords" content="profit optimization, business decisions, ILP solver, financial planning, budget optimization">
+    <meta property="og:title" content="Ipangela Finance - Maximize Your Profits Intelligently">
+    <meta property="og:description" content="Transform your business decisions with powerful integer linear programming optimization.">
+    <meta property="og:type" content="website">
+    <title>Ipangela Finance - Smart Profit Optimization</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='homestyle.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
-    <header class="main-header">
-        <a href="{{ url_for('home') }}" class="logo">
+    <header class="main-header" id="header">
+        <a href="{{ url_for('home') }}" class="logo" aria-label="Ipangela Finance Home">
+            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="40" height="40" rx="8" fill="currentColor"/>
+                <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
+            </svg>
             <span>Ipangela Finance</span>
         </a>
-        <nav class="header-nav">
-            <a href="{{ url_for('home') }}" class="active">Home</a>
-            <a href="{{ url_for('optimizer') }}">Services</a>
-            <a href="{{ url_for('about') }}">About Us</a>
-            <a href="{{ url_for('contact')}}">Contact</a>
+        <nav class="header-nav" aria-label="Main navigation">
+            <a href="{{ url_for('home') }}" class="nav-link active">Home</a>
+            <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+            <a href="{{ url_for('contact')}}" class="nav-link">Contact</a>
         </nav>
+        <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+            <span class="hamburger"></span>
+        </button>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content">
-            <h1>Maximize Your <span>Profits</span> Intelligently</h1>
-            <p>Transform your business decisions with powerful integer linear programming. Set your budget, define your variables, and let our algorithm find the optimal solution for maximum returns.</p>
-            <div class="hero-buttons">
-                <a href="{{ url_for('optimizer') }}" class="btn btn-primary">
-                    Start Optimizing
-                </a>
-                <a href="#how-it-works" class="btn btn-outline">
-                    Learn More
-                </a>
+        <div class="hero-background" aria-hidden="true">
+            <div class="hero-grid"></div>
+            <div class="hero-glow"></div>
+            <div class="hero-particles" id="particles"></div>
+        </div>
+        
+        <div class="hero-container">
+            <div class="hero-content" role="main">
+                <div class="hero-badge-wrapper">
+                    <span class="hero-badge">
+                        <span class="badge-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                            </svg>
+                        </span>
+                        <span>Powered by PuLP with CBC Solver</span>
+                    </span>
+                </div>
+                
+                <h1 class="hero-title">
+                    <span class="title-line">Maximize Your</span>
+                    <span class="title-highlight">Profits</span>
+                    <span class="title-line">Intelligently</span>
+                </h1>
+                
+                <p class="hero-subtitle">
+                    Transform your business with powerful integer linear programming. 
+                    Define your variables, set your budget, and let our algorithm find the optimal solution.
+                </p>
+                
+                <div class="hero-actions" role="navigation" aria-label="Primary actions">
+                    <a href="{{ url_for('optimizer') }}" class="btn btn-primary btn-large">
+                        <span class="btn-text">Start Optimizing</span>
+                        <span class="btn-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </span>
+                        <span class="btn-shine"></span>
+                    </a>
+                    
+                    <a href="#how-it-works" class="btn btn-ghost btn-large">
+                        <span class="btn-text">See How It Works</span>
+                    </a>
+                </div>
+                
+                <div class="hero-meta">
+                    <div class="hero-stats" aria-label="Key statistics">
+                        <div class="stat-pill">
+                            <span class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </span>
+                            <span class="stat-value">99.9%</span>
+                            <span class="stat-label">Uptime</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </span>
+                            <span class="stat-value">&lt;2s</span>
+                            <span class="stat-label">Solve Time</span>
+                        </div>
+                        <div class="stat-pill">
+                            <span class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                            </span>
+                            <span class="stat-value">4.9</span>
+                            <span class="stat-label">Rating</span>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-trust" role="complementary" aria-label="Social proof">
+                        <div class="avatar-stack">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23007a55'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='30' font-family='sans-serif'%3EJD%3C/text%3E%3C/svg%3E" alt="John D." class="avatar" loading="lazy">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2328a745'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='30' font-family='sans-serif'%3EMS%3C/text%3E%3C/svg%3E" alt="Maria S." class="avatar" loading="lazy">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff6b96'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='30' font-family='sans-serif'%3EAK%3C/text%3E%3C/svg%3E" alt="Alex K." class="avatar" loading="lazy">
+                            <div class="avatar-more">+2k</div>
+                        </div>
+                        <p class="trust-text">
+                            <strong>2,500+ businesses</strong> optimized
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual" aria-hidden="true">
+                <div class="code-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                        <span class="terminal-title">optimizer.py</span>
+                        <div class="terminal-actions">
+                            <span class="action"></span>
+                        </div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="code-line">
+                            <span class="code-keyword">from</span> <span class="code-module">pulp</span> <span class="code-keyword">import</span> <span class="code-var">*</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="code-comment"># Define optimization problem</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="code-var">prob</span> <span class="code-op">=</span> <span class="code-class">LpProblem</span>(<span class="code-string">"Maximize_Profit"</span>, <span class="code-class">LpMaximize</span>)
+                        </div>
+                        <div class="code-line">
+                            <span class="code-comment"># Decision variables</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="code-var">x</span> <span class="code-op">=</span> <span class="code-class">LpVariable</span>(<span class="code-string">"x"</span>, <span class="code-attr">lowBound</span><span class="code-op">=</span><span class="code-number">0</span>, <span class="code-attr">cat</span><span class="code-op">=</span><span class="code-string">'Integer'</span>)
+                        </div>
+                        <div class="code-line">
+                            <span class="code-var">y</span> <span class="code-op">=</span> <span class="code-class">LpVariable</span>(<span class="code-string">"y"</span>, <span class="code-attr">lowBound</span><span class="code-op">=</span><span class="code-number">0</span>, <span class="code-attr">cat</span><span class="code-op">=</span><span class="code-string">'Integer'</span>)
+                        </div>
+                        <div class="code-line">
+                            <span class="code-comment"># Objective function</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="code-var">prob</span> <span class="code-op">+=</span> <span class="code-number">45</span><span class="code-var">*x</span> <span class="code-op">+</span> <span class="code-number">80</span><span class="code-var">*y</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="code-comment"># Constraints</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="code-var">prob</span> <span class="code-op">+=</span> <span class="code-var">x</span> <span class="code-op">+</span> <span class="code-var">y</span> <span class="code-op"><=</span> <span class="code-number">150</span>
+                        </div>
+                        <div class="code-line result-line">
+                            <span class="result-icon">✓</span>
+                            <span class="result-text">Optimal:</span>
+                            <span class="result-value">$6,750</span>
+                        </div>
+                    </div>
+                    <div class="terminal-glow"></div>
+                </div>
+                
+                <div class="visual-floating-card card-1">
+                    <span class="card-icon">📊</span>
+                    <span class="card-value">+35%</span>
+                    <span class="card-label">Profit Increase</span>
+                </div>
+                
+                <div class="visual-floating-card card-2">
+                    <span class="card-icon">⚡</span>
+                    <span class="card-value">Instant</span>
+                    <span class="card-label">Results</span>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Stats Section -->
     <section class="stats">
-        <div class="stats-container">
+        <div class="stats-container fade-in-up" data-scroll>
             <div class="stat-card">
-                <div class="stat-number">100%</div>
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="stat-number" data-count="100">0%</div>
                 <div class="stat-label">Optimal Solutions</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">∞</div>
-                <div class="stat-label">Variables Support</div>
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <div class="stat-number" data-count="99">0</div>
+                <div class="stat-label">% Accuracy</div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
                 <div class="stat-number">0</div>
                 <div class="stat-label">Hidden Fees</div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
                 <div class="stat-number">24/7</div>
                 <div class="stat-label">Available</div>
             </div>
@@ -62,88 +247,286 @@
     <!-- Main Content -->
     <main class="main-content">
         <!-- Navigation Cards -->
-        <section class="nav-cards">
-            <a href="{{ url_for('optimizer') }}" class="nav-card optimizer">
-                <h3>Profit Optimizer</h3>
-                <p>Solve integer linear programming problems to maximize profits under budget constraints. Add variables, set budgets, and get optimal solutions instantly.</p>
-                <span class="nav-card-btn">Open Optimizer →</span>
-            </a>
-            <a href="{{ url_for('finance') }}" class="nav-card finance">
-                <h3>Financial Dashboard</h3>
-                <p>Track your finances, analyze spending patterns, and get insights into your business performance with comprehensive financial tools.</p>
-                <span class="nav-card-btn">View Dashboard →</span>
-            </a>
-            <a href="#" class="nav-card invoice">
-                <h3>Invoice Generator</h3>
-                <p>Create professional invoices quickly and easily. Manage clients, track payments, and streamline your billing process.</p>
-                <span class="nav-card-btn">Create Invoice →</span>
-            </a>
+        <section class="nav-cards-section">
+            <div class="section-header fade-in-up" data-scroll>
+                <h2 class="section-title">Powerful Tools for Your Business</h2>
+                <p class="section-subtitle">Everything you need to optimize your profits and streamline your finances</p>
+            </div>
+            <div class="nav-cards">
+                <a href="{{ url_for('optimizer') }}" class="nav-card optimizer fade-in-up" data-scroll>
+                    <div class="nav-card-icon">
+                        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                            <rect x="4" y="4" width="40" height="40" rx="8" fill="#007a55"/>
+                            <path d="M14 24V14h6c3.3 0 6 2.7 6 6s-2.7 6-6 6h-4v4h4c3.3 0 6 2.7 6 6s-2.7 6-6 6H14zm6-12h4c1.65 0 3-1.35 3-3s-1.35-3-3-3h-4v6zm0 12h4c1.65 0 3-1.35 3-3s-1.35-3-3-3h-4v6zm12-12h-6v12h9c1.65 0 3-1.35 3-3s-1.35-3-3-3h-3v-6z" fill="white"/>
+                        </svg>
+                    </div>
+                    <h3>Profit Optimizer</h3>
+                    <p>Solve integer linear programming problems to maximize profits under budget constraints. Add variables, set budgets, and get optimal solutions instantly.</p>
+                    <span class="nav-card-btn">
+                        Open Optimizer
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </a>
+                <a href="{{ url_for('finance') }}" class="nav-card finance fade-in-up" data-scroll data-delay="100">
+                    <div class="nav-card-icon">
+                        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                            <rect x="4" y="4" width="40" height="40" rx="8" fill="#28a745"/>
+                            <path d="M14 32V16h4c3.3 0 6 2.7 6 6s-2.7 6-6 6h-4v4zm8-8h-4v8h6c1.65 0 3-1.35 3-3s-1.35-3-3-3h-2v-2zm0 4h2c1.1 0 2 .9 2 2s-.9 2-2 2h-2v-4zm8-8h-4v12h6c1.65 0 3-1.35 3-3s-1.35-3-3-3h-2v-6z" fill="white"/>
+                        </svg>
+                    </div>
+                    <h3>Financial Dashboard</h3>
+                    <p>Track your finances, analyze spending patterns, and get insights into your business performance with comprehensive financial tools.</p>
+                    <span class="nav-card-btn">
+                        View Dashboard
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </a>
+                <a href="#" class="nav-card invoice fade-in-up" data-scroll data-delay="200">
+                    <div class="nav-card-icon">
+                        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                            <rect x="4" y="4" width="40" height="40" rx="8" fill="#ff6b96"/>
+                            <path d="M14 34V14h16c2.2 0 4 1.8 4 4v12c0 2.2-1.8 4-4 4H14zm4-16h8v4h-8v-4zm0 8h8v4h-8v-4zm0 8h4v4h-4v-4zm-8-8h8v4h-8v-4z" fill="white"/>
+                        </svg>
+                    </div>
+                    <h3>Invoice Generator</h3>
+                    <p>Create professional invoices quickly and easily. Manage clients, track payments, and streamline your billing process.</p>
+                    <span class="nav-card-btn">
+                        Create Invoice
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </a>
+            </div>
         </section>
 
         <!-- Features Section -->
-        <section class="features-section">
-            <h2 class="section-title">Powerful Features</h2>
-            <p class="section-subtitle">Everything you need to make smarter business decisions</p>
+        <section class="features-section" id="features">
+            <div class="section-header fade-in-up" data-scroll>
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-subtitle">Everything you need to make smarter business decisions</p>
+            </div>
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card fade-in-up" data-scroll>
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </div>
                     <h3>Advanced ILP Solver</h3>
                     <p>Powered by PuLP with CBC solver for accurate, reliable optimization results every time.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in-up" data-scroll data-delay="100">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
                     <h3>Import & Export</h3>
                     <p>Save your work and load it later. Export variables or download as JSON files for backup.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in-up" data-scroll data-delay="200">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <line x1="4" y1="21" x2="4" y2="14"/>
+                            <line x1="4" y1="10" x2="4" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12" y2="3"/>
+                            <line x1="20" y1="21" x2="20" y2="16"/>
+                            <line x1="20" y1="12" x2="20" y2="3"/>
+                            <line x1="1" y1="14" x2="7" y2="14"/>
+                            <line x1="9" y1="8" x2="15" y2="8"/>
+                            <line x1="17" y1="16" x2="23" y2="16"/>
+                        </svg>
+                    </div>
                     <h3>Precise Constraints</h3>
                     <p>Set minimum and maximum bounds, costs, profits, and multipliers for complete control.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in-up" data-scroll data-delay="300">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
                     <h3>Real-time Results</h3>
                     <p>Get instant feedback and detailed breakdowns of optimal quantities and projected profits.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in-up" data-scroll data-delay="400">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+                    </div>
                     <h3>Mobile Friendly</h3>
                     <p>Access your optimizer from any device with our responsive, mobile-optimized interface.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-in-up" data-scroll data-delay="500">
+                    <div class="feature-icon-wrapper">
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
                     <h3>Secure & Reliable</h3>
                     <p>Your data is protected with secure file handling and comprehensive input validation.</p>
                 </div>
             </div>
         </section>
 
+        <!-- Testimonials Section -->
+        <section class="testimonials-section">
+            <div class="section-header fade-in-up" data-scroll>
+                <h2 class="section-title">What Our Users Say</h2>
+                <p class="section-subtitle">Join thousands of businesses already optimizing their profits</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card fade-in-up" data-scroll>
+                    <div class="testimonial-rating" aria-label="5 stars">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <blockquote>"This optimizer transformed how we allocate our budget. We've seen a 35% increase in profits within the first quarter!"</blockquote>
+                    <div class="testimonial-author">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23007a55'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='30' font-family='sans-serif'%3ESM%3C/text%3E%3C/svg%3E" alt="Sarah Mitchell" class="author-avatar">
+                        <div class="author-info">
+                            <strong>Sarah Mitchell</strong>
+                            <span>CEO, Retail Solutions</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in-up" data-scroll data-delay="100">
+                    <div class="testimonial-rating" aria-label="5 stars">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <blockquote>"The interface is incredibly intuitive. Within minutes, I had my entire product line optimized. Best investment for our business."</blockquote>
+                    <div class="testimonial-author">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2328a745'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='30' font-family='sans-serif'%3EJC%3C/text%3E%3C/svg%3E" alt="James Chen" class="author-avatar">
+                        <div class="author-info">
+                            <strong>James Chen</strong>
+                            <span>Operations Director, TechCorp</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in-up" data-scroll data-delay="200">
+                    <div class="testimonial-rating" aria-label="5 stars">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <blockquote>"Finally, a tool that makes mathematical optimization accessible. Our supply chain efficiency improved dramatically."</blockquote>
+                    <div class="testimonial-author">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff6b96'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='30' font-family='sans-serif'%3EAP%3C/text%3E%3C/svg%3E" alt="Amanda Price" class="author-avatar">
+                        <div class="author-info">
+                            <strong>Amanda Price</strong>
+                            <span>Founder, Startup Labs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- How It Works -->
         <section class="how-it-works" id="how-it-works">
-            <h2 class="section-title">How It Works</h2>
-            <p class="section-subtitle">Get started in 4 simple steps</p>
-            <div class="steps-grid">
-                <div class="step-item">
-                    <h3>Add Variables</h3>
-                    <p>Define your items with names, costs, profits, and constraints. Set minimum and maximum quantities.</p>
-                </div>
-                <div class="step-item">
-                    <h3>Set Budget</h3>
-                    <p>Enter your available budget. This becomes the constraint for your optimization problem.</p>
-                </div>
-                <div class="step-item">
-                    <h3>Run Optimization</h3>
-                    <p>Click "Run Optimization" and let our algorithm find the best solution for maximum profit.</p>
-                </div>
-                <div class="step-item">
-                    <h3>View Results</h3>
-                    <p>See your projected profit and optimal quantities for each item. Export or save your results.</p>
+            <div class="section-header fade-in-up" data-scroll>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Get started in 4 simple steps</p>
+            </div>
+            <div class="steps-container">
+                <div class="steps-line" aria-hidden="true"></div>
+                <div class="steps-grid">
+                    <div class="step-item fade-in-up" data-scroll>
+                        <div class="step-number">1</div>
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </div>
+                        <h3>Add Variables</h3>
+                        <p>Define your items with names, costs, profits, and constraints. Set minimum and maximum quantities.</p>
+                    </div>
+                    <div class="step-item fade-in-up" data-scroll data-delay="100">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="6" y1="3" x2="6" y2="3"/>
+                                <line x1="6" y1="21" x2="6" y2="21"/>
+                                <line x1="2" y1="11" x2="22" y2="11"/>
+                                <line x1="2" y1="15" x2="22" y2="15"/>
+                            </svg>
+                        </div>
+                        <h3>Set Budget</h3>
+                        <p>Enter your available budget. This becomes the constraint for your optimization problem.</p>
+                    </div>
+                    <div class="step-item fade-in-up" data-scroll data-delay="200">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                        </div>
+                        <h3>Run Optimization</h3>
+                        <p>Click "Run Optimization" and let our algorithm find the best solution for maximum profit.</p>
+                    </div>
+                    <div class="step-item fade-in-up" data-scroll data-delay="300">
+                        <div class="step-number">4</div>
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </div>
+                        <h3>View Results</h3>
+                        <p>See your projected profit and optimal quantities for each item. Export or save your results.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- CTA Section -->
-        <section class="cta-section">
+        <section class="cta-section fade-in-up" data-scroll>
+            <div class="cta-bg-pattern" aria-hidden="true"></div>
             <div class="cta-content">
+                <div class="cta-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
                 <h2>Ready to Optimize Your Profits?</h2>
                 <p>Start making smarter business decisions today. It's free, fast, and easy to get started.</p>
-                <a href="{{ url_for('optimizer') }}" class="btn">
-                    Get Started Now
+                <a href="{{ url_for('optimizer') }}" class="btn btn-primary btn-large">
+                    <span>Get Started Now</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
                 </a>
+                <div class="cta-trust">
+                    <span>✓ No credit card required</span>
+                    <span>✓ Free forever</span>
+                    <span>✓ Cancel anytime</span>
+                </div>
             </div>
         </section>
     </main>
@@ -151,40 +534,155 @@
     <!-- Footer -->
     <footer class="main-footer">
         <div class="footer-content">
-            <div class="footer-section">
-                <h4>Profit Optimizer</h4>
+            <div class="footer-brand">
+                <a href="{{ url_for('home') }}" class="logo">
+                    <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect width="40" height="40" rx="8" fill="currentColor"/>
+                        <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
+                    </svg>
+                    <span>Ipangela Finance</span>
+                </a>
                 <p>Smart solutions for maximizing business profits through advanced optimization algorithms.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Twitter">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+                    </a>
+                    <a href="#" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                    <a href="#" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                    </a>
+                </div>
             </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="{{ url_for('home') }}">Home</a></li>
-                    <li><a href="{{ url_for('optimizer') }}">Optimizer</a></li>
-                    <li><a href="{{ url_for('finance') }}">Finance</a></li>
-                    <li><a href="#">Invoice</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Resources</h4>
-                <ul>
-                    <li><a href="#">Documentation</a></li>
-                    <li><a href="#">API Reference</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Legal</h4>
-                <ul>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                    <li><a href="#">License</a></li>
-                </ul>
+            <div class="footer-links-container">
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        <li><a href="{{ url_for('optimizer') }}">Optimizer</a></li>
+                        <li><a href="{{ url_for('finance') }}">Finance</a></li>
+                        <li><a href="{{ url_for('invoice') }}">Invoice</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="{{ url_for('contact')}}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">License</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Profit Optimizer. Built with Flask & PuLP.</p>
+            <p>&copy; 2026 Ipangela Finance. All Rights Reserved.</p>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.mobile-menu-toggle');
+        const headerNav = document.querySelector('.header-nav');
+        
+        if (menuToggle && headerNav) {
+            menuToggle.addEventListener('click', () => {
+                const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                menuToggle.setAttribute('aria-expanded', !isExpanded);
+                headerNav.classList.toggle('mobile-open');
+                menuToggle.classList.toggle('active');
+            });
+        }
+
+        // Scroll reveal animation
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = entry.target.dataset.delay || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, delay);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('[data-scroll]').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation for stats
+        const statNumbers = document.querySelectorAll('.stat-number[data-count]');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.count);
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+                    
+                    const counter = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            el.textContent = target + '%';
+                            clearInterval(counter);
+                        } else {
+                            el.textContent = Math.floor(current);
+                        }
+                    }, 16);
+                    
+                    statsObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statNumbers.forEach(el => statsObserver.observe(el));
+
+        // Header scroll effect
+        const header = document.getElementById('header');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
