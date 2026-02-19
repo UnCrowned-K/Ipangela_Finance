@@ -251,6 +251,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For questions, feedback, or support:
 - Open an issue in the repository
 - Email: MasanaboB@outlook.com
+- Email: [Mafu's Email]
 
 ---
 
