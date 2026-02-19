@@ -17,6 +17,7 @@ Functions:
 @date: 2025-09-18
 """
 
+import math
 from dataclasses import dataclass, asdict
 from typing import Optional, Dict, List, Tuple
 from pulp import LpProblem, LpVariable, LpMaximize, lpSum, PULP_CBC_CMD, LpStatus
@@ -30,6 +31,24 @@ class IntegerVariable:
     """
     Represents an integer (or continuous) variable for optimization.
     Uses dataclass for automatic __init__, __repr__, etc.
+    
+    The optimizer works with UNITS as the primary quantity.
+    
+    Attributes:
+        name: Name of the item/product
+        lowerBound: Minimum number of units
+        upperBound: Maximum number of units (None for unbounded)
+        cost: Cost per unit (always per individual unit)
+        profit: Profit per unit (always per individual unit)
+        multiplier: Units per pack (1 = individual units, >1 = packed items)
+    
+    Example 1 - Individual units:
+        cost=10, profit=2, multiplier=1
+        Buying 1 unit costs R10, profit is R2
+    
+    Example 2 - Packed items:
+        cost=2, profit=3, multiplier=6
+        Buying 1 pack (6 units) costs R12 (6 × R2), profit is R18 (6 × R3)
     """
     name: str
     lowerBound: int = 0
@@ -57,7 +76,7 @@ class IntegerVariable:
         if self.upperBound is not None and self.upperBound < self.lowerBound:
             raise OptimizationError(f"Upper bound must be greater than lower bound for {self.name}")
         if self.multiplier <= 0:
-            raise OptimizationError(f"Multiplier must be positive for {self.name}")
+            raise OptimizationError(f"Units per pack must be positive for {self.name}")
 
 # Global variables list
 variables_list: List[IntegerVariable] = []
@@ -66,13 +85,15 @@ def create_integer_variable(name: str, lowerBound: int, upperBound: Optional[int
     """
     Create and validate an IntegerVariable, then add it to the global list.
     
+    The optimizer works with UNITS. All values are per unit.
+    
     Args:
-        name: Name of the variable.
-        lowerBound: Minimum value.
-        upperBound: Maximum value (None for unbounded).
-        cost: Cost per unit.
-        profit: Profit per unit.
-        multiplier: Scaling factor.
+        name: Name of the item/product.
+        lowerBound: Minimum number of units.
+        upperBound: Maximum number of units (None for unbounded).
+        cost: Cost per unit (always per individual unit).
+        profit: Profit per unit (always per individual unit).
+        multiplier: Units per pack (1 = individual units, >1 = packed items).
     
     Raises:
         OptimizationError: If validation fails.
@@ -85,9 +106,11 @@ def clear_variables() -> None:
     """Clear the global variables list."""
     variables_list.clear()
 
-def optimize(variables: List[IntegerVariable], budget: float) -> Tuple[float, Dict[str, int]]:
+def optimize(variables: List['IntegerVariable'], budget: float) -> Tuple[float, Dict[str, Dict]]:
     """
     Set up and solve the integer programming problem to maximize profit.
+    
+    The optimizer works with UNITS as the primary quantity, with optional pack specification.
     
     Args:
         variables: List of variables to optimize.
@@ -96,10 +119,10 @@ def optimize(variables: List[IntegerVariable], budget: float) -> Tuple[float, Di
     Returns:
         Tuple of (max_profit, result_dict).
         max_profit is the maximum profit achieved.
-        result_dict maps variable names to their optimal values.
+        result_dict maps variable names to their details.
     
     Raises:
-        OptimizationError: If optimization fails or produces invalid results.
+        OptimizationError: If optimization fails, produces invalid results, or bounds are impossible.
     """
     if not variables:
         raise OptimizationError("No variables to optimize")
@@ -110,36 +133,66 @@ def optimize(variables: List[IntegerVariable], budget: float) -> Tuple[float, Di
     model = LpProblem("Production_Optimization", LpMaximize)
     lp_vars = {}
 
-    # Create PuLP variables
+    # Create PuLP variables - decision variable represents packs
     for var in variables:
-        lp_vars[var.name] = LpVariable(var.name, lowBound=var.lowerBound, upBound=var.upperBound)
+        # Convert unit bounds to pack bounds using math.ceil for the lower bound
+        if var.multiplier > 1:
+            pack_lower = math.ceil(var.lowerBound / var.multiplier)
+            pack_upper = None if var.upperBound is None else var.upperBound // var.multiplier
+        else:
+            pack_lower = var.lowerBound
+            pack_upper = var.upperBound
+        
+        # Safety check: Catch impossible bounds before the solver fails
+        if pack_upper is not None and pack_lower > pack_upper:
+            raise OptimizationError(
+                f"Impossible constraints for {var.name}: "
+                f"Minimum {var.lowerBound} units and maximum {var.upperBound} units "
+                f"cannot be satisfied with a pack size of {var.multiplier}."
+            )
+        
+        # Note: PuLP prefers variable names without spaces, replacing them with underscores internally
+        safe_name = var.name.replace(" ", "_")
+        lp_vars[var.name] = LpVariable(safe_name, lowBound=pack_lower, upBound=pack_upper, cat='Integer')
 
     # Add constraints
-    budget_constraint = lpSum([var.multiplier * lp_vars[var.name] for var in variables])
-    model += (budget_constraint <= budget, "Budget_Constraint")
+    budget_terms = [var.cost * var.multiplier * lp_vars[var.name] for var in variables]
+    model += (lpSum(budget_terms) <= budget, "Budget_Constraint")
 
     # Set objective function
-    total_profit = lpSum([var.profit * var.multiplier * lp_vars[var.name] for var in variables])
-    model += total_profit, "Total_Profit"
+    profit_terms = [var.profit * var.multiplier * lp_vars[var.name] for var in variables]
+    model += lpSum(profit_terms), "Total_Profit"
 
     # Solve the model
     solver = PULP_CBC_CMD(msg=False)
     model.solve(solver)
 
-    # Check solution status
+    # Check solution status with a specific catch for budget infeasibility 
     if LpStatus[model.status] != 'Optimal':
+        if LpStatus[model.status] == 'Infeasible':
+            raise OptimizationError("Your budget is too low to meet the minimum unit requirements.")
         raise OptimizationError(f"Failed to find optimal solution: {LpStatus[model.status]}")
 
     # Process results
     max_profit = 0
     result = {}
     for var in variables:
-        optimal_value = lp_vars[var.name].varValue
-        if optimal_value is None:
-            optimal_value = 0
-        optimal_value = int(optimal_value)
-        scaled_value = optimal_value * var.multiplier
-        result[var.name] = scaled_value
-        max_profit += var.profit * scaled_value
+        optimal_packs = lp_vars[var.name].varValue
+        if optimal_packs is None:
+            optimal_packs = 0
+        optimal_packs = int(optimal_packs)
+        
+        if optimal_packs > 0:
+            total_units = optimal_packs * var.multiplier
+            total_cost = optimal_packs * var.cost * var.multiplier
+            item_profit = optimal_packs * var.profit * var.multiplier
+            
+            result[var.name] = {
+                'units': total_units,
+                'packs': optimal_packs,
+                'cost': total_cost,
+                'profit': item_profit
+            }
+            max_profit += item_profit
 
     return float(f'{max_profit:.2f}'), result

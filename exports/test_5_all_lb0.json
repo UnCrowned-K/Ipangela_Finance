@@ -3,80 +3,81 @@
         "name": "coffee cake",
         "lowerBound": 0,
         "upperBound": null,
-        "cost": 10,
-        "profit": 1.8,
+        "profit": 1.80,
+        "cost": 8,
         "multiplier": 8
     },
     {
         "name": "chocolate cake",
         "lowerBound": 0,
         "upperBound": null,
-        "cost": 11,
-        "profit": 1.6,
+        "profit": 1.60,
+        "cost": 1,
         "multiplier": 1
     },
     {
         "name": "vanilla sponge",
         "lowerBound": 0,
         "upperBound": 20,
-        "cost": 9,
-        "profit": 2.1,
+        "profit": 2.10,
+        "cost": 3,
         "multiplier": 3
     },
     {
         "name": "fruit cake",
         "lowerBound": 0,
         "upperBound": 10,
-        "cost": 15,
-        "profit": 2.5,
+        "profit": 2.50,
+        "cost": 2,
         "multiplier": 2
     },
     {
         "name": "carrot cake",
         "lowerBound": 0,
         "upperBound": 15,
-        "cost": 15,
-        "profit": 2.3,
+        "profit": 2.30,
+        "cost": 1,
         "multiplier": 1
     },
     {
         "name": "red velvet cake",
         "lowerBound": 0,
         "upperBound": 12,
-        "cost": 10,
-        "profit": 1.9,
+        "profit": 1.90,
+        "cost": 4,
         "multiplier": 4
     },
     {
         "name": "lemon drizzle",
         "lowerBound": 0,
         "upperBound": null,
-        "cost": 12,
-        "profit": 2.0,
+        "profit": 2.00,
+        "cost": 5,
         "multiplier": 5
     },
     {
         "name": "cheesecake",
         "lowerBound": 0,
         "upperBound": 8,
-        "cost": 13,
-        "profit": 2.8,
+        "profit": 2.80,
+        "cost": 6,
         "multiplier": 6
     },
     {
         "name": "black forest cake",
         "lowerBound": 0,
         "upperBound": 10,
-        "cost": 13,
-        "profit": 3.0,
+        "profit": 3.00,
+        "cost": 7,
         "multiplier": 7
     },
     {
         "name": "banana bread",
         "lowerBound": 0,
         "upperBound": 5,
-        "cost": 14.5,
-        "profit": 1.5,
+        "profit": 1.50,
+        "cost": 2,
         "multiplier": 2
     }
 ]
+

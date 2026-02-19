@@ -508,6 +508,18 @@ def delete_variable(name):
     return redirect(url_for("optimizer"))
 
 
+@app.route("/clear_variables", methods=["POST"])
+def clear_all_variables():
+    """Clear all variables from the table."""
+    try:
+        clear_variables()
+        flash("All items cleared successfully!", "success")
+    except Exception as e:
+        flash(f"Error clearing items: {str(e)}", "error")
+    
+    return redirect(url_for("optimizer"))
+
+
 @app.route("/update_variable", methods=["POST"])
 def update_variable():
     """Update an existing variable."""
