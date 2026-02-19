@@ -72,12 +72,17 @@ The application will start at `http://localhost:5000` and automatically open in 
 
 1. Click "Add Item" to open the variable creation modal
 2. Fill in the following fields:
-   - **Item Name**: Unique identifier for the variable
-   - **Minimum Item(s)**: Lower bound (default: 0)
-   - **Maximum Item(s)**: Upper bound (optional, leave blank for unlimited)
-   - **Cost per Item**: Cost associated with each unit
-   - **Profit per Item**: Profit generated per unit
-   - **Number of Item(s)**: Multiplier for the variable
+   - **Item Name**: Unique identifier for the product
+   - **Minimum Units**: Minimum quantity of units required (default: 0)
+   - **Maximum Units**: Maximum quantity of units allowed (leave blank for unlimited)
+   - **Cost per Unit**: Cost to purchase ONE unit (always per unit, not per pack)
+   - **Profit per Unit**: Profit generated per individual unit sold
+   - **Units per Pack (optional)**: Set to 1 for individual units, or specify pack size (e.g., 12 for a dozen)
+
+**Note**: Everything is unit-based. If you have items in packs:
+- Enter the cost for ONE unit (not the pack)
+- Enter how many units are in a pack (multiplier)
+- The optimizer will calculate pack costs as: cost_per_unit × units_per_pack
 
 #### Setting Budget
 
