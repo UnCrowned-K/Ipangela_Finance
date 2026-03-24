@@ -13,8 +13,9 @@
             <nav>
                 <ul>
                     <li><a href="{{ url_for('optimizer') }}"><i data-lucide="home"></i> Dashboard</a></li>
-                    <li><a href="{{ url_for('exports') }}"><i data-lucide="files"></i> Files</a></li>
-                    <li><a href="{{ url_for('saved') }}"><i data-lucide="save"></i> Saved</a></li>
+                    <li><a href="{{ url_for('imports') }}"><i data-lucide="files"></i>Uploaded Files</a></li>
+                    <li><a href="{{ url_for('exports') }}"><i data-lucide="files"></i> Exported Files</a></li>
+                    <li><a href="{{ url_for('saved') }}"><i data-lucide="save"></i> Saved Files</a></li>
                     <br/><hr class="ruler"/><br/>
                     <li><a href="{{ url_for('optimizer') }}"><i data-lucide="trending-up"></i> Profit Optimizer</a></li>
                     <li><a href="{{ url_for('finance') }}"><i data-lucide="dollar-sign"></i> Finances</a></li>
@@ -129,7 +130,7 @@
                 </div>
             </div>
 
-            <!-- Export/Save Modal -->
+            <!-- Export Modal -->
             <div id="exportModal" class="modal">
                 <div class="modal-content export-modal-content">
                     <div class="modal-header">
@@ -138,13 +139,13 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="modalFilename">File Name:</label>
-                            <input type="text" class="form-control" id="modalFilename" value="MyItems" required>
+                            <label for="exportModalFilename">File Name:</label>
+                            <input type="text" class="form-control" id="exportModalFilename" value="MyItems" required>
                             <small>Enter the name for your export file (without extension)</small>
                         </div>
                         <div class="form-group">
-                            <label for="modalFormatSelect">Format:</label>
-                            <select class="form-control" id="modalFormatSelect">
+                            <label for="exportModalFormatSelect">Format:</label>
+                            <select class="form-control" id="exportModalFormatSelect">
                                 <option value="csv">CSV</option>
                                 <option value="xlsx">Excel</option>
                                 <option value="json">JSON</option>
@@ -154,7 +155,37 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" onclick="closeExportModal()">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="exportModalConfirmBtn" onclick="confirmExport()"><i data-lucide="check"></i> Confirm</button>
+                        <button type="button" class="btn btn-primary" id="exportModalConfirmBtn" onclick="confirmExport()"><i data-lucide="check"></i> Export</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Modal -->
+            <div id="saveModal" class="modal">
+                <div class="modal-content export-modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="saveModalTitle">Save Options</h2>
+                        <span class="close" onclick="closeSaveModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="saveModalFilename">File Name:</label>
+                            <input type="text" class="form-control" id="saveModalFilename" value="MyItems" required>
+                            <small>Enter the name for your saved file (without extension)</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="saveModalFormatSelect">Format:</label>
+                            <select class="form-control" id="saveModalFormatSelect">
+                                <option value="csv">CSV</option>
+                                <option value="xlsx">Excel</option>
+                                <option value="json">JSON</option>
+                            </select>
+                            <small>Select the save format</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeSaveModal()">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="saveModalConfirmBtn" onclick="confirmSave()"><i data-lucide="save"></i> Save</button>
                     </div>
                 </div>
             </div>
@@ -205,7 +236,7 @@
                                 <input type="hidden" id="download-filename" name="filename" value="MyItems.csv">
                                 <input type="hidden" id="download-format" name="format" value="csv">
                             </form>
-                            <button type="button" class="btn btn-primary btn-sm" onclick="openExportModal('export')"><i data-lucide="download"></i> Export</button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="openExportModal()"><i data-lucide="download"></i> Export</button>
                             <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('downloadForm').submit()"><i data-lucide="download"></i> Download</button>
                             <form method="post" action="/import" enctype="multipart/form-data" class="inline-form import-form">
                                 <label for="file" class="btn btn-primary btn-sm upload-btn">
@@ -241,17 +272,11 @@
                                 <td>{{ var.multiplier }}</td>                            
                                 <td class="table-actions-cell">
                                     <div class="button-group">
-                                        <button type="button" class="btn btn-primary btn-sm"
-                                        onclick='editVariable({{ {
-                                                "name": var.name,
-                                                "lowerBound": var.lowerBound,
-                                                "upperBound": var.upperBound,
-                                                "cost": var.cost,
-                                                "profit": var.profit,
-                                                "multiplier": var.multiplier
-                                                } | tojson | safe }})'>
-                                            <i data-lucide="edit-2"></i> Edit
-                                        </button>
+                                <button type="button" class="btn btn-primary btn-sm"
+                                data-variable="{{ var | tojson | safe }}"
+                                onclick="editVariable(JSON.parse(this.dataset.variable))">
+                                    <i data-lucide="edit-2"></i> Edit
+                                </button>
                                         <form method="POST" action="{{ url_for('delete_variable', name=var.name) }}" 
                                             class="inline-form" 
                                             onsubmit="return confirm('Are you sure you want to delete this item?');">
@@ -345,7 +370,7 @@
                         <input type="hidden" id="result-download-filename" name="filename" value="MyItems.csv">
                         <input type="hidden" id="result-download-format" name="format" value="csv">
                     </form>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="openExportModal('save')"><i data-lucide="save"></i> Save</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="openSaveModal()"><i data-lucide="save"></i> Save</button>
                     {% endif %}       
                 </section>
             </section>
@@ -449,6 +474,7 @@
                     closeModal();
                     closeBudgetModal();
                     closeExportModal();
+                    closeSaveModal();
                     closeSuccessModal();
                     closeErrorModal();
                 }
@@ -484,36 +510,16 @@
                 }
             });
             
-            // Export/Save Modal functionality
+            // Export Modal functionality
             const exportModal = document.getElementById('exportModal');
-            const modalFilename = document.getElementById('modalFilename');
-            const modalFormatSelect = document.getElementById('modalFormatSelect');
+            const exportModalFilename = document.getElementById('exportModalFilename');
+            const exportModalFormatSelect = document.getElementById('exportModalFormatSelect');
             const exportModalConfirmBtn = document.getElementById('exportModalConfirmBtn');
-            let currentExportAction = '';
             
-            window.openExportModal = function(actionType) {
-                currentExportAction = actionType;
-                
-                // Use default values since the visible inputs were removed
-                const currentFilename = 'MyItems';
-                const currentFormat = 'csv';
-                
-                // Set modal values
-                modalFilename.value = currentFilename;
-                modalFormatSelect.value = currentFormat;
-                
-                // Update modal title based on action
-                const modalTitle = document.getElementById('exportModalTitle');
-                if (actionType === 'export') {
-                    modalTitle.textContent = 'Export Options';
-                    exportModalConfirmBtn.innerHTML = '<i data-lucide="check"></i> Export';
-                } else if (actionType === 'download') {
-                    modalTitle.textContent = 'Download Options';
-                    exportModalConfirmBtn.innerHTML = '<i data-lucide="download"></i> Download';
-                } else if (actionType === 'save') {
-                    modalTitle.textContent = 'Save Options';
-                    exportModalConfirmBtn.innerHTML = '<i data-lucide="save"></i> Save';
-                }
+            window.openExportModal = function() {
+                // Set default values
+                exportModalFilename.value = 'MyItems';
+                exportModalFormatSelect.value = 'csv';
                 
                 // Show modal
                 exportModal.style.display = 'block';
@@ -523,22 +529,21 @@
                 lucide.createIcons();
                 
                 // Focus on filename input
-                modalFilename.focus();
-                modalFilename.select();
+                exportModalFilename.focus();
+                exportModalFilename.select();
             };
             
             window.closeExportModal = function() {
                 if (exportModal) {
                     exportModal.style.display = 'none';
                     document.body.style.overflow = 'auto';
-                    currentExportAction = '';
                 }
             };
             
             window.confirmExport = function() {
                 // Get values from modal inputs
-                const filename = modalFilename.value.trim();
-                const format = modalFormatSelect.value;
+                const filename = exportModalFilename.value.trim();
+                const format = exportModalFormatSelect.value;
                 
                 if (!filename) {
                     showErrorModal('Please enter a file name');
@@ -551,42 +556,7 @@
                 // Close modal first
                 closeExportModal();
                 
-                // For save action, use the /save endpoint (server-side save without download)
-                if (currentExportAction === 'save') {
-                    // Create a form and submit to /save endpoint
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '/save';
-                    
-                    const filenameInput = document.createElement('input');
-                    filenameInput.type = 'hidden';
-                    filenameInput.name = 'filename';
-                    filenameInput.value = fullFilename;
-                    form.appendChild(filenameInput);
-                    
-                    const formatInput = document.createElement('input');
-                    formatInput.type = 'hidden';
-                    formatInput.name = 'format';
-                    formatInput.value = format;
-                    form.appendChild(formatInput);
-                    
-                    document.body.appendChild(form);
-                    form.submit();
-                    return;
-                }
-                
-                // For download, use direct form submission to trigger browser download
-                if (currentExportAction === 'download') {
-                    // Update the hidden form inputs with the selected values
-                    document.getElementById('download-filename').value = fullFilename;
-                    document.getElementById('download-format').value = format;
-                    // Submit the form directly to let browser handle download
-                    document.getElementById('downloadForm').submit();
-                    return;
-                }
-                
-                // For regular export (server-side only), use fetch
-                // Create form data
+                // Create form data for export
                 const formData = new FormData();
                 formData.append('filename', fullFilename);
                 formData.append('format', format);
@@ -620,17 +590,158 @@
             });
             
             // Handle Enter key in modal inputs
-            modalFilename.addEventListener('keydown', function(event) {
+            exportModalFilename.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     event.preventDefault();
                     confirmExport();
                 }
             });
             
-            modalFormatSelect.addEventListener('keydown', function(event) {
+            exportModalFormatSelect.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     event.preventDefault();
                     confirmExport();
+                }
+            });
+            
+            // Save Modal functionality
+            const saveModal = document.getElementById('saveModal');
+            const saveModalFilename = document.getElementById('saveModalFilename');
+            const saveModalFormatSelect = document.getElementById('saveModalFormatSelect');
+            const saveModalConfirmBtn = document.getElementById('saveModalConfirmBtn');
+            
+            window.openSaveModal = function() {
+                // Set default values
+                saveModalFilename.value = 'MyItems';
+                saveModalFormatSelect.value = 'csv';
+                
+                // Show modal
+                saveModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                
+                // Re-initialize Lucide icons for the button
+                lucide.createIcons();
+                
+                // Focus on filename input
+                saveModalFilename.focus();
+                saveModalFilename.select();
+            };
+            
+            window.closeSaveModal = function() {
+                if (saveModal) {
+                    saveModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            };
+            
+            window.confirmSave = function() {
+                // Get values from modal inputs
+                const filename = saveModalFilename.value.trim();
+                const format = saveModalFormatSelect.value;
+                
+                if (!filename) {
+                    showErrorModal('Please enter a file name');
+                    return;
+                }
+                
+                // Build the filename with extension
+                const fullFilename = filename + '.' + format;
+                
+                // Close modal first
+                closeSaveModal();
+                
+                // Extract table data from the results table
+                const tableData = [];
+                const resultsTable = document.querySelector('.results-con table');
+                
+                if (resultsTable) {
+                    // Get headers
+                    const headers = [];
+                    resultsTable.querySelectorAll('thead th').forEach(th => {
+                        headers.push(th.textContent.trim());
+                    });
+                    
+                    // Get rows
+                    resultsTable.querySelectorAll('tbody tr').forEach(row => {
+                        const rowData = {};
+                        row.querySelectorAll('td').forEach((td, index) => {
+                            if (headers[index]) {
+                                rowData[headers[index]] = td.textContent.trim();
+                            }
+                        });
+                        tableData.push(rowData);
+                    });
+                    
+                    // Add summary rows
+                    const totalCostDiv = document.querySelector('.results-con .total:first-of-type span:last-child');
+                    const budgetRemainingDiv = document.querySelector('.results-con .total:last-of-type span:last-child');
+                    
+                    if (totalCostDiv) {
+                        tableData.push({
+                            'Name': 'Total Cost',
+                            'Units to Purchase': '',
+                            'Packs': '',
+                            'Total Cost': totalCostDiv.textContent.trim(),
+                            'Total Profit': ''
+                        });
+                    }
+                    
+                    if (budgetRemainingDiv) {
+                        tableData.push({
+                            'Name': 'Budget Remaining',
+                            'Units to Purchase': '',
+                            'Packs': '',
+                            'Total Cost': budgetRemainingDiv.textContent.trim(),
+                            'Total Profit': ''
+                        });
+                    }
+                }
+                
+                // Send data to server
+                fetch('/save_results', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'filename': fullFilename,
+                        'format': format,
+                        'data': JSON.stringify(tableData)
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccessModal(data.message);
+                    } else {
+                        showErrorModal('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showErrorModal('Error: Failed to save results. Please try again.');
+                });
+            };
+            
+            // Close save modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === saveModal) {
+                    closeSaveModal();
+                }
+            });
+            
+            // Handle Enter key in save modal inputs
+            saveModalFilename.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    confirmSave();
+                }
+            });
+            
+            saveModalFormatSelect.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    confirmSave();
                 }
             });
             
@@ -732,4 +843,5 @@
     </script>
 </body>
 </html>
+
 

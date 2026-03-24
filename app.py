@@ -215,6 +215,35 @@ def saved():
     return render_template("saved.html", files=files, saved_folder=saved_folder)
 
 
+@app.route("/imports", methods=["GET"])
+def imports():
+    """Show uploaded files."""
+    upload_folder = app.config.get('UPLOAD_FOLDER', 'uploads')
+    files = []
+    if os.path.exists(upload_folder):
+        for f in os.listdir(upload_folder):
+            filepath = os.path.join(upload_folder, f)
+            if os.path.isfile(filepath):
+                files.append({
+                    'name': f,
+                    'size': os.path.getsize(filepath),
+                    'path': filepath
+                })
+    return render_template("imports.html", files=files, upload_folder=upload_folder)
+
+
+@app.route("/download_uploaded/<filename>", methods=["GET"])
+def download_uploaded_file(filename):
+    """Download a file from the uploads folder."""
+    upload_folder = app.config.get('UPLOAD_FOLDER', 'uploads')
+    filepath = os.path.join(upload_folder, filename)
+    if os.path.exists(filepath):
+        return send_file(filepath, as_attachment=True, download_name=filename)
+    else:
+        flash("File not found", "error")
+        return redirect(url_for("imports"))
+
+
 @app.route("/download_file/<filename>", methods=["GET"])
 def download_file(filename):
     """Download a file from the exports folder."""
@@ -652,6 +681,41 @@ def save_variables():
     except Exception as e:
         flash(f"Save failed: {str(e)}", "error")
     return redirect(url_for("saved"))
+
+
+@app.route("/save_results", methods=["POST"])
+def save_results():
+    """Save optimization results to the saved folder."""
+    try:
+        filename = request.form.get("filename", "results").strip()
+        format_type = request.form.get("format", "csv")
+        data_json = request.form.get("data", "[]")
+        
+        # Parse the JSON data
+        import json
+        data = json.loads(data_json)
+        
+        # Ensure filename has correct extension
+        if not filename.endswith(f".{format_type}"):
+            filename = f"{filename}.{format_type}"
+        
+        filepath = os.path.join(app.config['SAVED_FOLDER'], filename)
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        
+        # Create DataFrame from the data
+        df = pd.DataFrame(data)
+        
+        # Save to file based on format
+        if format_type == 'csv':
+            df.to_csv(filepath, index=False)
+        elif format_type in ['xlsx', 'xls']:
+            df.to_excel(filepath, index=False)
+        else:
+            raise ValueError(f"Unsupported format: {format_type}")
+        
+        return {'success': True, 'message': f"Results saved as '{filename}'"}
+    except Exception as e:
+        return {'success': False, 'message': str(e)}, 500
 
 
 @app.route("/delete_variable/<name>", methods=["POST"])
