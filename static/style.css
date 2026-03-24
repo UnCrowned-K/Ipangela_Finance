@@ -512,6 +512,46 @@ hr {
     padding: 0.75rem;
 }
 
+/* Export Modal Styles */
+.export-modal-content {
+    max-width: 450px;
+    margin: 10% auto;
+}
+
+.export-modal-content .modal-body {
+    padding: 1.5rem;
+}
+
+.export-modal-content .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.export-modal-content .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.export-modal-content label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.export-modal-content small {
+    display: block;
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.export-modal-content .form-control {
+    margin-bottom: 0;
+}
+
+.export-modal-content .modal-footer {
+    padding: 1rem 1.5rem;
+}
+
 /* Lucide Icons */
 [data-lucide] {
     display: inline-block;

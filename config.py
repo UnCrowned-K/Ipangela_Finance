@@ -14,6 +14,7 @@ class Config:
     # File Upload Settings
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
     EXPORT_FOLDER = os.path.join(BASE_DIR, 'exports')
+    SAVED_FOLDER = os.path.join(BASE_DIR, 'saved')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     
     # Optimization Settings
@@ -27,9 +28,11 @@ class Config:
             if 'VERCEL' in os.environ:
                 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
                 app.config['EXPORT_FOLDER'] = '/tmp/exports'
+                app.config['SAVED_FOLDER'] = '/tmp/saved'
             
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             os.makedirs(app.config['EXPORT_FOLDER'], exist_ok=True)
+            os.makedirs(app.config['SAVED_FOLDER'], exist_ok=True)
         except Exception as e:
             # Log error but don't crash the app
             print(f"Warning: Could not create directories: {str(e)}")

@@ -24,6 +24,7 @@ import webbrowser
 from typing import Tuple, Dict, Any, Optional
 from flask import Flask, render_template, request, flash, redirect, url_for, send_file
 from werkzeug.utils import secure_filename
+import pandas as pd
 
 from optimizer_core import (
     IntegerVariable, create_integer_variable, optimize, variables_list,
@@ -46,11 +47,88 @@ budget = Config.DEFAULT_BUDGET
 
 
 def safe_filename(filename: str) -> str:
-    """Generate a secure filename and ensure .json extension."""
+    """Generate a secure filename and ensure valid extension."""
     filename = secure_filename(filename)
-    if not filename.endswith('.json'):
+    # Allow .json, .csv, .xlsx extensions
+    allowed_extensions = ['.json', '.csv', '.xlsx']
+    if not any(filename.lower().endswith(ext) for ext in allowed_extensions):
         filename += '.json'
     return filename
+
+
+def parse_file(filepath: str) -> list:
+    """
+    Parse CSV, Excel, or JSON files and return list of variable dictionaries.
+    
+    Args:
+        filepath: Path to the file to parse
+        
+    Returns:
+        List of dictionaries representing IntegerVariable data
+    """
+    ext = filepath.lower().split('.')[-1]
+    
+    if ext == 'json':
+        with open(filepath, 'r') as f:
+            return json.load(f)
+    elif ext == 'csv':
+        df = pd.read_csv(filepath)
+        # Convert DataFrame to list of dicts, handling NaN values
+        data = df.to_dict('records')
+        # Clean up None/NaN values for optional fields
+        for item in data:
+            if 'upperBound' in item and (pd.isna(item['upperBound']) or item['upperBound'] == 'None' or item['upperBound'] == ''):
+                item['upperBound'] = None
+            elif 'upperBound' in item and item['upperBound'] is not None:
+                item['upperBound'] = int(item['upperBound'])
+            if 'lowerBound' in item and pd.isna(item['lowerBound']):
+                item['lowerBound'] = 0
+            if 'multiplier' in item and pd.isna(item['multiplier']):
+                item['multiplier'] = 1
+        return data
+    elif ext in ['xlsx', 'xls']:
+        df = pd.read_excel(filepath)
+        # Convert DataFrame to list of dicts, handling NaN values
+        data = df.to_dict('records')
+        # Clean up None/NaN values for optional fields
+        for item in data:
+            if 'upperBound' in item and (pd.isna(item['upperBound']) or item['upperBound'] == 'None' or item['upperBound'] == ''):
+                item['upperBound'] = None
+            elif 'upperBound' in item and item['upperBound'] is not None:
+                item['upperBound'] = int(item['upperBound'])
+            if 'lowerBound' in item and pd.isna(item['lowerBound']):
+                item['lowerBound'] = 0
+            if 'multiplier' in item and pd.isna(item['multiplier']):
+                item['multiplier'] = 1
+        return data
+    else:
+        raise ValueError(f"Unsupported file format: {ext}")
+
+
+def export_to_file(variables: list, filepath: str) -> None:
+    """
+    Export variables to JSON, CSV, or Excel file.
+    
+    Args:
+        variables: List of IntegerVariable objects
+        filepath: Path to save the file
+    """
+    ext = filepath.lower().split('.')[-1]
+    data = [var.to_dict() for var in variables]
+    
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    
+    if ext == 'json':
+        with open(filepath, 'w') as f:
+            json.dump(data, f, indent=4)
+    elif ext == 'csv':
+        df = pd.DataFrame(data)
+        df.to_csv(filepath, index=False)
+    elif ext in ['xlsx', 'xls']:
+        df = pd.DataFrame(data)
+        df.to_excel(filepath, index=False)
+    else:
+        raise ValueError(f"Unsupported file format: {ext}")
 
 
 def handle_file_operation(operation: str, filepath: str, variables: Optional[list] = None) -> None:
@@ -59,18 +137,16 @@ def handle_file_operation(operation: str, filepath: str, variables: Optional[lis
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         
         if operation == 'save':
-            with open(filepath, 'w') as f:
-                json.dump([var.to_dict() for var in variables or variables_list], f, indent=4)
+            export_to_file(variables or variables_list, filepath)
         elif operation == 'load':
             if not os.path.exists(filepath):
                 raise IOError(f"File not found: {filepath}")
-            with open(filepath, 'r') as f:
-                data = json.load(f)
-                clear_variables()
-                for item in data:
-                    var = IntegerVariable.from_dict(item)
-                    var.validate()
-                    variables_list.append(var)
+            data = parse_file(filepath)
+            clear_variables()
+            for item in data:
+                var = IntegerVariable.from_dict(item)
+                var.validate()
+                variables_list.append(var)
     except Exception as e:
         error_msg = f"Error {operation}ing variables: {str(e)}"
         if 'VERCEL' in os.environ:
@@ -103,6 +179,64 @@ def parse_variable_form() -> Tuple[Dict[str, Any], bool]:
 def home():
     """Home page."""
     return render_template("home.html")
+
+
+@app.route("/exports", methods=["GET"])
+def exports():
+    """Show exports folder contents."""
+    export_folder = app.config.get('EXPORT_FOLDER', 'exports')
+    files = []
+    if os.path.exists(export_folder):
+        for f in os.listdir(export_folder):
+            filepath = os.path.join(export_folder, f)
+            if os.path.isfile(filepath):
+                files.append({
+                    'name': f,
+                    'size': os.path.getsize(filepath),
+                    'path': filepath
+                })
+    return render_template("exports.html", files=files, export_folder=export_folder)
+
+
+@app.route("/saved", methods=["GET"])
+def saved():
+    """Show saved folder contents."""
+    saved_folder = app.config.get('SAVED_FOLDER', 'saved')
+    files = []
+    if os.path.exists(saved_folder):
+        for f in os.listdir(saved_folder):
+            filepath = os.path.join(saved_folder, f)
+            if os.path.isfile(filepath):
+                files.append({
+                    'name': f,
+                    'size': os.path.getsize(filepath),
+                    'path': filepath
+                })
+    return render_template("saved.html", files=files, saved_folder=saved_folder)
+
+
+@app.route("/download_file/<filename>", methods=["GET"])
+def download_file(filename):
+    """Download a file from the exports folder."""
+    export_folder = app.config.get('EXPORT_FOLDER', 'exports')
+    filepath = os.path.join(export_folder, filename)
+    if os.path.exists(filepath):
+        return send_file(filepath, as_attachment=True, download_name=filename)
+    else:
+        flash("File not found", "error")
+        return redirect(url_for("exports"))
+
+
+@app.route("/download_saved/<filename>", methods=["GET"])
+def download_saved_file(filename):
+    """Download a file from the saved folder."""
+    saved_folder = app.config.get('SAVED_FOLDER', 'saved')
+    filepath = os.path.join(saved_folder, filename)
+    if os.path.exists(filepath):
+        return send_file(filepath, as_attachment=True, download_name=filename)
+    else:
+        flash("File not found", "error")
+        return redirect(url_for("saved"))
 
 
 @app.route("/finance", methods=["GET"])
@@ -447,12 +581,16 @@ def mark_invoice_sent(invoice_id):
 
 @app.route("/export", methods=["POST"])
 def export_variables():
-    """Export variables to a JSON file in the exports folder."""
+    """Export variables to a file in the exports folder."""
     try:
-        filename = safe_filename(request.form.get("filename", "variables.json"))
+        filename = request.form.get("filename", "variables")
+        format_type = request.form.get("format", "csv")
+        # Ensure filename has correct extension
+        if not filename.endswith(f".{format_type}"):
+            filename = f"{filename}.{format_type}"
         filepath = os.path.join(app.config['EXPORT_FOLDER'], filename)
         handle_file_operation('save', filepath)
-        flash(f"Table exported successfully!", "success")
+        flash(f"Table exported successfully as {format_type.upper()}!", "success")
     except Exception as e:
         flash(f"Export failed: {str(e)}", "error")
     return redirect(url_for("optimizer"))
@@ -484,15 +622,36 @@ def import_variables():
 
 @app.route("/download", methods=["POST"])
 def download_variables():
-    """Download variables as a JSON file."""
+    """Download variables as a file in the selected format."""
     try:
-        filename = safe_filename(request.form.get("filename", "variables.json").strip())
+        filename = request.form.get("filename", "variables").strip()
+        format_type = request.form.get("format", "csv")
+        # Ensure filename has correct extension
+        if not filename.endswith(f".{format_type}"):
+            filename = f"{filename}.{format_type}"
         filepath = os.path.join(app.config['EXPORT_FOLDER'], filename)
         handle_file_operation('save', filepath)
         return send_file(filepath, as_attachment=True, download_name=filename)
     except Exception as e:
         flash(f"Download failed: {str(e)}", "error")
         return redirect(url_for("optimizer"))
+
+
+@app.route("/save", methods=["POST"])
+def save_variables():
+    """Save variables to the saved folder without downloading."""
+    try:
+        filename = request.form.get("filename", "variables").strip()
+        format_type = request.form.get("format", "csv")
+        # Ensure filename has correct extension
+        if not filename.endswith(f".{format_type}"):
+            filename = f"{filename}.{format_type}"
+        filepath = os.path.join(app.config['SAVED_FOLDER'], filename)
+        handle_file_operation('save', filepath)
+        flash(f"File '{filename}' saved successfully to saved folder!", "success")
+    except Exception as e:
+        flash(f"Save failed: {str(e)}", "error")
+    return redirect(url_for("saved"))
 
 
 @app.route("/delete_variable/<name>", methods=["POST"])

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Files - Profit Optimizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .saved-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .saved-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .saved-header h1 {
+            color: #333;
+        }
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background: #fff;
+        }
+        .file-item:hover {
+            background: #f9f9f9;
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8f5e9;
+            border-radius: 8px;
+            color: #28a745;
+        }
+        .file-name {
+            font-weight: 500;
+            color: #333;
+        }
+        .file-size {
+            color: #666;
+            font-size: 12px;
+        }
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .download-btn, .delete-btn {
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .download-btn {
+            background: #007bff;
+            color: white;
+        }
+        .download-btn:hover {
+            background: #0056b3;
+        }
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        .empty-folder {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+        .empty-folder-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="saved-container">
+        <div class="saved-header">
+            <h1>Saved Files</h1>
+            <a href="{{ url_for('optimizer') }}" class="back-link">← Back to Optimizer</a>
+        </div>
+        
+        {% if files %}
+        <ul class="file-list">
+            {% for file in files %}
+            <li class="file-item">
+                <div class="file-info">
+                    <div class="file-icon">
+                        <i data-lucide="file-check"></i>
+                    </div>
+                    <div>
+                        <div class="file-name">{{ file.name }}</div>
+                        <div class="file-size">{{ (file.size / 1024)|round(2) }} KB</div>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <a href="{{ url_for('download_saved_file', filename=file.name) }}" class="download-btn">
+                        <i data-lucide="download"></i> Download
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-folder">
+            <div class="empty-folder-icon">📁</div>
+            <p>No saved files yet.</p>
+            <p>Save your optimization results from the Optimizer to see them here.</p>
+            <a href="{{ url_for('optimizer') }}" class="btn btn-primary" style="display: inline-block; margin-top: 20px;">
+                Go to Optimizer
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

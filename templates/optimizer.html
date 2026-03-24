@@ -13,7 +13,8 @@
             <nav>
                 <ul>
                     <li><a href="{{ url_for('optimizer') }}"><i data-lucide="home"></i> Dashboard</a></li>
-                    <li><a href="{{ url_for('home') }}"><i data-lucide="files"></i> Files</a></li>
+                    <li><a href="{{ url_for('exports') }}"><i data-lucide="files"></i> Files</a></li>
+                    <li><a href="{{ url_for('saved') }}"><i data-lucide="save"></i> Saved</a></li>
                     <br/><hr class="ruler"/><br/>
                     <li><a href="{{ url_for('optimizer') }}"><i data-lucide="trending-up"></i> Profit Optimizer</a></li>
                     <li><a href="{{ url_for('finance') }}"><i data-lucide="dollar-sign"></i> Finances</a></li>
@@ -21,6 +22,9 @@
                     <br/><hr class="ruler"/><br/>
                     <li><a href="#"><i data-lucide="user"></i>Profile</a></li>
                     <li><a href="#"><i data-lucide="settings"></i> Settings</a></li>
+                    <br/>
+                    <li><a href="#"><i data-lucide="log-out"></i> Log Out</a></li>
+
                 </ul>
             </nav>
         </div>
@@ -125,26 +129,88 @@
                 </div>
             </div>
 
+            <!-- Export/Save Modal -->
+            <div id="exportModal" class="modal">
+                <div class="modal-content export-modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="exportModalTitle">Export Options</h2>
+                        <span class="close" onclick="closeExportModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="modalFilename">File Name:</label>
+                            <input type="text" class="form-control" id="modalFilename" value="MyItems" required>
+                            <small>Enter the name for your export file (without extension)</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="modalFormatSelect">Format:</label>
+                            <select class="form-control" id="modalFormatSelect">
+                                <option value="csv">CSV</option>
+                                <option value="xlsx">Excel</option>
+                                <option value="json">JSON</option>
+                            </select>
+                            <small>Select the export format</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeExportModal()">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="exportModalConfirmBtn" onclick="confirmExport()"><i data-lucide="check"></i> Confirm</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Modal -->
+            <div id="successModal" class="modal">
+                <div class="modal-content flash-modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="successModalTitle">Success</h2>
+                        <span class="close" onclick="closeSuccessModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div id="successMessage" class="flash-message success"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="closeSuccessModal()">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Modal -->
+            <div id="errorModal" class="modal">
+                <div class="modal-content flash-modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="errorModalTitle">Error</h2>
+                        <span class="close" onclick="closeErrorModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div id="errorMessage" class="flash-message error"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="closeErrorModal()">OK</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Current Variables Section -->
             <section class="section card">
                 <div class="section-header">
                     <h2 class="card-title">Current Items</h2>
                     <div class="file-controls">
-                        <input type="text" class="form-control filename-input" id="filename" value="MyItems.json" required
-                            oninput="updateFileName(this.value)" aria-label="File name for export or download">
                         <div class="button-group">
-                            <form method="post" action="/export" class="inline-form">
-                                <input type="hidden" id="export-filename" name="filename" value="variables.json">
-                                <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="download"></i> Export</button>
+                            <form method="post" action="/export" class="inline-form" id="exportForm">
+                                <input type="hidden" id="export-filename" name="filename" value="MyItems.csv">
+                                <input type="hidden" id="export-format" name="format" value="csv">
                             </form>
-                            <form method="POST" action="/download" class="inline-form">
-                                <input type="hidden" id="download-filename" name="filename" value="variables.json">
-                                <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="download"></i> Download</button>
+                            <form method="POST" action="/download" class="inline-form" id="downloadForm">
+                                <input type="hidden" id="download-filename" name="filename" value="MyItems.csv">
+                                <input type="hidden" id="download-format" name="format" value="csv">
                             </form>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="openExportModal('export')"><i data-lucide="download"></i> Export</button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('downloadForm').submit()"><i data-lucide="download"></i> Download</button>
                             <form method="post" action="/import" enctype="multipart/form-data" class="inline-form import-form">
                                 <label for="file" class="btn btn-primary btn-sm upload-btn">
                                     <i data-lucide="upload"></i> Upload File
-                                    <input type="file" class="hidden-file-input" id="file" name="file" accept=".json" onchange="this.form.submit()">
+                                    <input type="file" class="hidden-file-input" id="file" name="file" accept=".json,.csv,.xlsx,.xls" onchange="this.form.submit()">
                                 </label>
                             </form>
                         </div>
@@ -275,10 +341,11 @@
                     </div>
                     <br>
                     
-                    <form method="POST" action="/download" class="inline-form">
-                        <input type="hidden" id="download-filename" name="filename" value="variables.json">
-                        <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="save"></i> Save</button>
+                    <form method="POST" action="/download" class="inline-form" id="resultDownloadForm">
+                        <input type="hidden" id="result-download-filename" name="filename" value="MyItems.csv">
+                        <input type="hidden" id="result-download-format" name="format" value="csv">
                     </form>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="openExportModal('save')"><i data-lucide="save"></i> Save</button>
                     {% endif %}       
                 </section>
             </section>
@@ -287,15 +354,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // File name updating
-            function updateFileName(value) {
-                document.getElementById('export-filename').value = value;
-                document.getElementById('download-filename').value = value;
-            }
-            
-            // Make updateFileName available globally
-            window.updateFileName = updateFileName;
-
             // Modal functionality
             const modal = document.getElementById('addVariableModal');
             const modalTitle = document.querySelector('.modal-title');
@@ -390,6 +448,9 @@
                 if (event.key === 'Escape') {
                     closeModal();
                     closeBudgetModal();
+                    closeExportModal();
+                    closeSuccessModal();
+                    closeErrorModal();
                 }
             });
             
@@ -423,6 +484,206 @@
                 }
             });
             
+            // Export/Save Modal functionality
+            const exportModal = document.getElementById('exportModal');
+            const modalFilename = document.getElementById('modalFilename');
+            const modalFormatSelect = document.getElementById('modalFormatSelect');
+            const exportModalConfirmBtn = document.getElementById('exportModalConfirmBtn');
+            let currentExportAction = '';
+            
+            window.openExportModal = function(actionType) {
+                currentExportAction = actionType;
+                
+                // Use default values since the visible inputs were removed
+                const currentFilename = 'MyItems';
+                const currentFormat = 'csv';
+                
+                // Set modal values
+                modalFilename.value = currentFilename;
+                modalFormatSelect.value = currentFormat;
+                
+                // Update modal title based on action
+                const modalTitle = document.getElementById('exportModalTitle');
+                if (actionType === 'export') {
+                    modalTitle.textContent = 'Export Options';
+                    exportModalConfirmBtn.innerHTML = '<i data-lucide="check"></i> Export';
+                } else if (actionType === 'download') {
+                    modalTitle.textContent = 'Download Options';
+                    exportModalConfirmBtn.innerHTML = '<i data-lucide="download"></i> Download';
+                } else if (actionType === 'save') {
+                    modalTitle.textContent = 'Save Options';
+                    exportModalConfirmBtn.innerHTML = '<i data-lucide="save"></i> Save';
+                }
+                
+                // Show modal
+                exportModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                
+                // Re-initialize Lucide icons for the button
+                lucide.createIcons();
+                
+                // Focus on filename input
+                modalFilename.focus();
+                modalFilename.select();
+            };
+            
+            window.closeExportModal = function() {
+                if (exportModal) {
+                    exportModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    currentExportAction = '';
+                }
+            };
+            
+            window.confirmExport = function() {
+                // Get values from modal inputs
+                const filename = modalFilename.value.trim();
+                const format = modalFormatSelect.value;
+                
+                if (!filename) {
+                    showErrorModal('Please enter a file name');
+                    return;
+                }
+                
+                // Build the filename with extension
+                const fullFilename = filename + '.' + format;
+                
+                // Close modal first
+                closeExportModal();
+                
+                // For save action, use the /save endpoint (server-side save without download)
+                if (currentExportAction === 'save') {
+                    // Create a form and submit to /save endpoint
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/save';
+                    
+                    const filenameInput = document.createElement('input');
+                    filenameInput.type = 'hidden';
+                    filenameInput.name = 'filename';
+                    filenameInput.value = fullFilename;
+                    form.appendChild(filenameInput);
+                    
+                    const formatInput = document.createElement('input');
+                    formatInput.type = 'hidden';
+                    formatInput.name = 'format';
+                    formatInput.value = format;
+                    form.appendChild(formatInput);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                    return;
+                }
+                
+                // For download, use direct form submission to trigger browser download
+                if (currentExportAction === 'download') {
+                    // Update the hidden form inputs with the selected values
+                    document.getElementById('download-filename').value = fullFilename;
+                    document.getElementById('download-format').value = format;
+                    // Submit the form directly to let browser handle download
+                    document.getElementById('downloadForm').submit();
+                    return;
+                }
+                
+                // For regular export (server-side only), use fetch
+                // Create form data
+                const formData = new FormData();
+                formData.append('filename', fullFilename);
+                formData.append('format', format);
+                
+                // Use fetch to submit the form data
+                fetch('/export', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Server error: ' + response.status);
+                    }
+                    // Show success message in modal
+                    const successMsg = 'File "' + fullFilename + '" has been exported successfully!';
+                    showSuccessModal(successMsg);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Show error message in modal
+                    const errorMsg = 'Error: Failed to export the file. Please try again.';
+                    showErrorModal(errorMsg);
+                });
+            };
+            
+            // Close export modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === exportModal) {
+                    closeExportModal();
+                }
+            });
+            
+            // Handle Enter key in modal inputs
+            modalFilename.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    confirmExport();
+                }
+            });
+            
+            modalFormatSelect.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    confirmExport();
+                }
+            });
+            
+            // Success Modal functionality
+            const successModal = document.getElementById('successModal');
+            const successMessage = document.getElementById('successMessage');
+            
+            window.showSuccessModal = function(message) {
+                if (successModal && successMessage) {
+                    successMessage.textContent = message;
+                    successModal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+            
+            window.closeSuccessModal = function() {
+                if (successModal) {
+                    successModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    window.location.reload();
+                }
+            };
+            
+            // Error Modal functionality
+            const errorModal = document.getElementById('errorModal');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            window.showErrorModal = function(message) {
+                if (errorModal && errorMessage) {
+                    errorMessage.textContent = message;
+                    errorModal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+            
+            window.closeErrorModal = function() {
+                if (errorModal) {
+                    errorModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    window.location.reload();
+                }
+            };
+            
+            // Close success/error modals when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === successModal) {
+                    closeSuccessModal();
+                }
+                if (event.target === errorModal) {
+                    closeErrorModal();
+                }
+            });
+            
             // Initialize Lucide icons
             lucide.createIcons();
             
@@ -439,8 +700,9 @@
             
             // Check if there are flash messages and show modal
             function showFlashModal() {
-                const flashMessages = document.querySelectorAll('.flash-message');
-                if (flashMessages.length > 0 && flashModal) {
+                const flashMessagesContainer = document.getElementById('flashMessagesContainer');
+                const actualFlashMessages = flashMessagesContainer ? flashMessagesContainer.querySelectorAll('.flash-message') : [];
+                if (actualFlashMessages.length > 0 && flashModal) {
                     flashModal.style.display = 'block';
                     
                     // Auto-dismiss after 5 seconds
@@ -470,3 +732,4 @@
     </script>
 </body>
 </html>
+
