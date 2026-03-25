@@ -9,6 +9,7 @@
     <meta property="og:description" content="Transform your business decisions with powerful integer linear programming optimization.">
     <meta property="og:type" content="website">
     <title>Ipangela Finance - Smart Profit Optimization</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='homestyle.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -255,10 +256,9 @@
             <div class="nav-cards">
                 <a href="{{ url_for('optimizer') }}" class="nav-card optimizer fade-in-up" data-scroll>
                     <div class="nav-card-icon">
-                        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-                            <rect x="4" y="4" width="40" height="40" rx="8" fill="#007a55"/>
-                            <path d="M14 24V14h6c3.3 0 6 2.7 6 6s-2.7 6-6 6h-4v4h4c3.3 0 6 2.7 6 6s-2.7 6-6 6H14zm6-12h4c1.65 0 3-1.35 3-3s-1.35-3-3-3h-4v6zm0 12h4c1.65 0 3-1.35 3-3s-1.35-3-3-3h-4v6zm12-12h-6v12h9c1.65 0 3-1.35 3-3s-1.35-3-3-3h-3v-6z" fill="white"/>
-                        </svg>
+                        <div class="nav-card-icon">
+                        <img src="{{ url_for('static', filename='performance.png') }}" alt="Performance" style="width: 48px; height: 48px;">
+                    </div>
                     </div>
                     <h3>Profit Optimizer</h3>
                     <p>Solve integer linear programming problems to maximize profits under budget constraints. Add variables, set budgets, and get optimal solutions instantly.</p>
@@ -686,3 +686,4 @@
     </script>
 </body>
 </html>
+
