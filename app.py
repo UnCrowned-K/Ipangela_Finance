@@ -286,6 +286,12 @@ def contact():
     return render_template("contact.html")
 
 
+@app.route("/profile", methods=["GET"])
+def profile():
+    """Profile page."""
+    return render_template("profile.html")
+
+
 @app.route("/optimizer.html", methods=["GET", "POST"])
 def optimizer():
     """Handle main page and form submissions."""

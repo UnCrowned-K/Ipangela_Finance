@@ -199,11 +199,12 @@ hr {
     margin-bottom: 2rem;
 }
 
+/* Section title */
 .section-title {
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-color, #007a55);
+    margin-bottom: 5px;
 }
 
 .section-header {
@@ -440,8 +441,6 @@ hr {
     }
 }
 
-
-
 #con-sec {
     display: flex;
     min-height: calc(100vh - 40px);
@@ -465,7 +464,7 @@ hr {
 
 .side-nav h3 {
     color: var(--bg-color);
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     border-bottom: 2px solid var(--border-color);
     padding: 0 1rem;
 }

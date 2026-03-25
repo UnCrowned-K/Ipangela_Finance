@@ -6,12 +6,13 @@
     <title>Finance Manager - Profit Optimizer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='finance.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Navigation -->
-    <div class="side-nav">
+    <!-- <div class="side-nav">
         <nav>
             <h3>Profit Optimizer</h3>
             <ul>
@@ -26,16 +27,61 @@
                 <li><a href="{{ url_for('finance') }}"><i data-lucide="dollar-sign"></i> Finances</a></li>
                 <li><a href="{{ url_for('invoice') }}"><i data-lucide="file-text"></i> Invoice Generator</a></li>
                 <hr class="ruler"/>
-                <li><a href="#"><i data-lucide="user"></i>Profile</a></li>
-                <li><a href="#"><i data-lucide="settings"></i> Settings</a></li>
+                <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i>Profile</a></li>
+                <li><a href="#"><i data-lucide="log-out"></i> Log Out</a></li>
             </ul>
         </nav>
-    </div>
+    </div> -->
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="{{ url_for('home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
+            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="40" height="40" rx="8" fill="currentColor"/>
+                <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
+            </svg>
+            <span class="logo-text">Ipangela</span>
+        </a>
+        
+        <!-- Main Navigation -->
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <ul class="nav-menu">
+                <li><a href="#" onclick="showSection('transactions')"><i data-lucide="repeat"></i> Transactions</a></li>
+                <li><a href="#" onclick="showSection('budgets')"><i data-lucide="pie-chart"></i> Budgets</a></li>
+                <li><a href="#" onclick="showSection('accounts')"><i data-lucide="building"></i> Accounts</a></li>
+                <li><a href="#" onclick="showSection('reports')"><i data-lucide="file-text"></i> Reports</a></li>
+                <li><a href="#" onclick="showSection('import-export')"><i data-lucide="refresh-cw"></i> Import/Export</a></li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-divider"></div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('optimizer') }}"><i data-lucide="trending-up"></i>Optimizer</a></li>
+                <li><a href="{{ url_for('finance') }}" class="active"><i data-lucide="wallet"></i>Finance</a></li>
+                <li><a href="{{ url_for('invoice') }}"><i data-lucide="file-text"></i>Invoices</a></li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-divider"></div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i>Profile</a></li>
+                <li><a href="{{ url_for('home') }}"><i data-lucide="log-out"></i>Sign Out</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+
+
 
     <div class="finance-container">
         <!-- Header -->
         <div class="section-header">
-            <h1><i data-lucide="line-chart"></i> Finance Manager</h1>
+            <h1 class="section-title">Finance Manager</h1>
             <div class="quick-actions">
                 <button class="btn btn-primary" onclick="openModal('transactionModal')">
                     <i data-lucide="plus"></i> Add Transaction

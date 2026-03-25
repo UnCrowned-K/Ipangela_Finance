@@ -206,13 +206,6 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Section title */
-.section-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--primary-color, #007a55);
-    margin-bottom: 5px;
-}
 
 /* Modal enhancements */
 .modal-content {

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ipangela Finance - Profile settings and account management">
+    <meta name="keywords" content="profile, account settings, user management">
+    <meta property="og:title" content="Profile - Ipangela Finance">
+    <meta property="og:description" content="Manage your account settings and profile preferences">
+    <meta property="og:type" content="website">
+    <title>Profile - Ipangela Finance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='homestyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header" id="header">
+        <div class="header-content">
+            <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="{{ url_for('home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
+                <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="40" height="40" rx="8" fill="currentColor"/>
+                    <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
+                </svg>
+                <span class="logo-text">Ipangela</span>
+            </a>
+            
+            <!-- Main Navigation -->
+            <nav class="sidebar-nav" aria-label="Main navigation">
+                <ul class="nav-menu">
+                    <li><a href="{{ url_for('home') }}"><i data-lucide="home"></i>Home</a></li>
+                    <li><a href="{{ url_for('optimizer') }}"><i data-lucide="trending-up"></i>Optimizer</a></li>
+                    <li><a href="{{ url_for('finance') }}"><i data-lucide="wallet"></i>Finance</a></li>
+                    <li><a href="{{ url_for('invoice') }}"><i data-lucide="file-text"></i>Invoices</a></li>
+                    <li><a href="#" class="active"><i data-lucide="user"></i>Profile</a></li>
+                    <li><a href="{{ url_for('contact') }}"><i data-lucide="mail"></i>Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-divider"></div>
+
+            <nav class="sidebar-nav" aria-label="Main navigation">
+
+                <ul class="nav-menu">
+                    <li><a href="#"><i data-lucide="settings"></i>Settings</a></li>
+                    <li><a href="#"><i data-lucide="bell"></i>Notifications</a></li>
+                    <li><a href="#"><i data-lucide="credit-card"></i>Billing</a></li>
+                    <li><a href="#"><i data-lucide="download"></i>Exports</a></li>
+                    <li><a href="{{ url_for('home') }}"><i data-lucide="log-out"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <div class="page-header fade-in">
+                <h1 class="page-title">Profile Settings</h1>
+                <p class="page-subtitle">Manage your account settings and preferences</p>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-grid fade-in delay-1">
+                <div class="stat-card">
+                    <i data-lucide="file-text"></i>
+                    <div class="stat-value">127</div>
+                    <div class="stat-label">Invoices Created</div>
+                </div>
+                <div class="stat-card">
+                    <i data-lucide="trending-up"></i>
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Optimizations Run</div>
+                </div>
+                <div class="stat-card">
+                    <i data-lucide="calendar"></i>
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">Months Active</div>
+                </div>
+            </div>
+
+            <!-- Profile Cards Grid -->
+            <div class="profile-grid">
+                <!-- Account Info Card -->
+                <div class="profile-card fade-in delay-2">
+                    <div class="profile-card-header">
+                        <h2 class="profile-card-title">
+                            <i data-lucide="user"></i>
+                            Account Information
+                        </h2>
+                        <button class="btn-profile btn-ghost">
+                            <i data-lucide="edit-2"></i>
+                            Edit
+                        </button>
+                    </div>
+                    
+                    <div class="avatar-section">
+                        <div class="avatar">JD</div>
+                        <div class="avatar-info">
+                            <h3>John Doe</h3>
+                            <p>Premium Member</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" value="John Doe" placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" value="john.doe@example.com" placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Company Name</label>
+                        <input type="text" class="form-input" value="Doe's Business" placeholder="Enter company name">
+                    </div>
+                </div>
+
+                <!-- Preferences Card -->
+                <div class="profile-card fade-in delay-3">
+                    <div class="profile-card-header">
+                        <h2 class="profile-card-title">
+                            <i data-lucide="sliders"></i>
+                            Preferences
+                        </h2>
+                    </div>
+                    
+                    <div class="toggle-wrapper">
+                        <div class="toggle-label">
+                            <span>Email Notifications</span>
+                            <span>Receive email updates about your account</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="toggle-wrapper">
+                        <div class="toggle-label">
+                            <span>Dark Mode</span>
+                            <span>Switch between light and dark themes</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="toggle-wrapper">
+                        <div class="toggle-label">
+                            <span>Auto-save</span>
+                            <span>Automatically save your work</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="toggle-wrapper">
+                        <div class="toggle-label">
+                            <span>Two-Factor Auth</span>
+                            <span>Add an extra layer of security</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Card -->
+            <div class="profile-card fade-in">
+                <div class="profile-card-header">
+                    <h2 class="profile-card-title">
+                        <i data-lucide="clock"></i>
+                        Recent Activity
+                    </h2>
+                    <button class="btn-profile btn-ghost">View All</button>
+                </div>
+                
+                <ul class="activity-list">
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i data-lucide="file-text"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Invoice #127 Generated</h4>
+                            <p>Successfully created invoice for Acme Corp</p>
+                        </div>
+                        <span class="activity-time">2 hours ago</span>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i data-lucide="trending-up"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Optimization Complete</h4>
+                            <p>Budget allocation optimized successfully</p>
+                        </div>
+                        <span class="activity-time">Yesterday</span>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Profile Updated</h4>
+                            <p>You updated your account information</p>
+                        </div>
+                        <span class="activity-time">3 days ago</span>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i data-lucide="download"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Export Downloaded</h4>
+                            <p>Exported optimization results to JSON</p>
+                        </div>
+                        <span class="activity-time">1 week ago</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="margin-top: 32px; display: flex; gap: 16px; flex-wrap: wrap;">
+                <button class="btn-profile btn-primary">
+                    <i data-lucide="save"></i>
+                    Save Changes
+                </button>
+                <button class="btn-profile btn-secondary">
+                    <i data-lucide="x"></i>
+                    Cancel
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile menu toggle - toggles sidebar on mobile
+        const menuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener('click', () => {
+                const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                menuToggle.setAttribute('aria-expanded', !isExpanded);
+                sidebar.classList.toggle('open');
+                menuToggle.classList.toggle('active');
+            });
+        }
+
+        // Header scroll effect
+        const header = document.getElementById('header');
+        if (header) {
+            let lastScroll = 0;
+
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+                
+                lastScroll = currentScroll;
+            });
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Form validation feedback
+        const formInputs = document.querySelectorAll('.form-input');
+        
+        formInputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    this.style.borderColor = 'var(--error-color)';
+                } else {
+                    this.style.borderColor = 'var(--border-color)';
+                }
+            });
+        });
+
+        // Toggle switch visual feedback
+        const toggles = document.querySelectorAll('.toggle-switch input');
+        
+        toggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                console.log('Toggle changed:', this.checked);
+            });
+        });
+    </script>
+</body>
+</html>
