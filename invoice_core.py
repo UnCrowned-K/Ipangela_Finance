@@ -27,6 +27,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
+from utils import ValidationUtils
+
 
 class PaymentStatus(Enum):
     """Enumeration of possible payment statuses."""
@@ -65,35 +67,16 @@ class ClientDetails:
     
     def __post_init__(self):
         """Validate and sanitize client data after initialization."""
-        self.name = self._sanitize_string(self.name, "Client name")
-        self.email = self._validate_email(self.email)
-        self.phone = self._sanitize_string(self.phone, "Phone")
-        self.address = self._sanitize_string(self.address, "Address")
-        self.city = self._sanitize_string(self.city, "City")
-        self.state = self._sanitize_string(self.state, "State")
-        self.postal_code = self._sanitize_string(self.postal_code, "Postal code")
-        self.country = self._sanitize_string(self.country, "Country")
-        self.company = self._sanitize_string(self.company, "Company")
-        self.tax_id = self._sanitize_string(self.tax_id, "Tax ID")
-    
-    @staticmethod
-    def _sanitize_string(value: str, field_name: str) -> str:
-        """Sanitize string input to prevent XSS and injection attacks."""
-        if not value:
-            return ""
-        # Remove potentially dangerous characters
-        sanitized = re.sub(r'[<>{}[\]\\|^~`]', '', str(value))
-        return sanitized.strip()
-    
-    @staticmethod
-    def _validate_email(email: str) -> str:
-        """Validate email format."""
-        if not email:
-            return ""
-        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        if not re.match(pattern, email):
-            raise ValueError(f"Invalid email format: {email}")
-        return email.lower().strip()
+        self.name = ValidationUtils.sanitize_string(self.name, "Client name")
+        self.email = ValidationUtils.validate_email(self.email)
+        self.phone = ValidationUtils.sanitize_string(self.phone, "Phone")
+        self.address = ValidationUtils.sanitize_string(self.address, "Address")
+        self.city = ValidationUtils.sanitize_string(self.city, "City")
+        self.state = ValidationUtils.sanitize_string(self.state, "State")
+        self.postal_code = ValidationUtils.sanitize_string(self.postal_code, "Postal code")
+        self.country = ValidationUtils.sanitize_string(self.country, "Country")
+        self.company = ValidationUtils.sanitize_string(self.company, "Company")
+        self.tax_id = ValidationUtils.sanitize_string(self.tax_id, "Tax ID")
     
     def to_dict(self) -> Dict[str, str]:
         """Convert to dictionary."""
@@ -128,8 +111,8 @@ class LineItem:
     
     def __post_init__(self):
         """Validate and calculate line item values."""
-        self.description = self._sanitize_string(self.description, "Description")
-        self.sku = self._sanitize_string(self.sku, "SKU")
+        self.description = ValidationUtils.sanitize_string(self.description, "Description")
+        self.sku = ValidationUtils.sanitize_string(self.sku, "SKU")
         
         # Convert to Decimal if needed
         if isinstance(self.quantity, (int, float)):
@@ -150,38 +133,6 @@ class LineItem:
             raise ValueError("Discount must be between 0 and 100")
         if self.tax_percent < 0 or self.tax_percent > 100:
             raise ValueError("Tax must be between 0 and 100")
-    
-    def _sanitize_string(self, value: str, field_name: str) -> str:
-        """Sanitize string input."""
-        if not value:
-            return ""
-        sanitized = re.sub(r'[<>{}[\]\\|^~`]', '', str(value))
-        return sanitized.strip()
-    
-    @property
-    def subtotal(self) -> Decimal:
-        """Calculate subtotal before discount."""
-        return self.quantity * self.unit_price
-    
-    @property
-    def discount_amount(self) -> Decimal:
-        """Calculate discount amount."""
-        return self.subtotal * (self.discount_percent / 100)
-    
-    @property
-    def discounted_subtotal(self) -> Decimal:
-        """Calculate subtotal after discount."""
-        return self.subtotal - self.discount_amount
-    
-    @property
-    def tax_amount(self) -> Decimal:
-        """Calculate tax amount based on discounted subtotal."""
-        return self.discounted_subtotal * (self.tax_percent / 100)
-    
-    @property
-    def total(self) -> Decimal:
-        """Calculate line item total including tax."""
-        return self.discounted_subtotal + self.tax_amount
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -237,7 +188,7 @@ class Invoice:
     
     def __post_init__(self):
         """Validate and calculate invoice values."""
-        self.invoice_number = self._sanitize_string(self.invoice_number, "Invoice number")
+        self.invoice_number = ValidationUtils.sanitize_string(self.invoice_number, "Invoice number")
         self.currency = self.currency.upper()
         if self.currency not in [c.value for c in Currency]:
             self.currency = "USD"
@@ -254,88 +205,16 @@ class Invoice:
         except ValueError:
             self.issue_date = date.today().isoformat()
         
-        self.notes = self._sanitize_string(self.notes, "Notes")
-        self.terms = self._sanitize_string(self.terms, "Terms")
-        self.business_name = self._sanitize_string(self.business_name, "Business name")
-        self.business_address = self._sanitize_string(self.business_address, "Business address")
-        self.business_email = self._validate_email(self.business_email)
-        self.business_phone = self._sanitize_string(self.business_phone, "Business phone")
-        self.payment_instructions = self._sanitize_string(self.payment_instructions, "Payment instructions")
+        self.notes = ValidationUtils.sanitize_string(self.notes, "Notes")
+        self.terms = ValidationUtils.sanitize_string(self.terms, "Terms")
+        self.business_name = ValidationUtils.sanitize_string(self.business_name, "Business name")
+        self.business_address = ValidationUtils.sanitize_string(self.business_address, "Business address")
+        self.business_email = ValidationUtils.validate_email(self.business_email)
+        self.business_phone = ValidationUtils.sanitize_string(self.business_phone, "Business phone")
+        self.payment_instructions = ValidationUtils.sanitize_string(self.payment_instructions, "Payment instructions")
         
         if isinstance(self.discount_percent, (int, float)):
             self.discount_percent = Decimal(str(self.discount_percent))
-    
-    def _sanitize_string(self, value: str, field_name: str) -> str:
-        """Sanitize string input."""
-        if not value:
-            return ""
-        sanitized = re.sub(r'[<>{}[\]\\|^~`]', '', str(value))
-        return sanitized.strip()
-    
-    def _validate_email(self, email: str) -> str:
-        """Validate email format."""
-        if not email:
-            return ""
-        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-        if not re.match(pattern, email):
-            raise ValueError(f"Invalid business email format: {email}")
-        return email.lower().strip()
-    
-    @property
-    def currency_info(self) -> Dict:
-        """Get currency information."""
-        for c in Currency:
-            if c.value["code"] == self.currency:
-                return c.value
-        return Currency.USD.value
-    
-    @property
-    def subtotal(self) -> Decimal:
-        """Calculate invoice subtotal."""
-        return sum(item.subtotal for item in self.line_items)
-    
-    @property
-    def total_discount(self) -> Decimal:
-        """Calculate total discount from line items."""
-        return sum(item.discount_amount for item in self.line_items)
-    
-    @property
-    def total_tax(self) -> Decimal:
-        """Calculate total tax from line items."""
-        return sum(item.tax_amount for item in self.line_items)
-    
-    @property
-    def grand_total(self) -> Decimal:
-        """Calculate grand total."""
-        return sum(item.total for item in self.line_items)
-    
-    @property
-    def is_overdue(self) -> bool:
-        """Check if invoice is overdue."""
-        if not self.due_date:
-            return False
-        try:
-            due = datetime.strptime(self.due_date, "%Y-%m-%d").date()
-            return due < date.today() and self.status not in [PaymentStatus.PAID.value, PaymentStatus.CANCELLED.value]
-        except ValueError:
-            return False
-    
-    @property
-    def days_until_due(self) -> Optional[int]:
-        """Calculate days until due date."""
-        if not self.due_date:
-            return None
-        try:
-            due = datetime.strptime(self.due_date, "%Y-%m-%d").date()
-            return (due - date.today()).days
-        except ValueError:
-            return None
-    
-    def update_status(self) -> None:
-        """Update payment status based on due date."""
-        if self.is_overdue:
-            self.status = PaymentStatus.OVERDUE.value
-        self.updated_at = datetime.now().isoformat()
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""

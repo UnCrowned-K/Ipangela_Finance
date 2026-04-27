@@ -22,16 +22,16 @@ import threading
 import time
 import webbrowser
 from typing import Tuple, Dict, Any, Optional
-from flask import Flask, render_template, request, flash, redirect, url_for, send_file
+from functools import wraps
+from flask import Flask, render_template, request, flash, redirect, url_for, send_file, session
 from werkzeug.utils import secure_filename
 import pandas as pd
 
-from optimizer_core import (
-    IntegerVariable, create_integer_variable, optimize, variables_list,
-    clear_variables, OptimizationError
-)
 from config import Config
-
+from optimizer_core import (
+    IntegerVariable, create_integer_variable, optimize,
+    OptimizationError
+)
 
 def create_app(config_class=Config) -> Flask:
     """Create and configure the Flask application."""
@@ -39,11 +39,13 @@ def create_app(config_class=Config) -> Flask:
     app.config.from_object(config_class)
     config_class.init_app(app)
     
+    # Configure session
+    app.secret_key = app.config.get('SECRET_KEY', 'dev-secret-key')
+    
     return app
 
 
 app = create_app()
-budget = Config.DEFAULT_BUDGET
 
 
 def safe_filename(filename: str) -> str:
@@ -171,6 +173,79 @@ def parse_variable_form() -> Tuple[Dict[str, Any], bool]:
         return {}, False
 
 
+def login_required(f):
+    """Decorator to require login for routes."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("Please log in to access this page.", "error")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Login page."""
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        
+        # Initialize UserManager (from finance_core)
+        from finance_core import UserManager, DataStorage
+        storage = DataStorage()
+        user_manager = UserManager(storage)
+        
+        user = user_manager.authenticate(username, password)
+        if user:
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            flash("Logged in successfully!", "success")
+            return redirect(url_for("finance"))
+        else:
+            flash("Invalid username or password", "error")
+    
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    """Logout and clear session."""
+    session.clear()
+    flash("Logged out successfully!", "success")
+    return redirect(url_for("home"))
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Registration page."""
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
+        
+        if not username or not password:
+            flash("Username and password are required", "error")
+            return render_template("register.html")
+        
+        if password != confirm_password:
+            flash("Passwords do not match", "error")
+            return render_template("register.html")
+        
+        from finance_core import UserManager, DataStorage
+        storage = DataStorage()
+        user_manager = UserManager(storage)
+        
+        try:
+            user = user_manager.register(username, password)
+            flash("Registration successful! Please log in.", "success")
+            return redirect(url_for("login"))
+        except Exception as e:
+            flash(str(e), "error")
+    
+    return render_template("register.html")
+
+
 # ============================================================================
 # MAIN ROUTES
 # ============================================================================
@@ -295,7 +370,11 @@ def profile():
 @app.route("/optimizer.html", methods=["GET", "POST"])
 def optimizer():
     """Handle main page and form submissions."""
-    global budget
+    # Get data from session
+    budget = session.get('optimizer_budget', Config.DEFAULT_BUDGET)
+    variables_dicts = session.get('optimizer_variables', [])
+    variables = [IntegerVariable.from_dict(d) for d in variables_dicts]
+    
     max_profit = None
     result = {}
 
@@ -306,6 +385,7 @@ def optimizer():
                 if new_budget <= 0:
                     raise ValueError("Budget must be positive")
                 budget = new_budget
+                session['optimizer_budget'] = new_budget
                 flash("Budget updated successfully!", "success")
             except ValueError as e:
                 flash(f"Invalid budget value: {str(e)}", "error")
@@ -314,22 +394,26 @@ def optimizer():
             data, valid = parse_variable_form()
             if valid:
                 try:
-                    create_integer_variable(**data)
+                    var = create_integer_variable(**data)
+                    # Save to session
+                    variables_dicts = session.get('optimizer_variables', [])
+                    variables_dicts.append(var.to_dict())
+                    session['optimizer_variables'] = variables_dicts
                     flash("Variable added successfully!", "success")
                 except OptimizationError as e:
                     flash(str(e), "error")
         
         elif "optimize" in request.form:
-            if not variables_list:
+            if not variables:
                 flash("No items to optimize. Add items first.", "error")
             else:
                 try:
-                    max_profit, result = optimize(variables_list, budget)
+                    max_profit, result = optimize(variables, budget)
                     flash("Optimization completed successfully!", "success")
                 except OptimizationError as e:
                     flash(f"Optimization failed: {str(e)}", "error")
 
-    return render_template("optimizer.html", variables=variables_list, max_profit=max_profit, result=result, budget=budget)
+    return render_template("optimizer.html", variables=variables, max_profit=max_profit, result=result, budget=budget)
 
 
 # ============================================================================
@@ -727,9 +811,11 @@ def save_results():
 @app.route("/delete_variable/<name>", methods=["POST"])
 def delete_variable(name):
     """Delete a variable by its name."""
-    global variables_list
     try:
-        variables_list = [var for var in variables_list if var.name != name]
+        variables_dicts = session.get('optimizer_variables', [])
+        # Filter out the variable with the given name
+        variables_dicts = [d for d in variables_dicts if d.get('name') != name]
+        session['optimizer_variables'] = variables_dicts
         flash(f"Variable '{name}' deleted successfully!", "success")
     except Exception as e:
         flash(f"Error deleting variable: {str(e)}", "error")
@@ -739,9 +825,10 @@ def delete_variable(name):
 
 @app.route("/clear_variables", methods=["POST"])
 def clear_all_variables():
-    """Clear all variables from the table."""
+    """Clear all variables from the session."""
     try:
-        clear_variables()
+        session.pop('optimizer_variables', None)
+        session.pop('optimizer_budget', None)
         flash("All items cleared successfully!", "success")
     except Exception as e:
         flash(f"Error clearing items: {str(e)}", "error")
@@ -752,30 +839,34 @@ def clear_all_variables():
 @app.route("/update_variable", methods=["POST"])
 def update_variable():
     """Update an existing variable."""
-    global variables_list
     try:
         old_name = request.form.get('old_name')
         if not old_name:
             return {'status': 'error', 'message': 'Original variable name is required'}, 400
 
-        old_var = next((var for var in variables_list if var.name == old_name), None)
-        if not old_var:
+        variables_dicts = session.get('optimizer_variables', [])
+        # Find the old variable
+        old_var_dict = next((d for d in variables_dicts if d.get('name') == old_name), None)
+        if not old_var_dict:
             return {'status': 'error', 'message': f'Variable {old_name} not found'}, 404
 
         data, valid = parse_variable_form()
         if not valid:
             return {'status': 'error', 'message': 'Invalid input data'}, 400
 
-        if data['name'] == old_name or not any(var.name == data['name'] for var in variables_list if var.name != old_name):
-            new_var = IntegerVariable(**data)
-            new_var.validate()
-            
-            variables_list = [var for var in variables_list if var.name != old_name]
-            variables_list.append(new_var)
-            flash("Item updated successfully!", "success")
-            return {'status': 'success'}, 200
-        else:
-            return {'status': 'error', 'message': f'An item named {data["name"]} already exists'}, 400
+        # Check if new name is unique (excluding the old variable)
+        if data['name'] != old_name:
+            if any(d.get('name') == data['name'] for d in variables_dicts if d.get('name') != old_name):
+                return {'status': 'error', 'message': f'An item named {data["name"]} already exists'}, 400
+
+        # Create new variable
+        new_var = create_integer_variable(**data)
+        # Remove old variable, add new one
+        variables_dicts = [d for d in variables_dicts if d.get('name') != old_name]
+        variables_dicts.append(new_var.to_dict())
+        session['optimizer_variables'] = variables_dicts
+        flash("Item updated successfully!", "success")
+        return {'status': 'success'}, 200
         
     except ValueError as e:
         return {'status': 'error', 'message': f'Invalid value: {str(e)}'}, 400

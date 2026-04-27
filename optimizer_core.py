@@ -78,12 +78,9 @@ class IntegerVariable:
         if self.multiplier <= 0:
             raise OptimizationError(f"Units per pack must be positive for {self.name}")
 
-# Global variables list
-variables_list: List[IntegerVariable] = []
-
-def create_integer_variable(name: str, lowerBound: int, upperBound: Optional[int], cost: float, profit: float, multiplier: int = 1) -> None:
+def create_integer_variable(name: str, lowerBound: int, upperBound: Optional[int], cost: float, profit: float, multiplier: int = 1) -> IntegerVariable:
     """
-    Create and validate an IntegerVariable, then add it to the global list.
+    Create and validate an IntegerVariable.
     
     The optimizer works with UNITS. All values are per unit.
     
@@ -95,16 +92,15 @@ def create_integer_variable(name: str, lowerBound: int, upperBound: Optional[int
         profit: Profit per unit (always per individual unit).
         multiplier: Units per pack (1 = individual units, >1 = packed items).
     
+    Returns:
+        Validated IntegerVariable instance.
+    
     Raises:
         OptimizationError: If validation fails.
     """
     var = IntegerVariable(name=name, lowerBound=lowerBound, upperBound=upperBound, cost=cost, profit=profit, multiplier=multiplier)
     var.validate()
-    variables_list.append(var)
-
-def clear_variables() -> None:
-    """Clear the global variables list."""
-    variables_list.clear()
+    return var
 
 def optimize(variables: List['IntegerVariable'], budget: float) -> Tuple[float, Dict[str, Dict]]:
     """
