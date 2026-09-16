@@ -157,47 +157,63 @@ function initLucide() {
     }
 }
 
-function initSidebarToggle() {
-    var sidebarToggle = document.getElementById('sidebarToggle');
-    var sidebar = document.getElementById('sidebar');
+function initTopNav() {
+    var hamburger = document.getElementById('navHamburger');
+    var panel = document.getElementById('navPanel');
+    var userToggle = document.getElementById('navUserToggle');
+    var userMenu = document.getElementById('navUserMenu');
 
-    if (sidebarToggle && sidebar) {
-        // Restore persisted collapsed state (desktop)
-        var saved = null;
-        try {
-            saved = localStorage.getItem('profit-sidebar');
-        } catch (e) {
-            saved = null;
+    function closeNav() {
+        if (panel) {
+            panel.classList.remove('open');
+            if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
         }
-        var isDesktop = window.matchMedia('(min-width: 769px)').matches;
-        if (isDesktop && saved === 'collapsed') {
-            sidebar.classList.add('collapsed');
-            sidebarToggle.setAttribute('aria-label', 'Expand sidebar');
+        if (userMenu) {
+            userMenu.classList.remove('open');
+            if (userToggle) userToggle.setAttribute('aria-expanded', 'false');
         }
+    }
 
-        sidebarToggle.addEventListener('click', function () {
-            if (window.matchMedia('(min-width: 769px)').matches) {
-                sidebar.classList.toggle('collapsed');
-                var collapsed = sidebar.classList.contains('collapsed');
-                sidebarToggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
-                try {
-                    localStorage.setItem('profit-sidebar', collapsed ? 'collapsed' : 'expanded');
-                } catch (e) {}
-            } else {
-                sidebar.classList.toggle('open');
-                sidebarToggle.setAttribute('aria-label', sidebar.classList.contains('open') ? 'Close menu' : 'Open menu');
+    if (hamburger && panel) {
+        hamburger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var open = panel.classList.toggle('open');
+            hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (userMenu) {
+                userMenu.classList.remove('open');
+                if (userToggle) userToggle.setAttribute('aria-expanded', 'false');
             }
         });
-
-        // Close the off-canvas menu after choosing a destination on mobile
-        sidebar.querySelectorAll('a').forEach(function (link) {
-            link.addEventListener('click', function () {
-                if (window.matchMedia('(max-width: 768px)').matches) {
-                    sidebar.classList.remove('open');
-                }
-            });
+        panel.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', closeNav);
         });
     }
+
+    if (userToggle && userMenu) {
+        userToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var open = userMenu.classList.toggle('open');
+            userToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (panel) {
+                panel.classList.remove('open');
+                if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
+            }
+        });
+        userMenu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', closeNav);
+        });
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!userMenu) return;
+        if (!userMenu.contains(e.target) && !(userToggle && userToggle.contains(e.target))) {
+            closeNav();
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeNav();
+    });
 }
 
 function setThemeLabel(isDark) {
@@ -321,7 +337,7 @@ function initModalBehavior() {
 
 document.addEventListener('DOMContentLoaded', function () {
     initLucide();
-    initSidebarToggle();
+    initTopNav();
     initFormValidation();
     initThemeToggle();
     initModalBehavior();

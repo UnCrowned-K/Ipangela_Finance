@@ -1,18 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Exports - Profit Optimizer{% endblock %}
+{% block title %}Exported Files - Profit Optimizer{% endblock %}
 {% block styles %}
 {% endblock %}
-{% block sidebar_extra %}
-    <nav class="sidebar-nav" aria-label="File navigation">
-        <ul class="nav-menu">
-            <li><a href="{{ url_for('pages.imports') }}"><i data-lucide="files"></i><span>Uploaded Files</span></a></li>
-            <li><a href="{{ url_for('pages.exports') }}" class="active"><i data-lucide="files"></i><span>Exported Files</span></a></li>
-            <li><a href="{{ url_for('pages.saved') }}"><i data-lucide="save"></i><span>Saved Files</span></a></li>
-        </ul>
-    </nav>
-    <div class="sidebar-divider"></div>
-{% endblock %}
 {% block content %}
+<div class="app-layout">
+    {% set active_file = 'exports' %}
+    {% include "_files_nav.html" %}
     <div class="files-container">
         <div class="files-header">
             <h1 class="section-title">Export Files</h1>
@@ -54,4 +47,5 @@
         </div>
         {% endif %}
     </div>
+</div>
 {% endblock %}

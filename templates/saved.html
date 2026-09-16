@@ -2,17 +2,10 @@
 {% block title %}Saved Files - Profit Optimizer{% endblock %}
 {% block styles %}
 {% endblock %}
-{% block sidebar_extra %}
-    <nav class="sidebar-nav" aria-label="File navigation">
-        <ul class="nav-menu">
-            <li><a href="{{ url_for('pages.imports') }}"><i data-lucide="files"></i><span>Uploaded Files</span></a></li>
-            <li><a href="{{ url_for('pages.exports') }}"><i data-lucide="files"></i><span>Exported Files</span></a></li>
-            <li><a href="{{ url_for('pages.saved') }}" class="active"><i data-lucide="save"></i><span>Saved Files</span></a></li>
-        </ul>
-    </nav>
-    <div class="sidebar-divider"></div>
-{% endblock %}
 {% block content %}
+<div class="app-layout">
+    {% set active_file = 'saved' %}
+    {% include "_files_nav.html" %}
     <div class="files-container">
         <div class="files-header">
             <h1 class="section-title">Saved Files</h1>
@@ -55,4 +48,5 @@
         </div>
         {% endif %}
     </div>
+</div>
 {% endblock %}

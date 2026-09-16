@@ -141,7 +141,7 @@ The palette is a two-state register: black graphite for the engaged screen, warm
 
 ## Layout
 
-The app is a fixed left rail plus a full-bleed content field. The rail is black, hard-edged, with the active item as a green-filled block (dark) or green-tinted block (light); width collapses to an icon rail on toggle, holding state in localStorage. Content columns follow the 8px spacer scale (2/8/16/24/32px), grouped tightly with generous section separation and more space above headings than below. Four money plates form the finance dashboard top row (mono label, large mono value, hairline rule, status LED). On small viewports the rail becomes an off-canvas panel (z 999) sliding in from the left; tables wrap in `.table-responsive` with horizontal scroll preserved.
+The app is a full-width top navigation bar (h: 56px, sticky, hairline under) plus a full-bleed content field. The bar is a plate register: wordmark top-left (Space Grotesk 700), primary nav inline (Optimizer / Finance / Invoices) with the active item a green-tinted block, and a compact right cluster (theme toggle, account menu) — no left rail, so the invoice workspace and finance dashboard use the whole viewport width. Content columns follow the 8px spacer scale (2/8/16/24/32px), grouped tightly with generous section separation and more space above headings than below. Four money plates form the finance dashboard top row (mono label, large mono value, hairline rule, status LED). On small viewports the top bar collapses to wordmark + hamburger + account menu; the hamburger drops a full-width panel of primary nav links, and tables wrap in `.table-responsive` with horizontal scroll preserved.
 
 ## Elevation & Depth
 
@@ -184,9 +184,10 @@ A square, ledger geometry. Radii are small and categorical: 4px for buttons and 
 - **Disabled:** muted text, dimmed hairline.
 
 ### Navigation
-- Left rail: black board, wordmark top-left (Space Grotesk 700, white, no kicker). Items are Inter labels.
-- Hover: translucent plate. Active: green-filled block (dark) or green-tinted block (light) with border-left suppressed (no side stripe).
-- Mobile (<768px): off-canvas panel sliding over content; toggling persists.
+- Top bar (56px, sticky, plate on ground): wordmark top-left (Space Grotesk 700), primary links inline (Optimizer / Finance / Invoices) allowing per-page extension (Optimizer file links), right cluster = theme toggle + account menu (Profile / Contact / Sign Out).
+- Hover: translucent green plate. Active: green-tinted block, bolded (no side stripe, no pill).
+- Account menu sign-out is the destructive exception: text red (tailwind red-600 / -700 light ramp, rgba(220,38,38,0.08) hover plate) — the only canonical use of red-as-action, distinct from status LED red.
+- Mobile (<768px): hamburger drops a full-width panel of primary links over the content, hairline bottom; account menu stays anchored right. Toggling persists nothing; open closes on link pick, outside click, or Escape.
 
 ### Browser surfaces
 - Scrollbars, text selection, and the caret are themed from the register palette in both themes; caret and selection use money green.

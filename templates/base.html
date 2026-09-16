@@ -33,48 +33,47 @@
 
     {% block header %}{% endblock %}
 
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Collapse sidebar" aria-expanded="true">
-            <i data-lucide="chevron-left"></i>
-        </button>
-
-        <a href="{{ url_for('pages.home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
+    <!-- Top navigation -->
+    <header class="top-nav" id="topNav">
+        <a href="{{ url_for('pages.home') }}" class="top-nav-brand" aria-label="Ipangela Finance Home">
             <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <rect width="40" height="40" rx="8" fill="currentColor"/>
                 <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
             </svg>
-            <span class="logo-text">Ipangela</span>
+            <span class="top-nav-name">Ipangela</span>
         </a>
 
-        {% block sidebar_extra %}{% endblock %}
+        <div class="top-nav-panel" id="navPanel">
+            <nav class="top-nav-links" aria-label="Main navigation">
+                <a href="{{ url_for('optimizer.optimizer') }}" {% if request.endpoint and request.endpoint.startswith('optimizer.') %}class="active"{% endif %}><i data-lucide="trending-up"></i><span>Optimizer</span></a>
+                <a href="{{ url_for('finance.finance') }}" {% if request.endpoint == 'finance.finance' %}class="active"{% endif %}><i data-lucide="wallet"></i><span>Finance</span></a>
+                <a href="{{ url_for('invoice.invoice') }}" {% if request.endpoint and request.endpoint.startswith('invoice.') %}class="active"{% endif %}><i data-lucide="file-text"></i><span>Invoices</span></a>
+                {% block nav_extra %}{% endblock %}
+            </nav>
+        </div>
 
-        <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('optimizer.optimizer') }}" {% if request.endpoint and request.endpoint.startswith('optimizer.') %}class="active"{% endif %}><i data-lucide="trending-up"></i><span>Optimizer</span></a></li>
-                <li><a href="{{ url_for('finance.finance') }}" {% if request.endpoint == 'finance.finance' %}class="active"{% endif %}><i data-lucide="wallet"></i><span>Finance</span></a></li>
-                <li><a href="{{ url_for('invoice.invoice') }}" {% if request.endpoint and request.endpoint.startswith('invoice.') %}class="active"{% endif %}><i data-lucide="file-text"></i><span>Invoices</span></a></li>
-            </ul>
-        </nav>
-
-        <div class="sidebar-divider"></div>
-
-        <nav class="sidebar-nav" aria-label="Account navigation">
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('pages.profile') }}" {% if request.endpoint == 'pages.profile' %}class="active"{% endif %}><i data-lucide="user"></i><span>Profile</span></a></li>
-                <li><a href="{{ url_for('pages.contact') }}"><i data-lucide="mail"></i><span>Contact</span></a></li>
-                <li><a href="{{ url_for('auth.logout') }}"><i data-lucide="log-out"></i><span>Sign Out</span></a></li>
-            </ul>
-        </nav>
-
-        <div class="sidebar-footer">
-            <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <div class="top-nav-actions">
+            <button type="button" class="top-nav-btn theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
                 <i data-lucide="moon" class="theme-icon-dark"></i>
                 <i data-lucide="sun" class="theme-icon-light"></i>
-                <span>Dark mode</span>
+            </button>
+            <div class="nav-user" id="navUser">
+                <button type="button" class="top-nav-btn nav-user-toggle" id="navUserToggle" aria-label="Account menu" aria-expanded="false">
+                    <i data-lucide="circle-user"></i>
+                    <i data-lucide="chevron-down" class="nav-user-caret"></i>
+                </button>
+                <div class="nav-user-menu" id="navUserMenu">
+                    <a href="{{ url_for('pages.profile') }}"><i data-lucide="user"></i><span>Profile</span></a>
+                    <a href="{{ url_for('pages.contact') }}"><i data-lucide="mail"></i><span>Contact</span></a>
+                    <div class="nav-user-divider"></div>
+                    <a href="{{ url_for('auth.logout') }}" class="nav-user-signout"><i data-lucide="log-out"></i><span>Sign Out</span></a>
+                </div>
+            </div>
+            <button type="button" class="top-nav-hamburger" id="navHamburger" aria-label="Open navigation menu" aria-expanded="false">
+                <i data-lucide="menu"></i>
             </button>
         </div>
-    </aside>
+    </header>
 
     {% block content %}{% endblock %}
 

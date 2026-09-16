@@ -1,0 +1,14 @@
+<aside class="app-sidebar" aria-label="File navigation">
+    <p class="app-sidebar-kicker">Files</p>
+    <nav class="app-sidebar-nav">
+        <a href="{{ url_for('pages.imports') }}" class="app-sidebar-link {% if active_file == 'imports' %}active{% endif %}">
+            <i data-lucide="files"></i><span>Uploaded Files</span>
+        </a>
+        <a href="{{ url_for('pages.exports') }}" class="app-sidebar-link {% if active_file == 'exports' %}active{% endif %}">
+            <i data-lucide="files"></i><span>Exported Files</span>
+        </a>
+        <a href="{{ url_for('pages.saved') }}" class="app-sidebar-link {% if active_file == 'saved' %}active{% endif %}">
+            <i data-lucide="save"></i><span>Saved Files</span>
+        </a>
+    </nav>
+</aside>

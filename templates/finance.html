@@ -5,18 +5,6 @@
 {% block head_scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
-{% block sidebar_extra %}
-    <nav class="sidebar-nav" aria-label="Finance sections">
-        <ul class="nav-menu">
-            <li><a href="#transactions" onclick="showSection('transactions'); return false;"><i data-lucide="repeat"></i> <span>Transactions</span></a></li>
-            <li><a href="#budgets" onclick="showSection('budgets'); return false;"><i data-lucide="pie-chart"></i> <span>Budgets</span></a></li>
-            <li><a href="#accounts" onclick="showSection('accounts'); return false;"><i data-lucide="building"></i> <span>Accounts</span></a></li>
-            <li><a href="#reports" onclick="showSection('reports'); return false;"><i data-lucide="file-text"></i> <span>Reports</span></a></li>
-            <li><a href="#import-export" onclick="showSection('import-export'); return false;"><i data-lucide="refresh-cw"></i> <span>Import/Export</span></a></li>
-        </ul>
-    </nav>
-    <div class="sidebar-divider"></div>
-{% endblock %}
 {% block content %}
     <div class="finance-container">
         <!-- Header -->

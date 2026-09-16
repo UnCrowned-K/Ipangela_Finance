@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block title %}Invoice Maker - Profit Optimizer{% endblock %}
-{% block sidebar_extra %}{% endblock %}
 {% block content %}
 
 <!-- ===== Slide-out All Invoices panel ===== -->
@@ -803,7 +802,7 @@ document.addEventListener('keydown', function(e){
    ============================================================= */
 .invoice-workspace{
     display:flex; flex-direction:column;
-    height:calc(100vh - 60px); overflow:hidden;
+    height:calc(100vh - var(--top-nav-h, 56px)); overflow:hidden;
 }
 
 /* ---- Header ---- */
