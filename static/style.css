@@ -3853,11 +3853,8 @@ a:hover {
    ============================================ */
 /* Invoice Maker Specific Styles - Enhanced Design System */
 
-/* Override container for invoice maker */
-.container {
-    margin-left: 250px !important;
-    max-width: calc(100% - 270px) !important;
-}
+/* Override container for invoice maker — obsolete since the left rail
+   was removed; the optimizer uses .optimizer-container full-bleed now. */
 
 /* Card Enhancements */
 .card {
@@ -6921,28 +6918,100 @@ html[data-theme="dark"] .nav-user-menu {
     }
 }
 
-/* Optimizer results card in the narrow rail */
-.results-con .table {
-    margin: var(--space-2) 0;
-    box-shadow: none;
-    font-size: var(--text-sm);
+/* =========================================================
+   Optimizer cards & results (no horizontal scroll at any width)
+   ========================================================= */
+.item-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-4);
 }
 
-.results-con .table th,
-.results-con .table td {
-    padding: var(--space-2) var(--space-2);
-    font-size: var(--text-sm);
-    white-space: nowrap;
-}
-
-.results-con .total {
+.item-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: var(--space-3);
-    padding: var(--space-2) 0;
-    font-size: var(--text-sm);
+    padding: var(--space-4);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+}
+
+.item-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.item-name {
+    font-weight: 700;
+    font-size: var(--text-base);
+    color: var(--text-primary, var(--color-gray-900));
+}
+
+.item-actions {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+}
+
+.item-stats,
+.result-stats {
+    margin: 0;
+    padding: var(--space-3) 0 0;
     border-top: 1px solid var(--border-default);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    gap: var(--space-3);
+}
+
+.item-stats dt,
+.result-stats dt {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+}
+
+.item-stats dd,
+.result-stats dd {
+    margin: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary, var(--color-gray-900));
+    overflow-wrap: anywhere;
+}
+
+/* Results list */
+.results-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: var(--space-2) 0;
+}
+
+.result-row {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.result-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.result-name {
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-primary-500);
 }
 
 /* =========================================================

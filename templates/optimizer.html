@@ -9,6 +9,27 @@
     <div class="container optimizer-container">
             <div class="section-header">
                 <h1 class="section-title">Profit Optimizer</h1>
+                <div class="quick-actions">
+                    <form method="post" action="/export" class="inline-form" id="exportForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" id="export-filename" name="filename" value="MyItems.csv">
+                        <input type="hidden" id="export-format" name="format" value="csv">
+                    </form>
+                    <form method="POST" action="/download" class="inline-form" id="downloadForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" id="download-filename" name="filename" value="MyItems.csv">
+                        <input type="hidden" id="download-format" name="format" value="csv">
+                    </form>
+                    <button type="button" class="btn btn-primary" onclick="openExportModal()"><i data-lucide="download"></i> Export File</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('downloadForm').submit()"><i data-lucide="download"></i> Download</button>
+                    <form method="POST" action="/import" enctype="multipart/form-data" class="inline-form upload-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <label for="file" class="btn btn-secondary">
+                            <i data-lucide="upload"></i> Upload File
+                            <input type="file" class="hidden-file-input" id="file" name="file" accept=".json,.csv,.xlsx,.xls" onchange="this.form.submit()">
+                        </label>
+                    </form>
+                </div>
             </div>
 
             <!-- Flash Messages Modal -->
@@ -207,73 +228,52 @@
             <section class="section card">
                 <div class="section-header">
                     <h2 class="card-title">Current Items</h2>
-                    <div class="file-controls">
-                        <div class="button-group">
-                            <form method="post" action="/export" class="inline-form" id="exportForm">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <input type="hidden" id="export-filename" name="filename" value="MyItems.csv">
-                                <input type="hidden" id="export-format" name="format" value="csv">
-                            </form>
-                            <form method="POST" action="/download" class="inline-form" id="downloadForm">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <input type="hidden" id="download-filename" name="filename" value="MyItems.csv">
-                                <input type="hidden" id="download-format" name="format" value="csv">
-                            </form>
-                            <button type="button" class="btn btn-primary btn-sm" onclick="openExportModal()"><i data-lucide="download"></i> Export</button>
-                            <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('downloadForm').submit()"><i data-lucide="download"></i> Download</button>
-                            <form method="POST" action="/import" enctype="multipart/form-data" class="inline-form import-form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <label for="file" class="btn btn-primary btn-sm upload-btn">
-                                    <i data-lucide="upload"></i> Upload File
-                                    <input type="file" class="hidden-file-input" id="file" name="file" accept=".json,.csv,.xlsx,.xls" onchange="this.form.submit()">
-                                </label>
-                            </form>
-                        </div>
-                    </div>
                 </div>
                 {% if variables %}
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Minimum Units</th>
-                                    <th>Maximum Units</th>
-                                    <th>Cost per Unit</th>
-                                    <th>Profit per Unit</th>
-                                    <th>Units per Pack</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for var in variables %}
-                                    <tr>
-                                        <td>{{ var.name }}</td>
-                                        <td>{{ var.lowerBound }}</td>
-                                        <td>{{ var.upperBound if var.upperBound != None else "∞" }}</td>
-                                        <td>R{{ "%.2f"|format(var.cost) }}</td>
-                                        <td>R{{ "%.2f"|format(var.profit) }}</td>
-                                        <td>{{ var.multiplier }}</td>
-                                        <td class="table-actions-cell">
-                                            <div class="button-group">
-                                                <button type="button" class="btn btn-primary btn-sm"
-                                                    data-variable="{{ var | tojson | safe }}"
-                                                    onclick="editVariable(JSON.parse(this.dataset.variable))">
-                                                        <i data-lucide="edit-2"></i> Edit
-                                                </button>
-                                                <form method="POST" action="{{ url_for('optimizer.delete_variable', name=var.name) }}"
-                                                    class="inline-form"
-                                                    onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <ul class="item-grid">
+                        {% for var in variables %}
+                            <li class="item-card">
+                                <div class="item-head">
+                                    <span class="item-name">{{ var.name }}</span>
+                                    <div class="item-actions">
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                            data-variable="{{ var | tojson | safe }}"
+                                            onclick="editVariable(JSON.parse(this.dataset.variable))">
+                                                <i data-lucide="edit-2"></i> Edit
+                                        </button>
+                                        <form method="POST" action="{{ url_for('optimizer.delete_variable', name=var.name) }}"
+                                            class="inline-form"
+                                            onsubmit="return confirm('Are you sure you want to delete this item?');">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                    <button type="submit" class="btn btn-danger btn-sm"><i data-lucide="trash-2"></i> Delete</button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                            <button type="submit" class="btn btn-danger btn-sm"><i data-lucide="trash-2"></i> Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <dl class="item-stats">
+                                    <div>
+                                        <dt>Minimum Units</dt>
+                                        <dd>{{ var.lowerBound }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Maximum Units</dt>
+                                        <dd>{{ var.upperBound if var.upperBound != None else "∞" }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Cost per Unit</dt>
+                                        <dd>R{{ "%.2f"|format(var.cost) }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Profit per Unit</dt>
+                                        <dd>R{{ "%.2f"|format(var.profit) }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Units per Pack</dt>
+                                        <dd>{{ var.multiplier }}</dd>
+                                    </div>
+                                </dl>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 {% else %}
                     <p>No items added yet.</p>
                 {% endif %}
@@ -312,40 +312,29 @@
                             <p class="profit"><strong>Maximum Profit:</strong> R{{ "%.2f"|format(max_profit) }}</p>
 
                             <h4>Optimal Purchase Plan:</h4>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Units to Purchase</th>
-                                            <th>Packs</th>
-                                            <th>Total Cost</th>
-                                            <th>Total Profit</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% set ns = namespace(total_cost=0) %}
-                                        {% for name, details in result.items() %}
-                                            <tr>
-                                                <td>{{ name }}</td>
-                                                <td>{{ details.units }}</td>
-                                                <td>{{ details.packs }}{% if details.packs != details.units %} ({{ details.units }} ÷ {{ details.packs }}){% endif %}</td>
-                                                <td>R{{ "%.2f"|format(details.cost) }}</td>
-                                                <td>R{{ "%.2f"|format(details.profit) }}</td>
-                                                {% set ns.total_cost = ns.total_cost + details.cost %}
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                            <div class="results-list">
+                                {% set ns = namespace(total_cost=0) %}
+                                {% for name, details in result.items() %}
+                                    <div class="result-row">
+                                        <div class="result-name">{{ name }}</div>
+                                        <dl class="result-stats">
+                                            <div><dt>Units to Purchase</dt><dd>{{ details.units }}</dd></div>
+                                            <div><dt>Packs</dt><dd>{{ details.packs }}{% if details.packs != details.units %} ({{ details.units }} ÷ {{ details.packs }}){% endif %}</dd></div>
+                                            <div><dt>Total Cost</dt><dd>R{{ "%.2f"|format(details.cost) }}</dd></div>
+                                            <div><dt>Total Profit</dt><dd>R{{ "%.2f"|format(details.profit) }}</dd></div>
+                                        </dl>
+                                        {% set ns.total_cost = ns.total_cost + details.cost %}
+                                    </div>
+                                {% endfor %}
+                            </div>
 
-                                <div class="total">
-                                    <span><strong>Total Cost:</strong></span>
-                                    <span><strong>R{{ "%.2f"|format(ns.total_cost) }}</strong></span>
-                                </div>
-                                <div class="total">
-                                    <span><strong>Budget Remaining:</strong></span>
-                                    <span><strong>R{{ "%.2f"|format(budget - ns.total_cost) }}</strong></span>
-                                </div>
+                            <div class="total">
+                                <span><strong>Total Cost:</strong></span>
+                                <span><strong>R{{ "%.2f"|format(ns.total_cost) }}</strong></span>
+                            </div>
+                            <div class="total">
+                                <span><strong>Budget Remaining:</strong></span>
+                                <span><strong>R{{ "%.2f"|format(budget - ns.total_cost) }}</strong></span>
                             </div>
                         </div>
                         <br>
@@ -637,23 +626,18 @@
                 // Close modal first
                 closeSaveModal();
 
-                // Extract table data from the results table
+                // Extract plan data from the results list
                 const tableData = [];
-                const resultsTable = document.querySelector('.results-con table');
+                const resultRows = document.querySelectorAll('.results-con .result-row');
 
-                if (resultsTable) {
-                    // Get headers
-                    const headers = [];
-                    resultsTable.querySelectorAll('thead th').forEach(th => {
-                        headers.push(th.textContent.trim());
-                    });
-
-                    // Get rows
-                    resultsTable.querySelectorAll('tbody tr').forEach(row => {
+                if (resultRows.length) {
+                    resultRows.forEach(row => {
                         const rowData = {};
-                        row.querySelectorAll('td').forEach((td, index) => {
-                            if (headers[index]) {
-                                rowData[headers[index]] = td.textContent.trim();
+                        row.querySelectorAll('.result-stats > div').forEach(entry => {
+                            const key = entry.querySelector('dt');
+                            const value = entry.querySelector('dd');
+                            if (key && value) {
+                                rowData[key.textContent.trim()] = value.textContent.trim();
                             }
                         });
                         tableData.push(rowData);
