@@ -1,55 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Maker - Profit Optimizer</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='invoice.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
-</head>
-<body>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <a href="{{ url_for('home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
-            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect width="40" height="40" rx="8" fill="currentColor"/>
-                <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
-            </svg>
-            <span class="logo-text">Ipangela</span>
-        </a>
-        
-        <!-- Main Navigation -->
-        <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('invoice') }}"><i data-lucide="notebook-text"></i>All Invoices</a></li>
-                <li><a href="{{ url_for('invoice') }}"><i data-lucide="notebook"></i>New Invoice</a></li>
-                <li><a href="{{ url_for('invoice') }}"><i data-lucide="notepad-text-dashed"></i>Drafts</a></li>
-            </ul>
-        </nav>
-        
-        <div class="sidebar-divider"></div>
-
-        <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('optimizer') }}"><i data-lucide="trending-up"></i>Optimizer</a></li>
-                <li><a href="{{ url_for('finance') }}"><i data-lucide="wallet"></i>Finance</a></li>
-                <li><a href="{{ url_for('invoice') }}" class="active"><i data-lucide="file-text"></i>Invoices</a></li>
-            </ul>
-        </nav>
-        
-        <div class="sidebar-divider"></div>
-
-        <nav class="sidebar-nav" aria-label="Main navigation">
-
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i>Profile</a></li>
-                <li><a href="{{ url_for('home') }}"><i data-lucide="log-out"></i>Sign Out</a></li>
-            </ul>
-        </nav>
-    </aside>
-
+{% extends "base.html" %}
+{% block title %}Invoice Maker - Profit Optimizer{% endblock %}
+{% block styles %}
+{% endblock %}
+{% block sidebar_extra %}
+    <nav class="sidebar-nav" aria-label="Invoice navigation">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('invoice.invoice') }}"><i data-lucide="notebook-text"></i><span>All Invoices</span></a></li>
+            <li><a href="{{ url_for('invoice.invoice') }}"><i data-lucide="notebook"></i><span>New Invoice</span></a></li>
+            <li><a href="{{ url_for('invoice.invoice') }}"><i data-lucide="notepad-text-dashed"></i><span>Drafts</span></a></li>
+        </ul>
+    </nav>
+    <div class="sidebar-divider"></div>
+{% endblock %}
+{% block content %}
     <div class="container">
         <div class="section-header">
             <h1 class="section-title">Invoice Maker</h1>
@@ -68,7 +31,8 @@
         {% endwith %}
 
         <!-- Invoice Form -->
-        <form id="invoiceForm" method="POST" action="{{ url_for('save_invoice') }}" onsubmit="return validateForm()">
+        <form id="invoiceForm" method="POST" action="{{ url_for('invoice.save_invoice') }}" onsubmit="return validateForm()">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" id="invoiceId" name="invoice_id" value="">
             <input type="hidden" id="invoiceData" name="invoice_data" value="">
 
@@ -259,7 +223,7 @@
             <!-- Action Buttons -->
             <div class="form-actions">
                 <button type="button" class="btn btn-complementary" onclick="previewInvoice()">Preview Invoice</button>
-                <button type="button" class="btn btn-primary" onclick="saveDraft()">Save Draft</button>
+                <button type="button" class="btn btn-primary" id="saveDraftBtn" onclick="saveDraft()">Save Draft</button>
                 <button type="submit" class="btn btn-success">Save & Send</button>
                 <button type="button" class="btn btn-secondary" onclick="downloadPDF()">Download PDF</button>
                 <button type="button" class="btn btn-primary" onclick="emailInvoice()">Send Email</button>
@@ -342,7 +306,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeModal('emailModal')">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="sendEmail()">Send Email</button>
+                <button type="button" class="btn btn-primary" id="sendEmailBtn" onclick="sendEmail()">Send Email</button>
             </div>
         </div>
     </div>
@@ -359,16 +323,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
             </div>
         </div>
     </div>
-
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
-    </script>
 
     <script>
         // Currency symbols
@@ -667,8 +625,9 @@
             document.getElementById('status').value = 'draft';
             
             // Submit via AJAX
-            fetch('{{ url_for("save_invoice") }}', {
+            csrfFetch('{{ url_for("invoice.save_invoice") }}', {
                 method: 'POST',
+                button: '#saveDraftBtn',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
@@ -867,8 +826,9 @@
             const invoiceData = JSON.parse(document.getElementById('invoiceData').value);
             
             // Submit via AJAX
-            fetch('{{ url_for("send_invoice_email") }}', {
+            csrfFetch('{{ url_for("invoice.send_invoice_email") }}', {
                 method: 'POST',
+                button: '#sendEmailBtn',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
@@ -896,7 +856,7 @@
 
         // Load invoices
         function loadInvoices() {
-            fetch('{{ url_for("list_invoices") }}')
+            csrfFetch('{{ url_for("invoice.list_invoices") }}')
             .then(response => response.json())
             .then(data => {
                 const tbody = document.getElementById('invoicesTableBody');
@@ -932,7 +892,7 @@
 
         // Load invoice for editing
         function loadInvoice(invoiceId) {
-            fetch(`{{ url_for("get_invoice") }}?id=${invoiceId}`)
+            csrfFetch(`{{ url_for("invoice.get_invoice") }}?id=${invoiceId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.invoice) {
@@ -996,8 +956,9 @@
 
         // Confirm delete
         function confirmDelete() {
-            fetch('{{ url_for("delete_invoice") }}', {
+            csrfFetch('{{ url_for("invoice.delete_invoice") }}', {
                 method: 'POST',
+                button: '#confirmDeleteBtn',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
@@ -1228,6 +1189,5 @@
             }
         }
     </style>
-</body>
-</html>
+{% endblock %}
 

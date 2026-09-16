@@ -1,60 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profit Optimizer</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> 
-    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
-</head>
-<body>
-    <section id="con-sec">
-
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <a href="{{ url_for('home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
-                <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <rect width="40" height="40" rx="8" fill="currentColor"/>
-                    <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
-                </svg>
-                <span class="logo-text">Ipangela</span>
-            </a>
-            
-            <!-- Main Navigation -->
-            <nav class="sidebar-nav" aria-label="Main navigation">
-                <ul class="nav-menu">
-                    <li><a href="{{ url_for('imports') }}"><i data-lucide="files"></i>Uploaded Files</a></li>
-                    <li><a href="{{ url_for('exports') }}"><i data-lucide="files"></i> Exported Files</a></li>
-                    <li><a href="{{ url_for('saved') }}"><i data-lucide="save"></i> Saved Files</a></li>
-                </ul>
-            </nav>
-            
-            <div class="sidebar-divider"></div>
-
-            <nav class="sidebar-nav" aria-label="Main navigation">
-                <ul class="nav-menu">
-                    <li><a href="{{ url_for('optimizer') }}" class="active"><i data-lucide="trending-up"></i>Optimizer</a></li>
-                    <li><a href="{{ url_for('finance') }}"><i data-lucide="wallet"></i>Finance</a></li>
-                    <li><a href="{{ url_for('invoice') }}"><i data-lucide="file-text"></i>Invoices</a></li>
-                </ul>
-            </nav>
-            
-            <div class="sidebar-divider"></div>
-
-            <nav class="sidebar-nav" aria-label="Main navigation">
-
-                <ul class="nav-menu">
-                    <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i>Profile</a></li>
-                    <li><a href="{{ url_for('home') }}"><i data-lucide="log-out"></i>Sign Out</a></li>
-                </ul>
-            </nav>
-        </aside>
-
-
+{% extends "base.html" %}
+{% block title %}Profit Optimizer{% endblock %}
+{% block styles %}
+{% endblock %}
+{% block sidebar_toggle %}
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <i data-lucide="chevron-left"></i>
+    </button>
+{% endblock %}
+{% block sidebar_extra %}
+    <nav class="sidebar-nav" aria-label="File navigation">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('pages.imports') }}"><i data-lucide="files"></i> <span>Uploaded Files</span></a></li>
+            <li><a href="{{ url_for('pages.exports') }}"><i data-lucide="files"></i> <span>Exported Files</span></a></li>
+            <li><a href="{{ url_for('pages.saved') }}"><i data-lucide="save"></i> <span>Saved Files</span></a></li>
+        </ul>
+    </nav>
+    <div class="sidebar-divider"></div>
+{% endblock %}
+{% block content %}
         <div class="container">
             <div class="section-header">
                 <h1 class="section-title">Profit Optimizer</h1>
             </div>
+
             <!-- Flash Messages Modal -->
             <div id="flashModal" class="modal">
                 <div class="modal-content flash-modal-content">
@@ -79,43 +47,45 @@
                         <button type="button" class="btn btn-primary" onclick="closeFlashModal()">OK</button>
                     </div>
                 </div>
-            </div>        
+            </div>
+
             <!-- Variable Input Modal -->
             <div id="addVariableModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2 class="modal-title">Add Item</h2>
-                        <span class="close">&times;</span>
+                        <span class="close" onclick="closeModal()">&times;</span>
                     </div>
-                    <form method="POST" class="form-group">
+                    <form method="POST" class="form-group" data-validate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="modal-body">
-                            <div>
+                            <div class="form-group">
                                 <label for="name">Item Name:</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
                             </div>
 
-                            <div>
+                            <div class="form-group">
                                 <label for="lowerBound">Minimum Units:</label>
                                 <input type="number" class="form-control" id="lowerBound" name="lowerBound" value="0">
                             </div>
 
-                            <div>
+                            <div class="form-group">
                                 <label for="upperBound">Maximum Units:</label>
                                 <input type="number" class="form-control" id="upperBound" name="upperBound" placeholder="Leave blank for unlimited">
                             </div>
 
-                            <div>
+                            <div class="form-group">
                                 <label for="cost">Cost per Unit:</label>
                                 <input type="number" class="form-control" id="cost" name="cost" step="0.01" required>
                                 <small>Always enter cost per individual unit</small>
                             </div>
 
-                            <div>
+                            <div class="form-group">
                                 <label for="profit">Profit per Unit:</label>
                                 <input type="number" class="form-control" id="profit" name="profit" step="0.01" required>
                             </div>
 
-                            <div>
+                            <div class="form-group">
                                 <label for="multiplier">Units per Pack (optional):</label>
                                 <input type="number" class="form-control" id="multiplier" name="multiplier" value="1" required>
                                 <small>Set to 1 for individual units, or specify pack size (e.g., 12 for a dozen)</small>
@@ -136,11 +106,12 @@
                         <h2 class="modal-title">Update Budget</h2>
                         <span class="close" onclick="closeBudgetModal()">&times;</span>
                     </div>
-                    <form method="POST" class="form-group">
+                    <form method="POST" class="form-group" data-validate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="modal-body">
-                            <div>
+                            <div class="form-group">
                                 <label for="budget_input">Budget Amount (R):</label>
-                                <input type="number" class="form-control" id="budget_input" name="budget" value="{{ budget }}" min="0" step="0.01" required>
+                                <input type="number" class="form-control" id="budget_input" name="budget" value="{{ budget }}" min="1" step="0.01" required>
                                 <small>Enter the total budget available for purchasing items.</small>
                             </div>
                         </div>
@@ -251,16 +222,19 @@
                     <div class="file-controls">
                         <div class="button-group">
                             <form method="post" action="/export" class="inline-form" id="exportForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <input type="hidden" id="export-filename" name="filename" value="MyItems.csv">
                                 <input type="hidden" id="export-format" name="format" value="csv">
                             </form>
                             <form method="POST" action="/download" class="inline-form" id="downloadForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <input type="hidden" id="download-filename" name="filename" value="MyItems.csv">
                                 <input type="hidden" id="download-format" name="format" value="csv">
                             </form>
                             <button type="button" class="btn btn-primary btn-sm" onclick="openExportModal()"><i data-lucide="download"></i> Export</button>
                             <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('downloadForm').submit()"><i data-lucide="download"></i> Download</button>
-                            <form method="post" action="/import" enctype="multipart/form-data" class="inline-form import-form">
+                            <form method="POST" action="/import" enctype="multipart/form-data" class="inline-form import-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <label for="file" class="btn btn-primary btn-sm upload-btn">
                                     <i data-lucide="upload"></i> Upload File
                                     <input type="file" class="hidden-file-input" id="file" name="file" accept=".json,.csv,.xlsx,.xls" onchange="this.form.submit()">
@@ -270,59 +244,62 @@
                     </div>
                 </div>
                 {% if variables %}
-                <div class="table-responsive">
-                    <table class="table">           
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Minimum Units</th>
-                                <th>Maximum Units</th>
-                                <th>Cost per Unit</th>
-                                <th>Profit per Unit</th>
-                                <th>Units per Pack</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for var in variables %}
-                            <tr>
-                                <td>{{ var.name }}</td>
-                                <td>{{ var.lowerBound }}</td>
-                                <td>{{ var.upperBound if var.upperBound != None else "∞" }}</td>
-                                <td>R{{ "%.2f"|format(var.cost) }}</td>
-                                <td>R{{ "%.2f"|format(var.profit) }}</td>
-                                <td>{{ var.multiplier }}</td>                            
-                                <td class="table-actions-cell">
-                                    <div class="button-group">
-                                <button type="button" class="btn btn-primary btn-sm"
-                                data-variable="{{ var | tojson | safe }}"
-                                onclick="editVariable(JSON.parse(this.dataset.variable))">
-                                    <i data-lucide="edit-2"></i> Edit
-                                </button>
-                                        <form method="POST" action="{{ url_for('delete_variable', name=var.name) }}" 
-                                            class="inline-form" 
-                                            onsubmit="return confirm('Are you sure you want to delete this item?');">
-                                            <button type="submit" class="btn btn-danger btn-sm"><i data-lucide="trash-2"></i> Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>            {% else %}
-                <p>No items added yet.</p>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Minimum Units</th>
+                                    <th>Maximum Units</th>
+                                    <th>Cost per Unit</th>
+                                    <th>Profit per Unit</th>
+                                    <th>Units per Pack</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for var in variables %}
+                                    <tr>
+                                        <td>{{ var.name }}</td>
+                                        <td>{{ var.lowerBound }}</td>
+                                        <td>{{ var.upperBound if var.upperBound != None else "∞" }}</td>
+                                        <td>R{{ "%.2f"|format(var.cost) }}</td>
+                                        <td>R{{ "%.2f"|format(var.profit) }}</td>
+                                        <td>{{ var.multiplier }}</td>
+                                        <td class="table-actions-cell">
+                                            <div class="button-group">
+                                                <button type="button" class="btn btn-primary btn-sm"
+                                                    data-variable="{{ var | tojson | safe }}"
+                                                    onclick="editVariable(JSON.parse(this.dataset.variable))">
+                                                        <i data-lucide="edit-2"></i> Edit
+                                                </button>
+                                                <form method="POST" action="{{ url_for('optimizer.delete_variable', name=var.name) }}"
+                                                    class="inline-form"
+                                                    onsubmit="return confirm('Are you sure you want to delete this item?');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="btn btn-danger btn-sm"><i data-lucide="trash-2"></i> Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>No items added yet.</p>
                 {% endif %}
                 <div class="table-actions">
                     <button type="button" class="btn btn-primary" onclick="openModal()"><i data-lucide="plus"></i> Add Item</button>
                     <form method="POST" action="/clear_variables" class="inline-form" style="display: inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear all items?');"><i data-lucide="trash-2"></i> Clear Table</button>
                     </form>
                 </div>
             </section>
 
             <!-- Constraints Section -->
-            <section class="constraints-sec"> 
+            <section class="constraints-sec">
                 <section class="section card constraints-con">
                     <h2 class="card-title">Budget</h2>
                     <div class="budget-display">
@@ -334,71 +311,69 @@
 
                     <h2 class="card-title">Optimization</h2>
                     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" name="optimize" class="btn btn-primary"><i data-lucide="play"></i> Run Optimization</button>
                     </form>
                 </section>
-                
+
                 <!-- Results Section -->
                 <section class="section card results-con">
-
                     {% if max_profit %}
-                    <div>
-                        <h2 class="card-title">Results</h2>
-                        <p class="profit"><strong>Maximum Profit:</strong> R{{ "%.2f"|format(max_profit) }}</p>
+                        <div>
+                            <h2 class="card-title">Results</h2>
+                            <p class="profit"><strong>Maximum Profit:</strong> R{{ "%.2f"|format(max_profit) }}</p>
 
-                        <h4>Optimal Purchase Plan:</h4>
-                        <div class="table-responsive">
-
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Units to Purchase</th>
-                                        <th>Packs</th>
-                                        <th>Total Cost</th>
-                                        <th>Total Profit</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% set ns = namespace(total_cost=0) %}
-                                    {% for name, details in result.items() %}
+                            <h4>Optimal Purchase Plan:</h4>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
                                         <tr>
-                                            <td>{{ name }}</td>
-                                            <td>{{ details.units }}</td>
-                                            <td>{{ details.packs }}{% if details.packs != details.units %} ({{ details.units }} ÷ {{ details.units // details.packs }}){% endif %}</td>
-                                            <td>R{{ "%.2f"|format(details.cost) }}</td>
-                                            <td>R{{ "%.2f"|format(details.profit) }}</td>
-                                            {% set ns.total_cost = ns.total_cost + details.cost %}
+                                            <th>Name</th>
+                                            <th>Units to Purchase</th>
+                                            <th>Packs</th>
+                                            <th>Total Cost</th>
+                                            <th>Total Profit</th>
                                         </tr>
-                                    {% endfor %}    
+                                    </thead>
+                                    <tbody>
+                                        {% set ns = namespace(total_cost=0) %}
+                                        {% for name, details in result.items() %}
+                                            <tr>
+                                                <td>{{ name }}</td>
+                                                <td>{{ details.units }}</td>
+                                                <td>{{ details.packs }}{% if details.packs != details.units %} ({{ details.units }} ÷ {{ details.packs }}){% endif %}</td>
+                                                <td>R{{ "%.2f"|format(details.cost) }}</td>
+                                                <td>R{{ "%.2f"|format(details.profit) }}</td>
+                                                {% set ns.total_cost = ns.total_cost + details.cost %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
 
-                                </tbody>
-                            </table>
-
-                            <div class="total">
-                                <span><strong>Total Cost:</strong></span>
-                                <span><strong>R{{ "%.2f"|format(ns.total_cost) }}</strong></span>
+                                <div class="total">
+                                    <span><strong>Total Cost:</strong></span>
+                                    <span><strong>R{{ "%.2f"|format(ns.total_cost) }}</strong></span>
+                                </div>
+                                <div class="total">
+                                    <span><strong>Budget Remaining:</strong></span>
+                                    <span><strong>R{{ "%.2f"|format(budget - ns.total_cost) }}</strong></span>
+                                </div>
                             </div>
-                            <div class="total">
-                                <span><strong>Budget Remaining:</strong></span>
-                                <span><strong>R{{ "%.2f"|format(budget - ns.total_cost) }}</strong></span>
-                            </div>
-                            
                         </div>
-                    </div>
-                    <br>
-                    
-                    <form method="POST" action="/download" class="inline-form" id="resultDownloadForm">
-                        <input type="hidden" id="result-download-filename" name="filename" value="MyItems.csv">
-                        <input type="hidden" id="result-download-format" name="format" value="csv">
-                    </form>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="openSaveModal()"><i data-lucide="save"></i> Save</button>
-                    {% endif %}       
+                        <br>
+
+                        <form method="POST" action="/download" class="inline-form" id="resultDownloadForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" id="result-download-filename" name="filename" value="MyItems.csv">
+                            <input type="hidden" id="result-download-format" name="format" value="csv">
+                        </form>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="openSaveModal()"><i data-lucide="save"></i> Save</button>
+                    {% endif %}
                 </section>
             </section>
-        </div>   
+        </div>
     </section>
-    <script src="https://unpkg.com/lucide@latest"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Modal functionality
@@ -409,7 +384,7 @@
             const submitBtn = form.querySelector('button[name="add_variable"]');
             let isEditing = false;
             let editingName = '';
-            
+
             window.openModal = function() {
                 if (modal) {
                     isEditing = false;
@@ -419,15 +394,15 @@
                     modal.style.display = 'block';
                     document.body.style.overflow = 'hidden';
                 }
-            }
-            
+            };
+
             window.editVariable = function(variable) {
                 if (modal) {
                     isEditing = true;
                     editingName = variable.name;
                     modalTitle.textContent = 'Edit Variable';
                     submitBtn.textContent = 'Update Variable';
-                    
+
                     // Fill form with variable data
                     form.name.value = variable.name;
                     form.lowerBound.value = variable.lowerBound;
@@ -435,12 +410,12 @@
                     form.cost.value = variable.cost;
                     form.profit.value = variable.profit;
                     form.multiplier.value = variable.multiplier;
-                    
+
                     modal.style.display = 'block';
                     document.body.style.overflow = 'hidden';
                 }
-            }
-            
+            };
+
             window.closeModal = function() {
                 if (modal) {
                     modal.style.display = 'none';
@@ -448,18 +423,19 @@
                     isEditing = false;
                     form.reset();
                 }
-            }
-            
+            };
+
             // Handle form submission
             form.addEventListener('submit', function(e) {
                 if (isEditing) {
                     e.preventDefault();
                     const formData = new FormData(form);
                     formData.append('old_name', editingName);
-                    
-                    fetch('/update_variable', {
+
+                    csrfFetch('/update_variable', {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        button: form.querySelector('[type="submit"]')
                     }).then(async response => {
                         if (response.ok) {
                             window.location.reload();
@@ -472,24 +448,24 @@
                     });
                 }
             });
-            
+
             // Function to display error messages
             function showError(message) {
                 alert(message);
             }
-            
+
             // Close modal when clicking outside
             window.onclick = function(event) {
                 if (event.target === modal) {
                     closeModal();
                 }
-            }
-            
+            };
+
             // Close modal when clicking the X
             if (closeBtn) {
                 closeBtn.onclick = closeModal;
             }
-            
+
             // Close modal when pressing Escape
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {
@@ -501,10 +477,10 @@
                     closeErrorModal();
                 }
             });
-            
+
             // Budget modal functionality
             const budgetModal = document.getElementById('budgetModal');
-            
+
             window.openBudgetModal = function() {
                 if (budgetModal) {
                     budgetModal.style.display = 'block';
@@ -516,77 +492,78 @@
                         budgetInput.select();
                     }
                 }
-            }
-            
+            };
+
             window.closeBudgetModal = function() {
                 if (budgetModal) {
                     budgetModal.style.display = 'none';
                     document.body.style.overflow = 'auto';
                 }
-            }
-            
+            };
+
             // Close budget modal when clicking outside
             window.addEventListener('click', function(event) {
                 if (event.target === budgetModal) {
                     closeBudgetModal();
                 }
             });
-            
+
             // Export Modal functionality
             const exportModal = document.getElementById('exportModal');
             const exportModalFilename = document.getElementById('exportModalFilename');
             const exportModalFormatSelect = document.getElementById('exportModalFormatSelect');
             const exportModalConfirmBtn = document.getElementById('exportModalConfirmBtn');
-            
+
             window.openExportModal = function() {
                 // Set default values
                 exportModalFilename.value = 'MyItems';
                 exportModalFormatSelect.value = 'csv';
-                
+
                 // Show modal
                 exportModal.style.display = 'block';
                 document.body.style.overflow = 'hidden';
-                
+
                 // Re-initialize Lucide icons for the button
                 lucide.createIcons();
-                
+
                 // Focus on filename input
                 exportModalFilename.focus();
                 exportModalFilename.select();
             };
-            
+
             window.closeExportModal = function() {
                 if (exportModal) {
                     exportModal.style.display = 'none';
                     document.body.style.overflow = 'auto';
                 }
             };
-            
+
             window.confirmExport = function() {
                 // Get values from modal inputs
                 const filename = exportModalFilename.value.trim();
                 const format = exportModalFormatSelect.value;
-                
+
                 if (!filename) {
                     showErrorModal('Please enter a file name');
                     return;
                 }
-                
+
                 // Build the filename with extension
                 const fullFilename = filename + '.' + format;
-                
+
                 // Close modal first
                 closeExportModal();
-                
+
                 // Create form data for export
                 const formData = new FormData();
                 formData.append('filename', fullFilename);
                 formData.append('format', format);
-                
+
                 // Use fetch to submit the form data
-                fetch('/export', {
+                csrfFetch('/export', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    button: '#exportModalConfirmBtn'
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -603,14 +580,14 @@
                     showErrorModal(errorMsg);
                 });
             };
-            
+
             // Close export modal when clicking outside
             window.addEventListener('click', function(event) {
                 if (event.target === exportModal) {
                     closeExportModal();
                 }
             });
-            
+
             // Handle Enter key in modal inputs
             exportModalFilename.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
@@ -618,71 +595,71 @@
                     confirmExport();
                 }
             });
-            
+
             exportModalFormatSelect.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     event.preventDefault();
                     confirmExport();
                 }
             });
-            
+
             // Save Modal functionality
             const saveModal = document.getElementById('saveModal');
             const saveModalFilename = document.getElementById('saveModalFilename');
             const saveModalFormatSelect = document.getElementById('saveModalFormatSelect');
             const saveModalConfirmBtn = document.getElementById('saveModalConfirmBtn');
-            
+
             window.openSaveModal = function() {
                 // Set default values
                 saveModalFilename.value = 'MyItems';
                 saveModalFormatSelect.value = 'csv';
-                
+
                 // Show modal
                 saveModal.style.display = 'block';
                 document.body.style.overflow = 'hidden';
-                
+
                 // Re-initialize Lucide icons for the button
                 lucide.createIcons();
-                
+
                 // Focus on filename input
                 saveModalFilename.focus();
                 saveModalFilename.select();
             };
-            
+
             window.closeSaveModal = function() {
                 if (saveModal) {
                     saveModal.style.display = 'none';
                     document.body.style.overflow = 'auto';
                 }
             };
-            
+
             window.confirmSave = function() {
                 // Get values from modal inputs
                 const filename = saveModalFilename.value.trim();
                 const format = saveModalFormatSelect.value;
-                
+
                 if (!filename) {
                     showErrorModal('Please enter a file name');
                     return;
                 }
-                
+
                 // Build the filename with extension
                 const fullFilename = filename + '.' + format;
-                
+
                 // Close modal first
                 closeSaveModal();
-                
+
                 // Extract table data from the results table
                 const tableData = [];
                 const resultsTable = document.querySelector('.results-con table');
-                
+
                 if (resultsTable) {
                     // Get headers
                     const headers = [];
                     resultsTable.querySelectorAll('thead th').forEach(th => {
                         headers.push(th.textContent.trim());
                     });
-                    
+
                     // Get rows
                     resultsTable.querySelectorAll('tbody tr').forEach(row => {
                         const rowData = {};
@@ -693,11 +670,11 @@
                         });
                         tableData.push(rowData);
                     });
-                    
+
                     // Add summary rows
                     const totalCostDiv = document.querySelector('.results-con .total:first-of-type span:last-child');
                     const budgetRemainingDiv = document.querySelector('.results-con .total:last-of-type span:last-child');
-                    
+
                     if (totalCostDiv) {
                         tableData.push({
                             'Name': 'Total Cost',
@@ -707,7 +684,7 @@
                             'Total Profit': ''
                         });
                     }
-                    
+
                     if (budgetRemainingDiv) {
                         tableData.push({
                             'Name': 'Budget Remaining',
@@ -718,10 +695,11 @@
                         });
                     }
                 }
-                
+
                 // Send data to server
-                fetch('/save_results', {
+                csrfFetch('/save_results', {
                     method: 'POST',
+                    button: '#saveModalConfirmBtn',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
@@ -744,14 +722,14 @@
                     showErrorModal('Error: Failed to save results. Please try again.');
                 });
             };
-            
+
             // Close save modal when clicking outside
             window.addEventListener('click', function(event) {
                 if (event.target === saveModal) {
                     closeSaveModal();
                 }
             });
-            
+
             // Handle Enter key in save modal inputs
             saveModalFilename.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
@@ -759,18 +737,18 @@
                     confirmSave();
                 }
             });
-            
+
             saveModalFormatSelect.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     event.preventDefault();
                     confirmSave();
                 }
             });
-            
+
             // Success Modal functionality
             const successModal = document.getElementById('successModal');
             const successMessage = document.getElementById('successMessage');
-            
+
             window.showSuccessModal = function(message) {
                 if (successModal && successMessage) {
                     successMessage.textContent = message;
@@ -778,7 +756,7 @@
                     document.body.style.overflow = 'hidden';
                 }
             };
-            
+
             window.closeSuccessModal = function() {
                 if (successModal) {
                     successModal.style.display = 'none';
@@ -786,11 +764,11 @@
                     window.location.reload();
                 }
             };
-            
+
             // Error Modal functionality
             const errorModal = document.getElementById('errorModal');
             const errorMessage = document.getElementById('errorMessage');
-            
+
             window.showErrorModal = function(message) {
                 if (errorModal && errorMessage) {
                     errorMessage.textContent = message;
@@ -798,7 +776,7 @@
                     document.body.style.overflow = 'hidden';
                 }
             };
-            
+
             window.closeErrorModal = function() {
                 if (errorModal) {
                     errorModal.style.display = 'none';
@@ -806,7 +784,7 @@
                     window.location.reload();
                 }
             };
-            
+
             // Close success/error modals when clicking outside
             window.addEventListener('click', function(event) {
                 if (event.target === successModal) {
@@ -816,54 +794,53 @@
                     closeErrorModal();
                 }
             });
-            
+
             // Initialize Lucide icons
             lucide.createIcons();
-            
+
             // Flash modal functionality
             const flashModal = document.getElementById('flashModal');
-            
+
             function closeFlashModal() {
                 if (flashModal) {
                     flashModal.style.display = 'none';
                 }
             }
-            
+
             window.closeFlashModal = closeFlashModal;
-            
+
             // Check if there are flash messages and show modal
             function showFlashModal() {
                 const flashMessagesContainer = document.getElementById('flashMessagesContainer');
                 const actualFlashMessages = flashMessagesContainer ? flashMessagesContainer.querySelectorAll('.flash-message') : [];
                 if (actualFlashMessages.length > 0 && flashModal) {
                     flashModal.style.display = 'block';
-                    
+
                     // Auto-dismiss after 5 seconds
                     setTimeout(function() {
                         closeFlashModal();
                     }, 5000);
                 }
             }
-            
+
             // Run on page load
             showFlashModal();
-            
+
             // Close modal when clicking outside
             window.onclick = function(event) {
                 if (event.target === flashModal) {
                     closeFlashModal();
                 }
             };
-            
+
             // Close modal when pressing Escape
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape' && flashModal && flashModal.style.display === 'block') {
                     closeFlashModal();
                 }
             });
+
+            // Sidebar toggle handled by static/app.js
         });
     </script>
-</body>
-</html>
-
-
+{% endblock %}

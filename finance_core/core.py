@@ -32,7 +32,9 @@ class FinanceCore:
         # Initialize managers
         self.category_manager = CategoryManager(self.storage)
         self.account_manager = AccountManager(self.storage)
-        self.transaction_manager = TransactionManager(self.storage, self.category_manager)
+        self.transaction_manager = TransactionManager(
+            self.storage, self.category_manager, self.account_manager
+        )
         self.budget_manager = BudgetManager(self.storage, self.transaction_manager)
         self.alert_manager = AlertManager(self.storage, self.budget_manager)
         self.user_manager = UserManager(self.storage)

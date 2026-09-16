@@ -11,7 +11,6 @@
     <title>Ipangela Finance - Smart Profit Optimization</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='homestyle.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,7 +18,7 @@
 <body>
     <!-- Header -->
     <header class="main-header" id="header">
-        <a href="{{ url_for('home') }}" class="logo" aria-label="Ipangela Finance Home">
+        <a href="{{ url_for('pages.home') }}" class="logo" aria-label="Ipangela Finance Home">
             <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <rect width="40" height="40" rx="8" fill="currentColor"/>
                 <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
@@ -27,9 +26,9 @@
             <span>Ipangela Finance</span>
         </a>
         <nav class="header-nav" aria-label="Main navigation">
-            <a href="{{ url_for('home') }}" class="nav-link active">Home</a>
-            <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
-            <a href="{{ url_for('contact')}}" class="nav-link">Contact</a>
+            <a href="{{ url_for('pages.home') }}" class="nav-link active">Home</a>
+            <a href="{{ url_for('pages.about') }}" class="nav-link">About Us</a>
+            <a href="{{ url_for('pages.contact')}}" class="nav-link">Contact</a>
         </nav>
         <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
             <span class="hamburger"></span>
@@ -69,7 +68,7 @@
                 </p>
                 
                 <div class="hero-actions" role="navigation" aria-label="Primary actions">
-                    <a href="{{ url_for('optimizer') }}" class="btn btn-primary btn-large">
+                    <a href="{{ url_for('optimizer.optimizer') }}" class="btn btn-primary btn-large">
                         <span class="btn-text">Start Optimizing</span>
                         <span class="btn-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -254,7 +253,7 @@
                 <p class="section-subtitle">Everything you need to optimize your profits and streamline your finances</p>
             </div>
             <div class="nav-cards">
-                <a href="{{ url_for('optimizer') }}" class="nav-card optimizer fade-in-up" data-scroll>
+                <a href="{{ url_for('optimizer.optimizer') }}" class="nav-card optimizer fade-in-up" data-scroll>
                     <div class="nav-card-icon">
                         <div class="nav-card-icon">
                         <img src="{{ url_for('static', filename='performance.png') }}" alt="Performance" style="width: 48px; height: 48px;">
@@ -269,7 +268,7 @@
                         </svg>
                     </span>
                 </a>
-                <a href="{{ url_for('finance') }}" class="nav-card finance fade-in-up" data-scroll data-delay="100">
+                <a href="{{ url_for('finance.finance') }}" class="nav-card finance fade-in-up" data-scroll data-delay="100">
                     <div class="nav-card-icon">
                         <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
                             <rect x="4" y="4" width="40" height="40" rx="8" fill="#28a745"/>
@@ -516,7 +515,7 @@
                 </div>
                 <h2>Ready to Optimize Your Profits?</h2>
                 <p>Start making smarter business decisions today. It's free, fast, and easy to get started.</p>
-                <a href="{{ url_for('optimizer') }}" class="btn btn-primary btn-large">
+                <a href="{{ url_for('optimizer.optimizer') }}" class="btn btn-primary btn-large">
                     <span>Get Started Now</span>
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -535,7 +534,7 @@
     <footer class="main-footer">
         <div class="footer-content">
             <div class="footer-brand">
-                <a href="{{ url_for('home') }}" class="logo">
+                <a href="{{ url_for('pages.home') }}" class="logo">
                     <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <rect width="40" height="40" rx="8" fill="currentColor"/>
                         <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
@@ -559,10 +558,10 @@
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="{{ url_for('home') }}">Home</a></li>
-                        <li><a href="{{ url_for('optimizer') }}">Optimizer</a></li>
-                        <li><a href="{{ url_for('finance') }}">Finance</a></li>
-                        <li><a href="{{ url_for('invoice') }}">Invoice</a></li>
+                        <li><a href="{{ url_for('pages.home') }}">Home</a></li>
+                        <li><a href="{{ url_for('optimizer.optimizer') }}">Optimizer</a></li>
+                        <li><a href="{{ url_for('finance.finance') }}">Finance</a></li>
+                        <li><a href="{{ url_for('invoice.invoice') }}">Invoice</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -571,7 +570,7 @@
                         <li><a href="#">Documentation</a></li>
                         <li><a href="#">API Reference</a></li>
                         <li><a href="#">Support</a></li>
-                        <li><a href="{{ url_for('contact')}}">Contact</a></li>
+                        <li><a href="{{ url_for('pages.contact')}}">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">

@@ -1,60 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Manager - Profit Optimizer</title>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='finance.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
-    <script src="https://unpkg.com/lucide@latest"></script>
+{% extends "base.html" %}
+{% block title %}Finance Manager - Profit Optimizer{% endblock %}
+{% block styles %}
+{% endblock %}
+{% block head_scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <a href="{{ url_for('home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
-            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect width="40" height="40" rx="8" fill="currentColor"/>
-                <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
-            </svg>
-            <span class="logo-text">Ipangela</span>
-        </a>
-        
-        <!-- Main Navigation -->
-        <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="#transactions" onclick="showSection('transactions'); return false;"><i data-lucide="repeat"></i> Transactions</a></li>
-                <li><a href="#budgets" onclick="showSection('budgets'); return false;"><i data-lucide="pie-chart"></i> Budgets</a></li>
-                <li><a href="#accounts" onclick="showSection('accounts'); return false;"><i data-lucide="building"></i> Accounts</a></li>
-                <li><a href="#reports" onclick="showSection('reports'); return false;"><i data-lucide="file-text"></i> Reports</a></li>
-                <li><a href="#import-export" onclick="showSection('import-export'); return false;"><i data-lucide="refresh-cw"></i> Import/Export</a></li>
-            </ul>
-        </nav>
-        
-        <div class="sidebar-divider"></div>
-
-        <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('optimizer') }}"><i data-lucide="trending-up"></i>Optimizer</a></li>
-                <li><a href="{{ url_for('finance') }}" class="active"><i data-lucide="wallet"></i>Finance</a></li>
-                <li><a href="{{ url_for('invoice') }}"><i data-lucide="file-text"></i>Invoices</a></li>
-            </ul>
-        </nav>
-        
-        <div class="sidebar-divider"></div>
-
-        <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i>Profile</a></li>
-                <li><a href="/logout"><i data-lucide="log-out"></i>Sign Out</a></li>
-            </ul>
-        </nav>
-    </aside>
-
-
+{% endblock %}
+{% block sidebar_toggle %}
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <i data-lucide="chevron-left"></i>
+    </button>
+{% endblock %}
+{% block sidebar_extra %}
+    <nav class="sidebar-nav" aria-label="Finance sections">
+        <ul class="nav-menu">
+            <li><a href="#transactions" onclick="showSection('transactions'); return false;"><i data-lucide="repeat"></i> <span>Transactions</span></a></li>
+            <li><a href="#budgets" onclick="showSection('budgets'); return false;"><i data-lucide="pie-chart"></i> <span>Budgets</span></a></li>
+            <li><a href="#accounts" onclick="showSection('accounts'); return false;"><i data-lucide="building"></i> <span>Accounts</span></a></li>
+            <li><a href="#reports" onclick="showSection('reports'); return false;"><i data-lucide="file-text"></i> <span>Reports</span></a></li>
+            <li><a href="#import-export" onclick="showSection('import-export'); return false;"><i data-lucide="refresh-cw"></i> <span>Import/Export</span></a></li>
+        </ul>
+    </nav>
+    <div class="sidebar-divider"></div>
+{% endblock %}
+{% block content %}
     <div class="finance-container">
         <!-- Header -->
         <div class="section-header">
@@ -119,22 +87,24 @@
                     <h3><i data-lucide="clock"></i> Recent Transactions</h3>
                     <button class="btn btn-sm btn-secondary" onclick="showSection('transactions')">View All</button>
                 </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Amount</th>
-                            <th>Account</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recent-transactions">
-                        <tr>
-                            <td colspan="5" class="empty-state">No transactions yet</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Account</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-transactions">
+                            <tr>
+                                <td colspan="5" class="empty-state">No transactions yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -177,24 +147,26 @@
                 </div>
             </div>
 
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Account</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="all-transactions">
-                    <tr>
-                        <td colspan="7" class="empty-state">No transactions found</td>
-                    </tr>
-                </tbody>
-            </table>
+<div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Account</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-transactions">
+                        <tr>
+                            <td colspan="7" class="empty-state">No transactions found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Budgets Section -->
@@ -266,7 +238,7 @@
                         <input type="date" class="form-control" id="report-end">
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-primary" onclick="generateReport()">
+                        <button class="btn btn-primary" id="generateReportBtn" onclick="generateReport()">
                             <i data-lucide="file-text"></i> Generate
                         </button>
                     </div>
@@ -292,7 +264,7 @@
                         <button class="btn btn-primary" onclick="exportData('json')">
                             <i data-lucide="file-json"></i> Export as JSON
                         </button>
-                        <button class="btn btn-secondary" onclick="exportTransactionsCSV()">
+                        <button class="btn btn-secondary" id="exportCsvBtn" onclick="exportTransactionsCSV()">
                             <i data-lucide="file-spreadsheet"></i> Export as CSV
                         </button>
                     </div>
@@ -319,7 +291,8 @@
                 <button class="close-modal" onclick="closeModal('transactionModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="transaction-form">
+                <form id="transaction-form" data-validate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" id="transaction-id">
                     <div class="form-row">
                         <div class="form-group">
@@ -392,7 +365,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('transactionModal')">Cancel</button>
-                <button class="btn btn-primary" onclick="saveTransaction()">
+                <button class="btn btn-primary" id="saveTransactionBtn" onclick="saveTransaction()">
                     <i data-lucide="save"></i> Save Transaction
                 </button>
             </div>
@@ -407,7 +380,8 @@
                 <button class="close-modal" onclick="closeModal('accountModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="account-form">
+                <form id="account-form" data-validate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" id="account-id">
                     <div class="form-row">
                         <div class="form-group">
@@ -465,7 +439,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('accountModal')">Cancel</button>
-                <button class="btn btn-primary" onclick="saveAccount()">
+                <button class="btn btn-primary" id="saveAccountBtn" onclick="saveAccount()">
                     <i data-lucide="save"></i> Save Account
                 </button>
             </div>
@@ -480,7 +454,8 @@
                 <button class="close-modal" onclick="closeModal('budgetModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="budget-form">
+                <form id="budget-form" data-validate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" id="budget-id">
                     <div class="form-group">
                         <label>Budget Name</label>
@@ -523,7 +498,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('budgetModal')">Cancel</button>
-                <button class="btn btn-primary" onclick="saveBudget()">
+                <button class="btn btn-primary" id="saveBudgetBtn" onclick="saveBudget()">
                     <i data-lucide="save"></i> Save Budget
                 </button>
             </div>
@@ -538,25 +513,57 @@
         let financeData = {};
         let allTransactions = [];
         
-        // Load initial data
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFinanceData();
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
             
-            // Initialize Lucide icons
+            const iconMap = {
+                success: 'check-circle',
+                error: 'x-circle',
+                warning: 'alert-triangle',
+                info: 'info'
+            };
+            
+            toast.innerHTML = '<i data-lucide="' + (iconMap[type] || 'info') + '"></i><span>' + message + '</span>' +
+                '<button class="toast-close" aria-label="Dismiss notification">&times;</button>';
+            toast.setAttribute('role', 'status');
+            
+            container.appendChild(toast);
+            
+            // Initialize Lucide icon
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
             
+            // Auto remove after animation
+            setTimeout(function() {
+                toast.remove();
+            }, 3000);
+        }
+        
+        // Sidebar toggle handled by static/app.js
+
+        // Load initial data
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFinanceData();
+                
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+                
             // Set today's date as default for transaction form
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('transaction-date').value = today;
             document.getElementById('budget-start-date').value = today;
-            
+                
             // Handle transaction type change to show/hide destination account
             const typeSelect = document.getElementById('transaction-type');
             const destGroup = document.getElementById('destination-account-group');
             const destSelect = document.getElementById('transaction-destination-account');
-            
+                
             if (typeSelect && destGroup) {
                 typeSelect.addEventListener('change', function() {
                     if (this.value === 'transfer') {
@@ -568,7 +575,7 @@
                     }
                 });
             }
-            
+                
             // Recurring checkbox toggle
             const recurringCheckbox = document.getElementById('transaction-recurring');
             const freqGroup = document.getElementById('recurring-frequency-group');
@@ -582,9 +589,9 @@
         // Load finance data from API
         async function loadFinanceData() {
             try {
-                const response = await fetch(`${API_BASE}/data`);
+                const response = await csrfFetch(`${API_BASE}/data`);
                 const result = await response.json();
-                
+                    
                 if (result.success) {
                     financeData = result.data;
                     renderDashboard();
@@ -592,16 +599,18 @@
                     renderTransactions();
                     renderBudgets();
                     renderAccounts();
+                    showToast('Data loaded successfully', 'success');
                 }
             } catch (error) {
                 console.error('Error loading finance data:', error);
+                showToast('Error loading data', 'error');
             }
         }
         
         // Render dashboard stats and charts
         function renderDashboard() {
             const data = financeData;
-            
+                
             // Update stat cards
             if (data.account_balances) {
                 document.getElementById('total-balance').textContent = formatCurrency(data.account_balances.total);
@@ -611,12 +620,12 @@
                 document.getElementById('monthly-expenses').textContent = formatCurrency(data.transaction_summary.expenses);
                 document.getElementById('net-income').textContent = formatCurrency(data.transaction_summary.net_income);
             }
-            
+                
             // Render recent transactions
             if (data.recent_transactions) {
                 renderRecentTransactions(data.recent_transactions);
             }
-            
+                
             // Render charts if Chart.js is available
             if (typeof Chart !== 'undefined' && data.monthly_trends) {
                 renderCharts(data.monthly_trends, data.category_breakdown);
@@ -627,12 +636,12 @@
         function renderRecentTransactions(transactions) {
             const tbody = document.getElementById('recent-transactions');
             if (!tbody) return;
-            
+                
             if (transactions.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No transactions yet</td></tr>';
                 return;
             }
-            
+                
             tbody.innerHTML = transactions.map(t => `
                 <tr>
                     <td>${t.date}</td>
@@ -652,12 +661,12 @@
                 document.getElementById('budget-category'),
                 document.getElementById('filter-category')
             ];
-            
+                
             if (financeData.categories) {
                 const options = financeData.categories.map(c => 
                     `<option value="${c.id}">${c.name}</option>`
                 ).join('');
-                
+                    
                 catSelects.forEach(select => {
                     if (select) {
                         const current = select.innerHTML;
@@ -665,20 +674,20 @@
                     }
                 });
             }
-            
+                
             // Accounts
             const accSelects = [
                 document.getElementById('transaction-account'),
                 document.getElementById('transaction-destination-account'),
                 document.getElementById('filter-account')
             ];
-            
+                
             if (financeData.accounts) {
                 const options = financeData.accounts
                     .filter(a => a.is_active)
                     .map(a => `<option value="${a.id}">${a.name}</option>`)
                     .join('');
-                
+                    
                 accSelects.forEach(select => {
                     if (select) {
                         select.innerHTML = options;
@@ -690,7 +699,7 @@
         // Render all transactions
         function renderTransactions() {
             if (!financeData.transactions) return;
-            
+                
             allTransactions = financeData.transactions;
             filterTransactions();
         }
@@ -701,9 +710,9 @@
             const typeFilter = document.getElementById('filter-type').value;
             const accFilter = document.getElementById('filter-account').value;
             const tagFilter = document.getElementById('filter-tags').value.toLowerCase();
-            
+                
             let filtered = allTransactions;
-            
+                
             if (search) {
                 filtered = filtered.filter(t => 
                     t.description.toLowerCase().includes(search) ||
@@ -725,13 +734,13 @@
                     t.tags && t.tags.some(tag => tag.toLowerCase().includes(tagFilter))
                 );
             }
-            
+                
             const tbody = document.getElementById('all-transactions');
             if (filtered.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No transactions found</td></tr>';
                 return;
             }
-            
+                
             tbody.innerHTML = filtered.map(t => `
                 <tr>
                     <td>${t.date}</td>
@@ -740,13 +749,13 @@
                     <td>${getCategoryBadge(t.category_id)}</td>
                     <td class="${t.type === 'income' ? 'amount-positive' : 'amount-negative'}">${formatCurrency(t.amount)}</td>
                     <td>${getAccountName(t.account_id)}</td>
-                    <td>
+                    <td class="actions">
                         <button class="btn btn-sm btn-secondary" onclick="editTransaction('${t.id}')">Edit</button>
-                        <button class="btn btn-sm btn-danger" data-delete-confirm="Delete this transaction?" onclick="deleteTransaction('${t.id}')">Delete</button>
+                        <button class="btn btn-sm btn-danger" onclick="confirmDelete('Delete this transaction?', () => deleteTransaction('${t.id}'))">Delete</button>
                     </td>
                 </tr>
             `).join('');
-            
+                
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
@@ -764,12 +773,12 @@
         // Render budgets
         function renderBudgets() {
             if (!financeData.budgets) return;
-            
+                
             const container = document.getElementById('budget-list');
             if (financeData.budgets.length === 0) {
                 return; // Keep empty state
             }
-            
+                
             // Update summary
             let totalBudget = 0, totalSpent = 0;
             financeData.budgets.forEach(b => {
@@ -780,7 +789,7 @@
             document.getElementById('total-spent').textContent = formatCurrency(totalSpent);
             document.getElementById('total-remaining').textContent = formatCurrency(totalBudget - totalSpent);
             document.getElementById('budget-count').textContent = financeData.budgets.length;
-            
+                
             container.innerHTML = financeData.budgets.map(b => {
                 const pct = b.amount > 0 ? (b.spent / b.amount * 100) : 0;
                 const status = pct >= 100 ? 'danger' : pct >= b.alert_threshold ? 'warning' : 'ok';
@@ -801,12 +810,12 @@
         // Render accounts
         function renderAccounts() {
             if (!financeData.accounts) return;
-            
+                
             const container = document.getElementById('accounts-list');
             if (financeData.accounts.length === 0) {
                 return; // Keep empty state
             }
-            
+                
             container.innerHTML = financeData.accounts
                 .filter(a => a.is_active)
                 .map(a => `
@@ -820,7 +829,7 @@
                         <div class="balance ${a.balance >= 0 ? 'positive' : 'negative'}">${formatCurrency(a.balance)}</div>
                         <div class="quick-actions">
                             <button class="btn btn-sm btn-secondary" onclick="editAccount('${a.id}')">Edit</button>
-                            <button class="btn btn-sm btn-danger" data-delete-confirm="Delete this account?" onclick="deleteAccount('${a.id}')">Delete</button>
+                            <button class="btn btn-sm btn-danger" onclick="confirmDelete('Delete this account?', () => deleteAccount('${a.id}'))">Delete</button>
                         </div>
                     </div>
                 `).join('');
@@ -833,7 +842,7 @@
             // Show selected section
             const target = document.getElementById(section + '-section');
             if (target) target.classList.add('active');
-            
+                
             // Update active nav link
             document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
             const activeLink = document.querySelector(`.sidebar-nav a[href="#${section}"]`);
@@ -851,8 +860,18 @@
             if (modal) modal.classList.remove('active');
         }
         
+        // Confirm Delete Modal
+        function confirmDelete(message, callback) {
+            const confirmed = confirm(message); // Temporary - can be replaced with custom modal
+            if (confirmed && callback) {
+                callback();
+            }
+        }
+        
         // Save transaction
         async function saveTransaction() {
+            if (!validateForm(document.getElementById('transaction-form'))) return;
+
             const form = document.getElementById('transaction-form');
             const id = document.getElementById('transaction-id').value;
             const data = {
@@ -868,32 +887,36 @@
                 recurring_frequency: document.getElementById('transaction-recurring').checked ? 
                     document.getElementById('transaction-frequency').value : null
             };
-            
+                
             const url = id ? `${API_BASE}/transaction/${id}` : `${API_BASE}/transaction`;
             const method = id ? 'PUT' : 'POST';
-            
+                
             try {
-                const response = await fetch(url, {
+                const response = await csrfFetch(url, {
                     method: method,
+                    button: '#saveTransactionBtn',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-                
+                    
                 if (result.success) {
                     closeModal('transactionModal');
                     loadFinanceData();
                     form.reset();
+                    showToast('Transaction saved successfully', 'success');
                 } else {
-                    alert(result.message || 'Error saving transaction');
+                    showToast(result.message || 'Error saving transaction', 'error');
                 }
             } catch (error) {
-                alert('Error saving transaction: ' + error.message);
+                showToast('Error saving transaction: ' + error.message, 'error');
             }
         }
         
         // Save account
         async function saveAccount() {
+            if (!validateForm(document.getElementById('account-form'))) return;
+
             const data = {
                 name: document.getElementById('account-name').value,
                 type: document.getElementById('account-type').value,
@@ -903,28 +926,32 @@
                 account_number: document.getElementById('account-number').value,
                 notes: document.getElementById('account-notes').value
             };
-            
+                
             try {
-                const response = await fetch(`${API_BASE}/account`, {
+                const response = await csrfFetch(`${API_BASE}/account`, {
                     method: 'POST',
+                    button: '#saveAccountBtn',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-                
+                    
                 if (result.success) {
                     closeModal('accountModal');
                     loadFinanceData();
+                    showToast('Account saved successfully', 'success');
                 } else {
-                    alert(result.message || 'Error saving account');
+                    showToast(result.message || 'Error saving account', 'error');
                 }
             } catch (error) {
-                alert('Error saving account: ' + error.message);
+                showToast('Error saving account: ' + error.message, 'error');
             }
         }
         
         // Save budget
         async function saveBudget() {
+            if (!validateForm(document.getElementById('budget-form'))) return;
+
             const data = {
                 name: document.getElementById('budget-name').value,
                 category_id: document.getElementById('budget-category').value,
@@ -932,41 +959,42 @@
                 period: document.getElementById('budget-period').value,
                 alert_threshold: parseFloat(document.getElementById('budget-alert-threshold').value) || 80
             };
-            
+                
             try {
-                const response = await fetch(`${API_BASE}/budget`, {
+                const response = await csrfFetch(`${API_BASE}/budget`, {
                     method: 'POST',
+                    button: '#saveBudgetBtn',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-                
+                    
                 if (result.success) {
                     closeModal('budgetModal');
                     loadFinanceData();
+                    showToast('Budget created successfully', 'success');
                 } else {
-                    alert(result.message || 'Error saving budget');
+                    showToast(result.message || 'Error saving budget', 'error');
                 }
             } catch (error) {
-                alert('Error saving budget: ' + error.message);
+                showToast('Error saving budget: ' + error.message, 'error');
             }
         }
         
         // Delete transaction
         async function deleteTransaction(id) {
-            if (!confirm('Are you sure you want to delete this transaction?')) return;
-            
             try {
-                const response = await fetch(`${API_BASE}/transaction/${id}`, {
+                const response = await csrfFetch(`${API_BASE}/transaction/${id}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
-                
+                    
                 if (result.success) {
                     loadFinanceData();
+                    showToast('Transaction deleted', 'success');
                 }
             } catch (error) {
-                alert('Error deleting transaction: ' + error.message);
+                showToast('Error deleting transaction: ' + error.message, 'error');
             }
         }
         
@@ -975,21 +1003,23 @@
             const type = document.getElementById('report-type').value;
             const start = document.getElementById('report-start').value;
             const end = document.getElementById('report-end').value;
-            
+                
             try {
-                const response = await fetch(`${API_BASE}/report`, {
+                const response = await csrfFetch(`${API_BASE}/report`, {
                     method: 'POST',
+                    button: '#generateReportBtn',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({type, start_date: start, end_date: end})
                 });
                 const result = await response.json();
-                
+                    
                 if (result.success) {
                     document.getElementById('report-output').innerHTML = 
                         '<pre>' + JSON.stringify(result.data, null, 2) + '</pre>';
+                    showToast('Report generated', 'success');
                 }
             } catch (error) {
-                alert('Error generating report: ' + error.message);
+                showToast('Error generating report: ' + error.message, 'error');
             }
         }
         
@@ -999,7 +1029,8 @@
         }
         
         async function exportTransactionsCSV() {
-            const response = await fetch(`${API_BASE}/export/csv`, {
+            const response = await csrfFetch(`${API_BASE}/export/csv`, {
+                button: '#exportCsvBtn',
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({})
@@ -1012,6 +1043,7 @@
                 a.href = url;
                 a.download = 'transactions.csv';
                 a.click();
+                showToast('CSV exported successfully', 'success');
             }
         }
         
@@ -1050,5 +1082,4 @@
             }
         });
     </script>
-</body>
-</html>
+{% endblock %}

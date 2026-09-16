@@ -1,7 +1,9 @@
+import csv
 import os
 import uuid
 import logging
 from datetime import datetime, date, timedelta
+from io import StringIO
 from typing import Dict, List, Optional, Any, Tuple
 
 from finance_core.models import (
@@ -134,9 +136,14 @@ class CategoryManager:
         data = [c.to_dict() for c in self.categories]
         self.storage.save_categories(data)
     
-    def auto_categorize(self, description: str, amount: float) -> str:
-        """Automatically suggest a category based on description and amount."""
+    def auto_categorize(self, description: str, amount: float, type_str: str = None) -> str:
+        """Automatically suggest a category based on description, amount, and type."""
         description_lower = description.lower()
+        
+        # Determines income/expense. Amounts are stored positive, so prefer the
+        # explicit type; fall back to the amount sign for backwards compatibility.
+        is_expense = (type_str == TransactionType.EXPENSE.value) if type_str else (amount < 0)
+        is_income = (type_str == TransactionType.INCOME.value) if type_str else (amount > 0)
         
         # Keywords for expense categories
         expense_keywords = {
@@ -158,19 +165,21 @@ class CategoryManager:
             'inc_investment': ['dividend', 'interest', 'investment', 'return', 'capital gain'],
         }
         
-        # Check expense keywords first
-        if amount <0 or amount >0:  # For expenses, we'll consider negative amounts
+        # Only match expense keywords for expenses
+        if is_expense:
             for category_id, keywords in expense_keywords.items():
                 if any(kw in description_lower for kw in keywords):
                     return category_id
+            return 'exp_other'
         
-        # Check income keywords
-        if amount >0:
+        # Only match income keywords for income
+        if is_income:
             for category_id, keywords in income_keywords.items():
                 if any(kw in description_lower for kw in keywords):
                     return category_id
+            return 'inc_other'
         
-        return 'exp_other' if amount <0 else 'inc_other'
+        return 'transfer'
 
 
 class AccountManager:
@@ -225,7 +234,7 @@ class AccountManager:
             notes=ValidationUtils.sanitize_string(notes, "notes", 1000)
         )
         
-        self._accounts.append(account)
+        self.accounts.append(account)
         self._save_accounts()
         logger.info(f"Created account: {account.name} ({account.id})")
         return account
@@ -291,10 +300,12 @@ class AccountManager:
 class TransactionManager:
     """Manages financial transactions."""
     
-    def __init__(self, storage: DataStorage = None, category_manager: CategoryManager = None):
+    def __init__(self, storage: DataStorage = None, category_manager: CategoryManager = None,
+                 account_manager: 'AccountManager' = None):
         """Initialize the transaction manager."""
         self.storage = storage or DataStorage()
         self.category_manager = category_manager or CategoryManager(storage)
+        self.account_manager = account_manager or AccountManager(self.storage)
         self._transactions = None
     
     @property
@@ -326,22 +337,21 @@ class TransactionManager:
                           destination_account_id: str = None) -> Transaction:
         """Create a new transaction."""
         # Validate account exists
-        account_manager = AccountManager(self.storage)
-        if not account_manager.get_account(account_id):
+        if not self.account_manager.get_account(account_id):
             raise ValueError(f"Account not found: {account_id}")
         
         # For transfers, validate destination account
         if type_str == TransactionType.TRANSFER.value:
             if not destination_account_id:
                 raise ValueError("Destination account required for transfers")
-            if not account_manager.get_account(destination_account_id):
+            if not self.account_manager.get_account(destination_account_id):
                 raise ValueError(f"Destination account not found: {destination_account_id}")
             if account_id == destination_account_id:
                 raise ValueError("Source and destination accounts must be different")
         
         # Auto-categorize if no category provided
         if category_id is None:
-            category_id = self.category_manager.auto_categorize(description, amount)
+            category_id = self.category_manager.auto_categorize(description, amount, type_str)
         
         # Validate category
         if not self.category_manager.get_category(category_id):
@@ -363,7 +373,7 @@ class TransactionManager:
             destination_account_id=destination_account_id if type_str == TransactionType.TRANSFER.value else None
         )
         
-        self._transactions.append(transaction)
+        self.transactions.append(transaction)
         self._save_transactions()
         
         # Update account balance
@@ -399,7 +409,7 @@ class TransactionManager:
                 elif key == 'destination_account_id':
                     if value and value == transaction.account_id:
                         raise ValueError("Source and destination must be different")
-                    if value and not AccountManager(self.storage).get_account(value):
+                    if value and not self.account_manager.get_account(value):
                         raise ValueError(f"Account not found: {value}")
                 setattr(transaction, key, value)
         
@@ -446,7 +456,7 @@ class TransactionManager:
     
     def _update_account_balance(self, account_id: str, amount: float, type_str: str, destination_account_id: str = None):
         """Update account balance after transaction."""
-        account_manager = AccountManager(self.storage)
+        account_manager = self.account_manager
         
         # Handle transfers
         if type_str == TransactionType.TRANSFER.value and destination_account_id:
@@ -602,6 +612,40 @@ class TransactionManager:
             return current.replace(year=current.year + 1)
         return current
 
+    def export_transactions_csv(self, start_date: str = None, end_date: str = None,
+                               account_id: str = None) -> str:
+        """Export transactions as a CSV string, with formula-injection sanitization."""
+        transactions = self.transactions
+
+        if account_id:
+            transactions = [t for t in transactions if t.account_id == account_id]
+
+        if start_date and end_date:
+            start = datetime.fromisoformat(start_date)
+            end = datetime.fromisoformat(end_date)
+            transactions = [t for t in transactions
+                            if start <= datetime.fromisoformat(t.date) <= end]
+
+        buf = StringIO()
+        writer = csv.writer(buf)
+        writer.writerow(['id', 'date', 'type', 'amount', 'category',
+                         'description', 'payee', 'notes'])
+
+        for t in transactions:
+            category = self.category_manager.get_category(t.category_id)
+            writer.writerow([
+                t.id,
+                t.date,
+                t.type,
+                t.amount,
+                ValidationUtils.sanitize_csv_value(category.name if category else ''),
+                ValidationUtils.sanitize_csv_value(t.description),
+                ValidationUtils.sanitize_csv_value(t.payee),
+                ValidationUtils.sanitize_csv_value(t.notes),
+            ])
+
+        return buf.getvalue()
+
 
 class BudgetManager:
     """Manages budget planning and tracking."""
@@ -654,7 +698,7 @@ class BudgetManager:
             alert_threshold=alert_threshold
         )
         
-        self._budgets.append(budget)
+        self.budgets.append(budget)
         self._save_budgets()
         
         logger.info(f"Created budget: {budget.name} ({budget.amount})")
@@ -707,7 +751,8 @@ class BudgetManager:
         if not budget.end_date:
             end_date = self._get_period_end_date(start_date, budget.period)
         
-        end = datetime.fromisoformat(end_date)
+        # Normalize to a datetime (period helper returns one already)
+        end = end_date if isinstance(end_date, datetime) else datetime.fromisoformat(end_date)
         
         transactions = self.transaction_manager.get_transactions_by_category(budget.category_id)
         transactions = [t for t in transactions 
@@ -838,7 +883,7 @@ class AlertManager:
             data=data or {}
         )
         
-        self._alerts.append(alert)
+        self.alerts.append(alert)
         self._save_alerts()
         
         logger.info(f"Created alert: {type_str} - {message}")

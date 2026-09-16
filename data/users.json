@@ -1,0 +1,20 @@
+[
+  {
+    "id": "6babcbf8-75d5-487e-8a9c-7a06e1fb7048",
+    "username": "x1",
+    "email": null,
+    "password_hash": "516c9c87f44e4548252ee3b4754ecda487c74479ed7aec70a8b0b64cc2b7dc34",
+    "salt": "3626b1dab6ad70b6385f88d47cc6af62",
+    "created_at": "2026-09-15T22:55:42.378086",
+    "is_active": true
+  },
+  {
+    "id": "77266b49-9b53-428c-a3b4-145c3fa35509",
+    "username": "bongani",
+    "email": null,
+    "password_hash": "7665b97ee01cfe881933559a1853caf7d7ed18eccab054e231b4245ccba2196c",
+    "salt": "f94026ccb9ee0dea1c6238266f7af33e",
+    "created_at": "2026-09-16T10:22:18.537396",
+    "is_active": true
+  }
+]

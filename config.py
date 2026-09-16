@@ -19,6 +19,9 @@ class Config:
     
     # Optimization Settings
     DEFAULT_BUDGET = 0
+    # Server-side storage for per-user optimizer state (kept out of the
+    # client-side session cookie).
+    OPTIMIZER_STATE_FOLDER = os.path.join(BASE_DIR, 'optimizer_state')
     
     # Ensure upload and export directories exist
     @staticmethod
@@ -29,10 +32,12 @@ class Config:
                 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
                 app.config['EXPORT_FOLDER'] = '/tmp/exports'
                 app.config['SAVED_FOLDER'] = '/tmp/saved'
+                app.config['OPTIMIZER_STATE_FOLDER'] = '/tmp/optimizer_state'
             
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             os.makedirs(app.config['EXPORT_FOLDER'], exist_ok=True)
             os.makedirs(app.config['SAVED_FOLDER'], exist_ok=True)
+            os.makedirs(app.config['OPTIMIZER_STATE_FOLDER'], exist_ok=True)
         except Exception as e:
             # Log error but don't crash the app
             print(f"Warning: Could not create directories: {str(e)}")

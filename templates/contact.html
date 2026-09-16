@@ -10,7 +10,6 @@
     <meta property="og:type" content="website">
     <title>Contact Us - Ipangela Finance</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='homestyle.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,7 +17,7 @@
 <body>
     <!-- Header -->
     <header class="main-header" id="header">
-        <a href="{{ url_for('home') }}" class="logo" aria-label="Ipangela Finance Home">
+        <a href="{{ url_for('pages.home') }}" class="logo" aria-label="Ipangela Finance Home">
             <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <rect width="40" height="40" rx="8" fill="currentColor"/>
                 <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
@@ -26,9 +25,9 @@
             <span>Ipangela Finance</span>
         </a>
         <nav class="header-nav" aria-label="Main navigation">
-            <a href="{{ url_for('home') }}" class="nav-link">Home</a>
-            <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
-            <a href="{{ url_for('contact')}}" class="nav-link active">Contact</a>
+            <a href="{{ url_for('pages.home') }}" class="nav-link">Home</a>
+            <a href="{{ url_for('pages.about') }}" class="nav-link">About Us</a>
+            <a href="{{ url_for('pages.contact')}}" class="nav-link active">Contact</a>
         </nav>
         <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
             <span class="hamburger"></span>
@@ -157,6 +156,7 @@
             <div class="features-grid" style="max-width: 800px; margin: 0 auto;">
                 <div class="feature-card fade-in-up" data-scroll style="grid-column: 1 / -1;">
                     <form id="contact-form" class="contact-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="name">Your Name</label>
@@ -286,7 +286,7 @@
     <footer class="main-footer">
         <div class="footer-content">
             <div class="footer-brand">
-                <a href="{{ url_for('home') }}" class="logo">
+                <a href="{{ url_for('pages.home') }}" class="logo">
                     <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <rect width="40" height="40" rx="8" fill="currentColor"/>
                         <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
@@ -310,10 +310,10 @@
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="{{ url_for('home') }}">Home</a></li>
-                        <li><a href="{{ url_for('optimizer') }}">Optimizer</a></li>
-                        <li><a href="{{ url_for('finance') }}">Finance</a></li>
-                        <li><a href="{{ url_for('invoice') }}">Invoice</a></li>
+                        <li><a href="{{ url_for('pages.home') }}">Home</a></li>
+                        <li><a href="{{ url_for('optimizer.optimizer') }}">Optimizer</a></li>
+                        <li><a href="{{ url_for('finance.finance') }}">Finance</a></li>
+                        <li><a href="{{ url_for('invoice.invoice') }}">Invoice</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -322,7 +322,7 @@
                         <li><a href="#">Documentation</a></li>
                         <li><a href="#">API Reference</a></li>
                         <li><a href="#">Support</a></li>
-                        <li><a href="{{ url_for('contact')}}">Contact</a></li>
+                        <li><a href="{{ url_for('pages.contact')}}">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">

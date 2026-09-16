@@ -1,59 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exports - Profit Optimizer</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='files.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
-</head>
-<body>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <a href="{{ url_for('home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
-            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect width="40" height="40" rx="8" fill="currentColor"/>
-                <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
-            </svg>
-            <span class="logo-text">Ipangela</span>
-        </a>
-        
-        <!-- Main Navigation -->
-        <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('imports') }}"><i data-lucide="files"></i>Uploaded Files</a></li>
-                <li><a href="{{ url_for('exports') }}" class="active"><i data-lucide="files"></i> Exported Files</a></li>
-                <li><a href="{{ url_for('saved') }}"><i data-lucide="save"></i> Saved Files</a></li>
-            </ul>
-        </nav>
-        
-        <div class="sidebar-divider"></div>
-
-        <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('optimizer') }}"><i data-lucide="trending-up"></i>Optimizer</a></li>
-                <li><a href="{{ url_for('finance') }}"><i data-lucide="wallet"></i>Finance</a></li>
-                <li><a href="{{ url_for('invoice') }}"><i data-lucide="file-text"></i>Invoices</a></li>
-            </ul>
-        </nav>
-        
-        <div class="sidebar-divider"></div>
-
-        <nav class="sidebar-nav" aria-label="Main navigation">
-
-            <ul class="nav-menu">
-                <li><a href="{{ url_for('profile') }}"><i data-lucide="user"></i>Profile</a></li>
-                <li><a href="{{ url_for('home') }}"><i data-lucide="log-out"></i>Sign Out</a></li>
-            </ul>
-        </nav>
-    </aside>
-
+{% extends "base.html" %}
+{% block title %}Exports - Profit Optimizer{% endblock %}
+{% block styles %}
+{% endblock %}
+{% block sidebar_extra %}
+    <nav class="sidebar-nav" aria-label="File navigation">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('pages.imports') }}"><i data-lucide="files"></i><span>Uploaded Files</span></a></li>
+            <li><a href="{{ url_for('pages.exports') }}" class="active"><i data-lucide="files"></i><span>Exported Files</span></a></li>
+            <li><a href="{{ url_for('pages.saved') }}"><i data-lucide="save"></i><span>Saved Files</span></a></li>
+        </ul>
+    </nav>
+    <div class="sidebar-divider"></div>
+{% endblock %}
+{% block content %}
     <div class="files-container">
         <div class="files-header">
             <h1 class="section-title">Export Files</h1>
-            <a href="{{ url_for('optimizer') }}" class="back-link">← Back to Optimizer</a>
+            <a href="{{ url_for('optimizer.optimizer') }}" class="back-link">← Back to Optimizer</a>
         </div>
         
         {% if files %}
@@ -70,10 +33,10 @@
                     </div>
                 </div>
                 <div class="file-actions">
-                    <a href="{{ url_for('download_saved_file', filename=file.name) }}" class="download-btn">
+                    <a href="{{ url_for('pages.download_saved_file', filename=file.name) }}" class="download-btn">
                         <i data-lucide="download"></i> Download
                     </a>
-                    <a href="{{ url_for('download_saved_file', filename=file.name) }}" class="delete-btn">
+                    <a href="{{ url_for('pages.download_saved_file', filename=file.name) }}" class="delete-btn">
                         <i data-lucide="trash-2"></i> Delete
                     </a>
                 </div>
@@ -85,15 +48,10 @@
             <div class="empty-folder-icon">📁</div>
             <p>No saved files yet.</p>
             <p>Save your optimization results from the Optimizer to see them here.</p>
-            <a href="{{ url_for('optimizer') }}" class="btn btn-primary" style="display: inline-block; margin-top: 20px;">
+            <a href="{{ url_for('optimizer.optimizer') }}" class="btn btn-primary" style="display: inline-block; margin-top: 20px;">
                 Go to Optimizer
             </a>
         </div>
         {% endif %}
     </div>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        lucide.createIcons();
-    </script>
-</body>
-</html>
+{% endblock %}

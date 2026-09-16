@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block error_title %}{{ error_code }} - Profit Optimizer{% endblock %}</title>
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('profit-theme');
+                if (theme !== 'light') {
+                    theme = 'dark';
+                }
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="finance-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+        <div class="auth-card" style="max-width: 440px; text-align: center;">
+            <div class="modal-header" style="justify-content: center;">
+                <h2 style="font-size: 2.5rem; color: var(--color-primary-600);">{{ error_code }}</h2>
+            </div>
+            <div class="modal-body">
+                <h3 style="margin-bottom: 8px;">{{ error_title }}</h3>
+                <p style="color: var(--color-text-muted);">{{ error_message }}</p>
+                <div class="modal-footer" style="border-top: none; justify-content: center; gap: 12px; margin-top: 18px;">
+                    <a href="{{ url_for('pages.home') }}" class="btn btn-primary">
+                        <i data-lucide="home"></i> Home
+                    </a>
+                    <a href="javascript:history.back()" class="btn">
+                        <i data-lucide="arrow-left"></i> Go Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

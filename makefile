@@ -6,5 +6,5 @@ install:
 build:
 	python3 app.py
 
-test: 
-# 	testing will be placed here
+test:
+	python3 -m pytest -q

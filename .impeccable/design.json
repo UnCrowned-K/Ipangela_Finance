@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-16T00:00:00Z",
+  "title": "Design System: Profit Optimizer (Mobile Money)",
+  "extensions": {
+    "colorMeta": {
+      "money-green": { "role": "primary", "displayName": "Money Green", "canonical": "#3ddc8e", "tonalRamp": ["#0b1f16", "#103b28", "#165a3c", "#238555", "#35c57b", "#3ddc8e", "#64e6a5", "#8fedc0", "#bff5dc", "#e6fbf1"] },
+      "black-ground": { "role": "neutral", "displayName": "Black Ground", "canonical": "#0a0f0c", "tonalRamp": ["#0a0f0c", "#101612", "#18201b", "#243029", "#31433a", "#55685d", "#7c9488", "#a3b7ac", "#cfdcd5", "#eef4ef"] },
+      "plate": { "role": "neutral", "displayName": "Plate", "canonical": "#101612", "tonalRamp": ["#0a0f0c", "#101612", "#18201b", "#243029", "#31433a", "#55685d", "#7c9488", "#a3b7ac", "#cfdcd5", "#eef4ef"] },
+      "paper-ground": { "role": "neutral", "displayName": "Paper Ground", "canonical": "#f4f1e8", "tonalRamp": ["#e9f7f0", "#cdeddc", "#a6e2c2", "#72d2a1", "#3dd48d", "#1fa868", "#168a56", "#0f6b44", "#0a4c33", "#063324"] },
+      "deep-leaf": { "role": "primary", "displayName": "Deep Leaf", "canonical": "#0f6b44", "tonalRamp": ["#e9f7f0", "#cdeddc", "#a6e2c2", "#72d2a1", "#3dd48d", "#1fa868", "#168a56", "#0f6b44", "#0a4c33", "#063324"] },
+      "led-red": { "role": "danger", "displayName": "LED Red", "canonical": "#ff5c62", "tonalRamp": ["#4a1214", "#7a1d20", "#a8282c", "#d032", "#f047", "#ff5c62", "#ff8287", "#ffa8ac", "#ffced1", "#ffe9ea"] },
+      "led-amber": { "role": "warning", "displayName": "LED Amber", "canonical": "#ffb020", "tonalRamp": ["#4a3004", "#7a500a", "#a86e10", "#d08c16", "#f0a31c", "#ffb020", "#ffc24e", "#ffd47d", "#ffe6ab", "#fff3d5"] },
+      "led-blue": { "role": "info", "displayName": "LED Blue", "canonical": "#4da3ff", "tonalRamp": ["#0e2b4a", "#17467a", "#2061a8", "#297cd0", "#3a95f0", "#4da3ff", "#72b8ff", "#99cdff", "#c0e1ff", "#e5f2ff"] },
+      "paper-card": { "role": "neutral", "displayName": "Paper Card", "canonical": "#ffffff", "tonalRamp": ["#e9f7f0", "#cdeddc", "#a6e2c2", "#72d2a1", "#3dd48d", "#1fa868", "#168a56", "#0f6b44", "#0a4c33", "#063324"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles, wordmark, section headers." },
+      "money": { "displayName": "Money & Data", "purpose": "Every amount, value, ID, and code; tabular numerals always." }
+    },
+    "shadows": [
+      { "name": "register", "value": "0 1px 3px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.4)", "purpose": "Raised plates on the black ground (dark)." },
+      { "name": "hover-lift", "value": "0 10px 18px rgba(0,0,0,0.6), 0 4px 6px rgba(0,0,0,0.4)", "purpose": "Interactive card hover." },
+      { "name": "focus-ring", "value": "0 0 0 3px rgba(61,220,142,0.18)", "purpose": "Money-green keyboard focus ring on inputs." }
+    ],
+    "motion": [
+      { "name": "ease-expo-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default easing; the only authored transition family." },
+      { "name": "duration-fast", "value": "0.15s", "purpose": "Micro-interactions and hover." },
+      { "name": "duration-base", "value": "0.2s", "purpose": "State transitions." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (dark)",
+      "kind": "button",
+      "refersTo": "button-primary-dark",
+      "description": "The money action on the black till.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Optimize Profit</button>",
+      "css": ".ds-btn { border: 1px solid transparent; border-radius: 4px; font-family: Inter, sans-serif; font-weight: 600; letter-spacing: 0.01em; padding: 10px 18px; cursor: pointer; } .ds-btn-primary { background: #3ddc8e; color: #04130b; } .ds-btn-primary:hover { background: #35c57b; } .ds-btn-primary:focus-visible { outline: 2px solid #3ddc8e; outline-offset: 2px; box-shadow: 0 0 0 3px rgba(61,220,142,0.18); }"
+    },
+    {
+      "name": "Status LED",
+      "kind": "chip",
+      "refersTo": "status-led",
+      "description": "Status is a lit LED, never a pill.",
+      "html": "<span class=\"ds-led ds-led-paid\"><span class=\"ds-led-dot\"></span>PAID</span>",
+      "css": ".ds-led { display: inline-flex; align-items: center; gap: 8px; border-radius: 4px; padding: 4px 12px 4px 6px; font-family: 'Space Mono', monospace; font-size: 0.8rem; color: #3ddc8e; } .ds-led-dot { width: 8px; height: 8px; border-radius: 50%; background: #3ddc8e; box-shadow: 0 0 0 3px rgba(61,220,142,0.15); } .ds-led-overdue { color: #ff5c62; } .ds-led-overdue .ds-led-dot { background: #ff5c62; box-shadow: 0 0 0 3px rgba(255,92,98,0.15); } .ds-led-cancelled { color: #7c9488; } .ds-led-cancelled .ds-led-dot { background: #7c9488; opacity: 0.6; box-shadow: none; }"
+    },
+    {
+      "name": "Money Plate (stat card)",
+      "kind": "card",
+      "refersTo": "stat-card",
+      "description": "The daily register: mono label, large mono value, hairline rule, LED.",
+      "html": "<div class=\"ds-plate\"><span class=\"ds-label\">INCOME</span><span class=\"ds-value\">R4 320.00</span></div>",
+      "css": ".ds-plate { background: #101612; border: 1px solid rgba(255,255,255,0.13); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 8px; } .ds-label { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: #7c9488; } .ds-value { font-family: 'Space Mono', monospace; font-size: 1.563rem; font-weight: 700; color: #eef4ef; font-variant-numeric: tabular-nums; text-align: right; }"
+    },
+    {
+      "name": "Input / Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Hairline stroke, transparent interior, money-green focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"Amount (R)\" />",
+      "css": ".ds-input { background: transparent; border: 1px solid rgba(255,255,255,0.13); border-radius: 4px; padding: 10px 12px; color: #eef4ef; font-family: Inter, sans-serif; font-size: 1rem; } .ds-input::placeholder { color: #55685d; } .ds-input:focus { outline: none; border-color: #35c57b; box-shadow: 0 0 0 3px rgba(61,220,142,0.18); }"
+    },
+    {
+      "name": "Sidebar Active Item",
+      "kind": "nav",
+      "refersTo": "nav-active",
+      "description": "Active rail item is a green-filled block with dark text, no side stripe.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item ds-nav-active\">Finance</a></nav>",
+      "css": ".ds-nav { background: #0a0f0c; padding: 8px; display: flex; flex-direction: column; gap: 4px; border-radius: 6px; } .ds-nav-item { font-family: Inter, sans-serif; font-weight: 500; font-size: 0.95rem; color: #cdd3ce; padding: 12px 16px; border-radius: 4px; margin: 2px 8px; } .ds-nav-active { background: #3ddc8e; color: #0a0f0c; font-weight: 600; } .ds-nav-item:focus-visible { outline: 2px solid #3ddc8e; outline-offset: -2px; border-radius: 4px; }"
+    },
+    {
+      "name": "Auth Card Plate",
+      "kind": "card",
+      "refersTo": "auth-card",
+      "description": "Standalone raised plate for login/register/error.",
+      "html": "<div class=\"ds-auth\"><h2>Login</h2></div>",
+      "css": ".ds-auth { background: #101612; border: 1px solid rgba(255,255,255,0.13); border-radius: 12px; box-shadow: 0 20px 28px rgba(0,0,0,0.6); width: 100%; max-width: 400px; margin: 0 auto; overflow: hidden; padding: 24px; } .ds-auth h2 { font-family: 'Space Grotesk', sans-serif; color: #3ddc8e; margin: 0 0 16px; letter-spacing: -0.02em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Till at Night",
+    "overview": "The interface is the everyday SA phone-banking screen rebuilt as a whole product world: a terminal-grade money interface where the operator stands beside the till and reads the day at a glance. The world has two states of matter — the black till at night (the default engaged screen) and the paper ledger in daylight (the lighter theme and the printed invoice sheet). On both, money is the hero: every amount is a tabular Space Mono figure sitting on a ruled plate, statuses are LEDs rather than pills, and the only color that means anything is the money green.",
+    "keyCharacteristics": [
+      "Near-black graphite ground with raised plates every surface sits on.",
+      "1px hairline rules create the ledger; nothing floats off the grid.",
+      "Status is a lit LED (6–8px dot), never a badge pill.",
+      "Money, codes, and data always render in tabular Space Mono.",
+      "Flat hard corners (4–12px); buttons are flat rects or green fills.",
+      "Dark is the flagship theme; light paper is the secondary mode and the invoice sheet."
+    ],
+    "rules": [
+      { "name": "The One Green Rule", "body": "Money green is used sparingly and always means money or action. It appears as a fill, a hairline, or a focus ring — never as a gradient, glow, or ambient wash.", "section": "colors" },
+      { "name": "The LED Rule", "body": "A status is a lit dot (6–8px, fully rounded, colored, optionally a soft 3px halo ring). Never a pill, badge, or gradient chip. Canceled/unread states dim to 60% opacity.", "section": "components" },
+      { "name": "The Tabular Money Rule", "body": "Every displayed amount, value, or code uses Space Mono with tabular numerals. Ordinary body text never uses the mono face; mono is reserved for data and measurement.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest; shadows respond only to state (hover, focus, elevation). A zero-offset glow is a decoration and banned.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do set every page field to the theme's ground and every surface on it a raised plate.",
+      "Do render every amount, value, ID, and code with Space Mono tabular numerals.",
+      "Do represent status with a colored 8px LED dot (with its soft halo) and a mono label.",
+      "Do keep corners categorical: 4px buttons/chips, 6px cards, 12px modals and auth plates.",
+      "Do use the money green as a flat fill, hairline, or focus ring — it is earned, not ambient.",
+      "Do keep animations to a single authored moment with expo ease-out, and honor prefers-reduced-motion."
+    ],
+    "donts": [
+      "Don't use gradient text, glassmorphism, or colored border-left/border-right stripes above 1px on cards, list items, or alerts.",
+      "Don't use bounce easing, layout-triggering width/margin animations, or glow blobs.",
+      "Don't use a badge pill for status, decorative illustrations, or a SaaS blue-green corporate palette.",
+      "Don't use monospace for non-data prose; mono is reserved for measurement.",
+      "Don't add kickers/eyebrows above headings, section numbering as decoration, or hard offset block shadows outside a genuinely neobrutalist world."
+    ]
+  }
+}

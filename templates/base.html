@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Profit Optimizer{% endblock %}</title>
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('profit-theme');
+                if (theme !== 'light') {
+                    theme = 'dark';
+                }
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    {% block styles %}{% endblock %}
+    <script src="https://unpkg.com/lucide@latest"></script>
+    {% block head_scripts %}{% endblock %}
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-label="Notifications"></div>
+
+    {% block header %}{% endblock %}
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        {% block sidebar_toggle %}{% endblock %}
+
+        <a href="{{ url_for('pages.home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
+            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="40" height="40" rx="8" fill="currentColor"/>
+                <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
+            </svg>
+            <span class="logo-text">Ipangela</span>
+        </a>
+
+        {% block sidebar_extra %}{% endblock %}
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('optimizer.optimizer') }}" {% if request.endpoint and request.endpoint.startswith('optimizer.') %}class="active"{% endif %}><i data-lucide="trending-up"></i><span>Optimizer</span></a></li>
+                <li><a href="{{ url_for('finance.finance') }}" {% if request.endpoint == 'finance.finance' %}class="active"{% endif %}><i data-lucide="wallet"></i><span>Finance</span></a></li>
+                <li><a href="{{ url_for('invoice.invoice') }}" {% if request.endpoint and request.endpoint.startswith('invoice.') %}class="active"{% endif %}><i data-lucide="file-text"></i><span>Invoices</span></a></li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-divider"></div>
+
+        <nav class="sidebar-nav" aria-label="Account navigation">
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('pages.profile') }}" {% if request.endpoint == 'pages.profile' %}class="active"{% endif %}><i data-lucide="user"></i><span>Profile</span></a></li>
+                <li><a href="{{ url_for('pages.contact') }}"><i data-lucide="mail"></i><span>Contact</span></a></li>
+                <li><a href="{{ url_for('auth.logout') }}"><i data-lucide="log-out"></i><span>Sign Out</span></a></li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                <i data-lucide="moon" class="theme-icon-dark"></i>
+                <i data-lucide="sun" class="theme-icon-light"></i>
+                <span>Dark mode</span>
+            </button>
+        </div>
+    </aside>
+
+    {% block content %}{% endblock %}
+
+    {% block scripts %}
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    {% endblock %}
+</body>
+</html>

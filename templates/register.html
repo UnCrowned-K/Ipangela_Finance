@@ -4,13 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Profit Optimizer</title>
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('profit-theme');
+                if (theme !== 'light') {
+                    theme = 'dark';
+                }
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='finance.css') }}">
 </head>
 <body>
     <div class="finance-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
-        <div class="modal" style="max-width: 400px; margin: 0 auto;">
+        <div class="auth-card" style="max-width: 400px;">
             <div class="modal-header">
                 <h2><i data-lucide="user-plus"></i> Register</h2>
             </div>
@@ -23,7 +36,8 @@
                     {% endif %}
                 {% endwith %}
                 
-                <form method="POST">
+                <form method="POST" data-validate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label>Username</label>
                         <input type="text" class="form-control" name="username" required>
@@ -34,14 +48,14 @@
                     </div>
                     <div class="form-group">
                         <label>Confirm Password</label>
-                        <input type="password" class="form-control" name="confirm_password" required>
+                        <input type="password" class="form-control" name="confirm_password" data-same="password" required>
                     </div>
                     <div class="modal-footer" style="border-top: none; justify-content: center;">
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
                     </div>
                 </form>
                 <p style="text-align: center; margin-top: 15px;">
-                    Already have an account? <a href="{{ url_for('login') }}">Login</a>
+                    Already have an account? <a href="{{ url_for('auth.login') }}">Login</a>
                 </p>
             </div>
         </div>

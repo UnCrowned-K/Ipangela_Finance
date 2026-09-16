@@ -1,23 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Ipangela Finance - Profile settings and account management">
-    <meta name="keywords" content="profile, account settings, user management">
-    <meta property="og:title" content="Profile - Ipangela Finance">
-    <meta property="og:description" content="Manage your account settings and profile preferences">
-    <meta property="og:type" content="website">
-    <title>Profile - Ipangela Finance</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='homestyle.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Profile - Ipangela Finance{% endblock %}
+{% block styles %}
+{% endblock %}
+{% block header %}
     <!-- Header -->
     <header class="main-header" id="header">
         <div class="header-content">
@@ -26,45 +11,9 @@
             </button>
         </div>
     </header>
-
+{% endblock %}
+{% block content %}
     <div class="main-wrapper">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <a href="{{ url_for('home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
-                <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <rect width="40" height="40" rx="8" fill="currentColor"/>
-                    <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
-                </svg>
-                <span class="logo-text">Ipangela</span>
-            </a>
-            
-            <!-- Main Navigation -->
-            <nav class="sidebar-nav" aria-label="Main navigation">
-                <ul class="nav-menu">
-                    <li><a href="{{ url_for('home') }}"><i data-lucide="home"></i>Home</a></li>
-                    <li><a href="{{ url_for('optimizer') }}"><i data-lucide="trending-up"></i>Optimizer</a></li>
-                    <li><a href="{{ url_for('finance') }}"><i data-lucide="wallet"></i>Finance</a></li>
-                    <li><a href="{{ url_for('invoice') }}"><i data-lucide="file-text"></i>Invoices</a></li>
-                    <li><a href="#" class="active"><i data-lucide="user"></i>Profile</a></li>
-                    <li><a href="{{ url_for('contact') }}"><i data-lucide="mail"></i>Contact</a></li>
-                </ul>
-            </nav>
-            
-            <div class="sidebar-divider"></div>
-
-            <nav class="sidebar-nav" aria-label="Main navigation">
-
-                <ul class="nav-menu">
-                    <li><a href="#"><i data-lucide="settings"></i>Settings</a></li>
-                    <li><a href="#"><i data-lucide="bell"></i>Notifications</a></li>
-                    <li><a href="#"><i data-lucide="credit-card"></i>Billing</a></li>
-                    <li><a href="#"><i data-lucide="download"></i>Exports</a></li>
-                    <li><a href="{{ url_for('home') }}"><i data-lucide="log-out"></i>Sign Out</a></li>
-                </ul>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
         <main class="content">
             <div class="page-header fade-in">
                 <h1 class="page-title">Profile Settings</h1>
@@ -329,5 +278,4 @@
             });
         });
     </script>
-</body>
-</html>
+{% endblock %}

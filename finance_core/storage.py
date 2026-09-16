@@ -16,8 +16,10 @@ class DataStorage:
     def __init__(self, storage_dir: str = None):
         """Initialize the data storage."""
         if storage_dir is None:
-            # Use server directory relative to this file
-            storage_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data')
+            if 'VERCEL' in os.environ:
+                storage_dir = '/tmp/data'
+            else:
+                storage_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data')
         
         self.storage_dir = os.path.normpath(storage_dir)
         self._ensure_directories()
