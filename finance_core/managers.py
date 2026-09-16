@@ -53,11 +53,11 @@ class CategoryManager:
     
     @property
     def categories(self) -> List[Category]:
-        """Get all categories."""
+        """Get all active categories."""
         if self._categories is None:
             self._load_categories()
-        return self._categories
-    
+        return [c for c in self._categories if c.is_active]
+
     def _load_categories(self):
         """Load categories from storage or initialize defaults."""
         data = self.storage.get_categories()
@@ -121,19 +121,19 @@ class CategoryManager:
         category = self.get_category(category_id)
         if not category:
             raise ValueError(f"Category not found: {category_id}")
-        
+
         if category.is_system:
             # Soft delete - just mark as inactive
             category.is_active = False
         else:
             self._categories = [c for c in self._categories if c.id != category_id]
-        
+
         self._save_categories()
         return True
-    
+
     def _save_categories(self):
         """Save categories to storage."""
-        data = [c.to_dict() for c in self.categories]
+        data = [c.to_dict() for c in self._categories]
         self.storage.save_categories(data)
     
     def auto_categorize(self, description: str, amount: float, type_str: str = None) -> str:
@@ -1016,7 +1016,8 @@ class UserManager:
             'password_hash': password_hash,
             'salt': salt,
             'created_at': datetime.now().isoformat(),
-            'is_active': True
+            'is_active': True,
+            'profile': {}
         }
         
         self._users.append(user)
@@ -1075,3 +1076,33 @@ class UserManager:
         
         self._save_users()
         return True
+
+    def get_profile(self, user_id: str) -> Dict:
+        """Return the profile dict for a user."""
+        user = self.get_user(user_id)
+        if not user:
+            raise ValueError(f"User not found: {user_id}")
+        return dict(user.get('profile') or {})
+
+    def update_profile(self, user_id: str, **kwargs) -> Dict:
+        """Update editable profile fields for a user.
+
+        Allowed top-level keys: ``email``. Everything else (name, company,
+        preferences) is stored inside the user's ``profile`` dict.
+        """
+        user = self.get_user(user_id)
+        if not user:
+            raise ValueError(f"User not found: {user_id}")
+
+        if 'email' in kwargs:
+            user['email'] = ValidationUtils.validate_email(kwargs.pop('email')) or None
+
+        profile = user.setdefault('profile', {})
+        for key, value in kwargs.items():
+            if isinstance(value, bool):
+                profile[key] = value
+            elif value is not None:
+                profile[key] = ValidationUtils.sanitize_string(value, key)
+
+        self._save_users()
+        return dict(profile)

@@ -127,14 +127,14 @@ def create_app(config_class=Config) -> Flask:
     return app
 
 
-app = create_app()
-
-
 PUBLIC_ENDPOINTS = {
     'static',
     'pages.home', 'pages.about', 'pages.contact',
     'auth.login', 'auth.logout', 'auth.register',
 }
+
+
+app = create_app()
 
 
 def run_app(port: int = 5000, debug: bool = True):

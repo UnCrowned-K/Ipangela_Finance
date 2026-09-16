@@ -22,6 +22,10 @@ class Config:
     # Server-side storage for per-user optimizer state (kept out of the
     # client-side session cookie).
     OPTIMIZER_STATE_FOLDER = os.path.join(BASE_DIR, 'optimizer_state')
+
+    # Per-user data roots
+    FINANCE_DATA_FOLDER = os.path.join(BASE_DIR, 'data', 'finance')
+    INVOICE_STORAGE_FOLDER = os.path.join(BASE_DIR, 'invoices')
     
     # Ensure upload and export directories exist
     @staticmethod
@@ -33,6 +37,8 @@ class Config:
                 app.config['EXPORT_FOLDER'] = '/tmp/exports'
                 app.config['SAVED_FOLDER'] = '/tmp/saved'
                 app.config['OPTIMIZER_STATE_FOLDER'] = '/tmp/optimizer_state'
+                app.config['FINANCE_DATA_FOLDER'] = '/tmp/data/finance'
+                app.config['INVOICE_STORAGE_FOLDER'] = '/tmp/invoices'
             
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             os.makedirs(app.config['EXPORT_FOLDER'], exist_ok=True)

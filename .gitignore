@@ -1,1 +1,27 @@
 __pycache__/
+*.pyc
+
+# Runtime data – regenerated on first request
+data/
+invoices/
+saved/
+uploads/
+exports/
+optimizer_state/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.flaskenv
+.venv/
+venv/

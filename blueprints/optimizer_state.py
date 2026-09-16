@@ -17,7 +17,7 @@ _UNSET = object()
 
 def _empty_state() -> Dict[str, Any]:
     """Return a fresh, isolated empty state (no shared mutable defaults)."""
-    return {'budget': None, 'variables': []}
+    return {'budget': None, 'variables': [], 'optimizations_run': 0}
 
 
 def _folder(user_id: Optional[str]) -> str:
@@ -44,16 +44,20 @@ def load_state_for(user_id: Optional[str]) -> Dict[str, Any]:
     return {
         'budget': data.get('budget'),
         'variables': data.get('variables') or [],
+        'optimizations_run': data.get('optimizations_run') or 0,
     }
 
 
-def save_state_for(user_id: Optional[str], budget=_UNSET, variables=_UNSET) -> Dict[str, Any]:
+def save_state_for(user_id: Optional[str], budget=_UNSET, variables=_UNSET,
+                   optimizations_run=_UNSET) -> Dict[str, Any]:
     """Persist a user's optimizer state, returning the new state."""
     state = load_state_for(user_id)
     if budget is not _UNSET:
         state['budget'] = budget
     if variables is not _UNSET:
         state['variables'] = variables or []
+    if optimizations_run is not _UNSET:
+        state['optimizations_run'] = optimizations_run
     path = _path(user_id)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w') as f:
@@ -95,3 +99,16 @@ def set_variables(variables: List[Dict[str, Any]]) -> None:
 def clear_state() -> None:
     """Reset the current user's optimizer state."""
     clear_state_for(_me())
+
+
+def get_optimizations_run() -> int:
+    """Return the number of optimizations successfully run by the user."""
+    return load_state_for(_me())['optimizations_run']
+
+
+def increment_optimizations() -> int:
+    """Increment the user's successful optimization counter."""
+    count = get_optimizations_run()
+    new_count = count + 1
+    save_state_for(_me(), optimizations_run=new_count)
+    return new_count

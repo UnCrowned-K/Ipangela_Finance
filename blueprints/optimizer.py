@@ -62,6 +62,7 @@ def optimizer():
             else:
                 try:
                     max_profit, result = optimize(variables, budget)
+                    optimizer_state.increment_optimizations()
                     flash("Optimization completed successfully!", "success")
                 except OptimizationError as e:
                     flash(f"Optimization failed: {str(e)}", "error")

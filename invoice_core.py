@@ -134,6 +134,26 @@ class LineItem:
         if self.tax_percent < 0 or self.tax_percent > 100:
             raise ValueError("Tax must be between 0 and 100")
     
+    @property
+    def subtotal(self) -> Decimal:
+        """Line subtotal before discount and tax."""
+        return self.quantity * self.unit_price
+
+    @property
+    def discount_amount(self) -> Decimal:
+        """Discount amount in currency terms."""
+        return self.subtotal * self.discount_percent / Decimal("100")
+
+    @property
+    def tax_amount(self) -> Decimal:
+        """Tax amount in currency terms."""
+        return (self.subtotal - self.discount_amount) * self.tax_percent / Decimal("100")
+
+    @property
+    def total(self) -> Decimal:
+        """Line total after discount and tax."""
+        return self.subtotal - self.discount_amount + self.tax_amount
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -190,7 +210,7 @@ class Invoice:
         """Validate and calculate invoice values."""
         self.invoice_number = ValidationUtils.sanitize_string(self.invoice_number, "Invoice number")
         self.currency = self.currency.upper()
-        if self.currency not in [c.value for c in Currency]:
+        if self.currency not in Currency.__members__:
             self.currency = "USD"
         
         # Validate dates
@@ -215,7 +235,60 @@ class Invoice:
         
         if isinstance(self.discount_percent, (int, float)):
             self.discount_percent = Decimal(str(self.discount_percent))
-    
+
+    @property
+    def is_overdue(self) -> bool:
+        """True when the invoice is past due and not yet paid."""
+        if not self.due_date:
+            return False
+        due = datetime.strptime(self.due_date, "%Y-%m-%d").date()
+        return self.status not in (PaymentStatus.PAID.value, PaymentStatus.CANCELLED.value) and due < date.today()
+
+    @property
+    def days_until_due(self) -> int:
+        """Number of days until the invoice is due (negative when overdue)."""
+        if not self.due_date:
+            return 0
+        due = datetime.strptime(self.due_date, "%Y-%m-%d").date()
+        return (due - date.today()).days
+
+    @property
+    def currency_info(self) -> Dict[str, str]:
+        """Currency symbol and metadata for the invoice currency."""
+        try:
+            currency = Currency[self.currency]
+        except KeyError:
+            currency = Currency.USD
+        return currency.value
+
+    @property
+    def subtotal(self) -> Decimal:
+        """Sum of all line item subtotals."""
+        return sum((item.subtotal for item in self.line_items), Decimal("0"))
+
+    @property
+    def total_discount(self) -> Decimal:
+        """Sum of all line item discounts."""
+        return sum((item.discount_amount for item in self.line_items), Decimal("0"))
+
+    @property
+    def total_tax(self) -> Decimal:
+        """Sum of all line item taxes."""
+        return sum((item.tax_amount for item in self.line_items), Decimal("0"))
+
+    @property
+    def grand_total(self) -> Decimal:
+        """Final invoice total after discounts and taxes."""
+        return sum((item.total for item in self.line_items), Decimal("0"))
+
+    def update_status(self) -> None:
+        """Refresh the status to OVERDUE when the due date has passed."""
+        if self.status not in (PaymentStatus.PAID.value, PaymentStatus.CANCELLED.value):
+            if self.due_date:
+                due = datetime.strptime(self.due_date, "%Y-%m-%d").date()
+                if due < date.today():
+                    self.status = PaymentStatus.OVERDUE.value
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -472,7 +545,8 @@ class InvoiceCore:
         business_address: str = "",
         business_email: str = "",
         business_phone: str = "",
-        payment_instructions: str = ""
+        payment_instructions: str = "",
+        status: str = PaymentStatus.DRAFT.value,
     ) -> Tuple[Optional[Invoice], str]:
         """Create a new invoice."""
         try:
@@ -491,6 +565,7 @@ class InvoiceCore:
                 client=client,
                 line_items=line_items,
                 currency=currency,
+                status=status,
                 due_date=due_date,
                 notes=notes,
                 terms=terms,
@@ -683,7 +758,7 @@ Invoice Details:
 - Due Date: {invoice.due_date}
 - Amount Due: {currency_symbol}{invoice.grand_total:,.2f}
 
-{payment_instructions}
+{invoice.payment_instructions}
 
 Please let us know if you have any questions.
 

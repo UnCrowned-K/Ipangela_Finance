@@ -619,14 +619,25 @@ hr {
    homestyle.css (consolidated)
    ============================================ */
 /* ==========================================
-   Ipangela Finance - Enhanced Landing Page CSS
+   Club Book — ruled-landing aesthetic
    ========================================== */
 
-/* CSS Custom Properties (Design System) */
+/* Club Book palette additions */
 :root {
-    /* Typography - Inter font family */
+    --ink-blue: #1a3a5c;
+    --ink-blue-light: #2c5a8c;
+    --ink-blue-faint: rgba(26, 58, 92, 0.06);
+    --ink-blue-rule: rgba(26, 58, 92, 0.15);
+    --ledger-ruled: #e8e4d8;
+    --stamp-border: var(--ink-blue);
+    --stamp-text: var(--ink-blue);
+    --settlement-green: var(--color-success, #10b981);
+}
+
+/* Typography - Inter font family */
+:root {
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --font-mono: 'Space Mono', 'JetBrains Mono', 'Fira Code', monospace;
 
     /* Type Scale (Major Third: 1.25) */
     --text-xs: 0.64rem;
@@ -2221,6 +2232,482 @@ a:hover {
 
 :focus:not(:focus-visible) {
     outline: none;
+}
+
+/* ============================================
+   Club Book — landing page components
+   ============================================ */
+
+/* Ledger paper background for the body landing feel */
+.club-book {
+    background: var(--bg-primary, #f4f1e8);
+    color: var(--ink-blue, #1a3a5c);
+}
+
+/* Rubber-stamp CTA button */
+.btn-stamp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 0.65em 1.6em;
+    border: 3px solid var(--ink-blue);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--ink-blue);
+    font-family: var(--font-display, var(--font-primary));
+    font-weight: 800;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative;
+}
+
+.btn-stamp:hover {
+    background: var(--ink-blue);
+    color: #fff;
+    transform: rotate(-1deg) scale(1.02);
+}
+
+.btn-stamp-stamp {
+    transform: rotate(-1.5deg);
+}
+
+.btn-stamp-stamp:hover {
+    transform: rotate(0deg) scale(1.03);
+}
+
+.btn-stamp-settle {
+    border-color: var(--settlement-green);
+    color: var(--settlement-green);
+}
+
+.btn-stamp-settle:hover {
+    background: var(--settlement-green);
+    color: #fff;
+}
+
+/* Hero — Club Book ledger intro */
+.hero-club {
+    position: relative;
+    padding: clamp(5rem, 12vh, 9rem) var(--space-6) clamp(4rem, 10vh, 7rem);
+    background: var(--bg-primary, #f4f1e8);
+    overflow: hidden;
+    text-align: center;
+}
+
+.hero-club::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 31px,
+            var(--ink-blue-rule) 31px,
+            var(--ink-blue-rule) 32px
+        );
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.hero-club::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: var(--ink-blue-rule);
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.hero-club-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.hero-club h1 {
+    font-family: var(--font-display, var(--font-primary));
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    color: var(--ink-blue);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: var(--space-5);
+}
+
+.hero-club h1 em {
+    font-style: normal;
+    color: var(--settlement-green);
+}
+
+.hero-club .hero-tagline {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--ink-blue-light);
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto var(--space-8);
+}
+
+.hero-club .hero-stamp-row {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Three Tool Doors — ledger entries */
+.tool-doors {
+    padding: clamp(3rem, 8vh, 6rem) var(--space-6) clamp(4rem, 10vh, 7rem);
+    background: var(--bg-primary, #f4f1e8);
+}
+
+.tool-doors-heading {
+    text-align: center;
+    margin-bottom: var(--space-10);
+}
+
+.tool-doors-heading h2 {
+    font-family: var(--font-display, var(--font-primary));
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    color: var(--ink-blue);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-2);
+}
+
+.tool-doors-heading p {
+    color: var(--ink-blue-light);
+    font-size: var(--text-lg);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.tool-doors-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.tool-door {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--ledger-ruled);
+    border-radius: 6px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+    position: relative;
+}
+
+.tool-door:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(26, 58, 92, 0.1);
+}
+
+.tool-door-header {
+    padding: var(--space-5) var(--space-5) var(--space-3);
+    border-bottom: 2px solid var(--ink-blue-rule);
+    background: var(--ink-blue-faint);
+}
+
+.tool-door-num {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--ink-blue-light);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-1);
+}
+
+.tool-door-title {
+    font-family: var(--font-display, var(--font-primary));
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--ink-blue);
+    letter-spacing: -0.01em;
+}
+
+/* Mini-ledger inside each tool door */
+.tool-door-ledger {
+    flex: 1;
+    padding: var(--space-5);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: 1.8;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 27px,
+            var(--ledger-ruled) 27px,
+            var(--ledger-ruled) 28px
+        );
+}
+
+.ledger-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 2px 0;
+}
+
+.ledger-row-label {
+    color: var(--ink-blue-light);
+    font-family: var(--font-primary);
+    font-size: var(--text-sm);
+}
+
+.ledger-row-value {
+    color: var(--ink-blue);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.ledger-row-total {
+    border-top: 2px solid var(--ink-blue);
+    margin-top: var(--space-3);
+    padding-top: var(--space-2);
+}
+
+.ledger-row-total .ledger-row-value {
+    color: var(--settlement-green);
+    font-size: var(--text-lg);
+}
+
+.ledger-row-arrow {
+    color: var(--ink-blue-light);
+}
+
+/* Tool door CTA footer */
+.tool-door-cta {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--ledger-ruled);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tool-door-cta-label {
+    font-family: var(--font-primary);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.tool-door-cta-arrow {
+    width: 20px;
+    height: 20px;
+    color: var(--ink-blue);
+    transition: transform var(--transition-base);
+}
+
+.tool-door:hover .tool-door-cta-arrow {
+    transform: translateX(4px);
+}
+
+/* CTA banner — rubber stamp on ruled paper */
+.cta-club {
+    position: relative;
+    padding: clamp(3rem, 8vh, 6rem) var(--space-6);
+    background: var(--ink-blue);
+    text-align: center;
+    overflow: hidden;
+}
+
+.cta-club::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 31px,
+            rgba(255,255,255,0.06) 31px,
+            rgba(255,255,255,0.06) 32px
+        );
+    pointer-events: none;
+}
+
+.cta-club-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-club h2 {
+    font-family: var(--font-display, var(--font-primary));
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+}
+
+.cta-club p {
+    color: rgba(255,255,255,0.75);
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-8);
+}
+
+.cta-club .btn-stamp {
+    border-color: #fff;
+    color: #fff;
+    transform: rotate(-1deg);
+}
+
+.cta-club .btn-stamp:hover {
+    background: #fff;
+    color: var(--ink-blue);
+}
+
+/* Features strip */
+.features-club {
+    padding: clamp(3rem, 8vh, 6rem) var(--space-6);
+    background: #fff;
+    border-top: 1px solid var(--ledger-ruled);
+    border-bottom: 1px solid var(--ledger-ruled);
+}
+
+.features-club-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.feature-club-item {
+    text-align: center;
+    padding: var(--space-6) var(--space-4);
+}
+
+.feature-club-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--ink-blue-rule);
+    border-radius: 4px;
+    color: var(--ink-blue);
+}
+
+.feature-club-item h3 {
+    font-family: var(--font-display, var(--font-primary));
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--ink-blue);
+    margin-bottom: var(--space-2);
+}
+
+.feature-club-item p {
+    color: var(--ink-blue-light);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive — club book */
+@media (max-width: 900px) {
+    .tool-doors-grid {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+    }
+
+    .features-club-grid {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero-club .hero-stamp-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-stamp {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .ledger-form .form-field-row > .form-group {
+        flex: 1 1 100%;
+    }
+}
+
+/* Ledger form — ruled paper contact form */
+.ledger-form .form-field-row {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+}
+
+.ledger-form .form-field-row > .form-group {
+    flex: 1 1 200px;
+}
+
+.ledger-form .form-group {
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.ledger-form label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-blue-light);
+    margin-bottom: var(--space-2);
+}
+
+.ledger-form input[type="text"],
+.ledger-form input[type="email"],
+.ledger-form select,
+.ledger-form textarea {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--ink-blue-rule);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--ink-blue);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.ledger-form input:focus,
+.ledger-form select:focus,
+.ledger-form textarea:focus {
+    outline: none;
+    border-color: var(--ink-blue);
+    box-shadow: 0 0 0 3px var(--ink-blue-faint);
+}
+
+.ledger-form textarea {
+    resize: vertical;
 }
 
 /* ============================================
@@ -5781,4 +6268,292 @@ html[data-theme="dark"] .theme-icon-light {
 .preview-totals .total-row .amount {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   Sidebar system — single source of truth
+   Consolidates the finance/invoice/profile-era sidebars into
+   one deterministic design for every dashboard. Lives last in
+   the file so it wins the cascade over all older definitions.
+   Palette follows the Mobile Money tokens (paper / till).
+   ========================================================= */
+
+/* Rail */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-default);
+    color: var(--text-secondary);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: var(--z-sticky);
+    transition: width var(--transition-slow), transform var(--transition-slow);
+}
+
+.sidebar.collapsed {
+    width: 64px;
+}
+
+/* Brand */
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-5);
+    color: var(--primary-color);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-default);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.sidebar-logo:hover {
+    color: var(--primary-color);
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.sidebar-logo .logo-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+}
+
+.sidebar-logo .logo-text {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar.collapsed .sidebar-logo .logo-text,
+.sidebar.collapsed .sidebar-nav .nav-menu a span {
+    display: none;
+}
+
+/* Collapsed rail: icon-only pills, centered, no overflow */
+.sidebar.collapsed .sidebar-nav .nav-menu li a {
+    margin: 2px var(--space-3);
+    padding: var(--space-3) 0;
+    justify-content: center;
+}
+
+/* Collapse toggle */
+.sidebar-toggle {
+    position: absolute;
+    right: 8px;
+    top: var(--space-5);
+    width: 24px;
+    height: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-sm);
+    z-index: 1;
+    transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.sidebar-toggle:hover {
+    color: var(--primary-color);
+}
+
+.sidebar.collapsed .sidebar-toggle {
+    transform: rotate(180deg);
+}
+
+.sidebar-toggle [data-lucide] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
+/* Navigation groups */
+.sidebar-nav {
+    padding: var(--space-4) 0;
+}
+
+.sidebar-nav .nav-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-nav .nav-menu li {
+    display: block;
+    margin: 0;
+}
+
+.sidebar-nav .nav-menu li a {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 2px var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: none;
+    border-left: none;
+    border-radius: 4px;
+    width: auto;
+    box-sizing: border-box;
+    color: var(--text-secondary);
+    font-size: var(--text-base);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.sidebar-nav .nav-menu li a:hover {
+    background: var(--color-primary-50);
+    color: var(--primary-color);
+}
+
+.sidebar-nav .nav-menu li a.active {
+    background: var(--color-primary-500);
+    color: #ffffff;
+}
+
+.sidebar-nav .nav-menu li a [data-lucide] {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin: 0;
+    color: inherit;
+}
+
+/* Dark rail — the till at night */
+html[data-theme="dark"] .sidebar {
+    background: var(--bg-card);
+    border-right-color: var(--border-default);
+}
+
+html[data-theme="dark"] .sidebar-logo {
+    border-bottom-color: var(--border-default);
+}
+
+html[data-theme="dark"] .sidebar-logo:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme="dark"] .sidebar-nav .nav-menu li a:hover {
+    background: rgba(61, 220, 142, 0.1);
+    color: var(--color-primary-500);
+}
+
+html[data-theme="dark"] .sidebar-nav .nav-menu li a.active {
+    background: var(--color-primary-500);
+    color: #04130b;
+}
+
+/* Dividers + footer */
+.sidebar-divider {
+    height: 1px;
+    background: var(--border-default);
+    margin: var(--space-2) var(--space-6);
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: var(--space-4);
+}
+
+/* Theme toggle inside the sidebar */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    background: transparent;
+    border: 1px solid var(--border-default);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.theme-toggle:hover {
+    color: var(--primary-color);
+    border-color: var(--color-primary-400);
+}
+
+.theme-toggle [data-lucide] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+/* =========================================================
+   Sidebar layout contract — every dashboard main area
+   shifts with the rail and reacts to collapse.
+   ========================================================= */
+.sidebar ~ .container,
+.sidebar ~ .finance-container,
+.sidebar ~ .files-container,
+.sidebar ~ .main-wrapper {
+    margin-left: 250px;
+    transition: margin-left var(--transition-slow);
+}
+
+/* Profile-style pages use .main-wrapper > .content; kill the
+   legacy double margin so only the wrapper offsets. */
+.sidebar ~ .main-wrapper .content {
+    margin-left: 0;
+    max-width: none;
+}
+
+/* Optimizer + invoice containers used an older !important rule */
+.sidebar ~ .container {
+    margin-left: 250px !important;
+    max-width: calc(100% - 270px) !important;
+}
+
+.sidebar.collapsed ~ .container,
+.sidebar.collapsed ~ .finance-container,
+.sidebar.collapsed ~ .files-container,
+.sidebar.collapsed ~ .main-wrapper {
+    margin-left: 64px;
+}
+
+.sidebar.collapsed ~ .container {
+    margin-left: 64px !important;
+    max-width: calc(100% - 96px) !important;
+}
+
+/* Small viewport — off-canvas rail */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        height: 100vh;
+        z-index: 999;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar ~ .container,
+    .sidebar ~ .finance-container,
+    .sidebar ~ .files-container,
+    .sidebar ~ .main-wrapper {
+        margin-left: 0 !important;
+    }
+
+    .sidebar ~ .container {
+        max-width: 100% !important;
+    }
 }

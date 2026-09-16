@@ -1,1193 +1,1076 @@
 {% extends "base.html" %}
 {% block title %}Invoice Maker - Profit Optimizer{% endblock %}
-{% block styles %}
-{% endblock %}
-{% block sidebar_extra %}
-    <nav class="sidebar-nav" aria-label="Invoice navigation">
-        <ul class="nav-menu">
-            <li><a href="{{ url_for('invoice.invoice') }}"><i data-lucide="notebook-text"></i><span>All Invoices</span></a></li>
-            <li><a href="{{ url_for('invoice.invoice') }}"><i data-lucide="notebook"></i><span>New Invoice</span></a></li>
-            <li><a href="{{ url_for('invoice.invoice') }}"><i data-lucide="notepad-text-dashed"></i><span>Drafts</span></a></li>
-        </ul>
-    </nav>
-    <div class="sidebar-divider"></div>
-{% endblock %}
+{% block sidebar_extra %}{% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="section-header">
-            <h1 class="section-title">Invoice Maker</h1>
-            <div class="button-group">
-                <button type="button" class="btn btn-primary" onclick="showModal('invoiceListModal')">View All Invoices</button>
-                <button type="button" class="btn btn-complementary" onclick="createNewInvoice()">New Invoice</button>
+
+<!-- ===== Slide-out All Invoices panel ===== -->
+<div class="invoices-slide-panel" id="invoicesSlidePanel">
+    <div class="invoices-slide-backdrop" onclick="closeInvoicesPanel()"></div>
+    <div class="invoices-slide-content">
+        <div class="invoices-slide-header">
+            <h3>All Invoices</h3>
+            <button class="btn-icon" onclick="closeInvoicesPanel()" aria-label="Close panel"><i data-lucide="x"></i></button>
+        </div>
+        <div class="invoices-slide-body" id="invoicesSlideBody">
+            <p class="text-muted" style="padding:20px;">Loading invoices...</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Delete Confirmation Modal ===== -->
+<div id="deleteModal" class="modal" role="dialog" aria-modal="true" aria-label="Confirm delete">
+    <div class="modal-content" style="max-width:400px;">
+        <div class="modal-header">
+            <h3 class="modal-title">Delete Invoice</h3>
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this invoice? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+            <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Email Modal ===== -->
+<div id="emailModal" class="modal" role="dialog" aria-modal="true" aria-label="Send invoice email">
+    <div class="modal-content" style="max-width:480px;">
+        <div class="modal-header">
+            <h3 class="modal-title">Send Invoice via Email</h3>
+            <span class="close" onclick="closeModal('emailModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="emailTo">To</label>
+                <input type="email" id="emailTo" class="form-control" placeholder="client@example.com">
+            </div>
+            <div class="form-group">
+                <label for="emailSubject">Subject</label>
+                <input type="text" id="emailSubject" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="emailBody">Message</label>
+                <textarea id="emailBody" class="form-control" rows="4" placeholder="Message to client..."></textarea>
             </div>
         </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('emailModal')">Cancel</button>
+            <button class="btn btn-primary" id="sendEmailBtn" onclick="sendEmail()">Send</button>
+        </div>
+    </div>
+</div>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message {{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+<!-- ===== Invoice Workspace ===== -->
+<div class="invoice-workspace">
 
-        <!-- Invoice Form -->
-        <form id="invoiceForm" method="POST" action="{{ url_for('invoice.save_invoice') }}" onsubmit="return validateForm()">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" id="invoiceId" name="invoice_id" value="">
-            <input type="hidden" id="invoiceData" name="invoice_data" value="">
+    <!-- Header bar -->
+    <header class="iw-header">
+        <div class="iw-header-left">
+            <h1 class="iw-title">Invoice Maker</h1>
+            <span class="iw-save-status" id="saveStatus"></span>
+        </div>
+        <div class="iw-header-right">
+            <button class="btn btn-ghost" onclick="openInvoicesPanel()"><i data-lucide="list"></i><span>All Invoices</span></button>
+            <button class="btn btn-complementary" onclick="newInvoice()"><i data-lucide="plus"></i><span>New</span></button>
+            <button class="btn btn-secondary" onclick="downloadPDF()"><i data-lucide="download"></i><span>PDF</span></button>
+            <button class="btn btn-primary" id="saveBtn" onclick="saveInvoice()"><i data-lucide="save"></i><span>Save</span></button>
+        </div>
+    </header>
 
-            <!-- Business Details Section -->
-            <div class="card">
-                <h3 class="card-title">Your Business Details</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="businessName">Business Name *</label>
-                        <input type="text" id="businessName" name="business_name" class="form-control" 
-                               placeholder="Your Company Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="businessEmail">Business Email *</label>
-                        <input type="email" id="businessEmail" name="business_email" class="form-control" 
-                               placeholder="billing@yourcompany.com" required>
-                    </div>
+    <!-- Body: editor + preview split -->
+    <div class="iw-body" id="iwBody">
+
+        <!-- ===== Editor (left panel) ===== -->
+        <div class="iw-editor" id="iwEditor">
+
+            <!-- Top row: invoice #, dates, currency, status -->
+            <div class="editor-top-row">
+                <div class="etr-field etr-invoice-num">
+                    <label>Invoice #</label>
+                    <input type="text" id="invoiceNumber" readonly placeholder="Auto-generated">
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="businessPhone">Phone</label>
-                        <input type="tel" id="businessPhone" name="business_phone" class="form-control" 
-                               placeholder="+27 12-345-4567">
-                    </div>
-                    <div class="form-group">
-                        <label for="businessAddress">Address</label>
-                        <input type="text" id="businessAddress" name="business_address" class="form-control" 
-                               placeholder="123 Business St, City, Province, Postal Code,Country">
+                <div class="etr-field">
+                    <label>Issue Date</label>
+                    <input type="date" id="issueDate" value="{{ today_date }}">
+                </div>
+                <div class="etr-field">
+                    <label>Due Date</label>
+                    <input type="date" id="dueDate">
+                </div>
+                <div class="etr-field">
+                    <label>Currency</label>
+                    <select id="currency">
+                        <option value="ZAR" selected>ZAR (R)</option>
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (&euro;)</option>
+                        <option value="GBP">GBP (&pound;)</option>
+                        <option value="JPY">JPY (&yen;)</option>
+                        <option value="CAD">CAD (C$)</option>
+                        <option value="AUD">AUD (A$)</option>
+                        <option value="CHF">CHF (CHF)</option>
+                    </select>
+                </div>
+                <div class="etr-field">
+                    <label>Status</label>
+                    <select id="status">
+                        <option value="draft">Draft</option>
+                        <option value="sent">Sent</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Business section -->
+            <div class="editor-section">
+                <button class="section-toggle" type="button" onclick="toggleSection('businessBody', this)" aria-expanded="true">
+                    <span class="st-left"><i data-lucide="building-2"></i> Your Business</span>
+                    <i data-lucide="chevron-down" class="st-icon"></i>
+                </button>
+                <div class="section-body" id="businessBody">
+                    <div class="editor-grid two-col">
+                        <input id="businessName" placeholder="Business Name" autocomplete="organization">
+                        <input id="businessEmail" type="email" placeholder="Email" autocomplete="email">
+                        <input id="businessPhone" type="tel" placeholder="Phone" autocomplete="tel">
+                        <input id="businessAddress" placeholder="Address" autocomplete="street-address">
                     </div>
                 </div>
             </div>
 
-            <!-- Client Details Section -->
-            <div class="card">
-                <h3 class="card-title">Client Details</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="clientName">Client Name *</label>
-                        <input type="text" id="clientName" name="client_name" class="form-control" 
-                               placeholder="Client Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="clientEmail">Client Email *</label>
-                        <input type="email" id="clientEmail" name="client_email" class="form-control" 
-                               placeholder="client@example.com" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="clientCompany">Company</label>
-                        <input type="text" id="clientCompany" name="client_company" class="form-control" 
-                               placeholder="Company Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="clientPhone">Phone</label>
-                        <input type="tel" id="clientPhone" name="client_phone" class="form-control" 
-                               placeholder="+27 12-987-6543">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="clientAddress">Address</label>
-                    <input type="text" id="clientAddress" name="client_address" class="form-control" 
-                           placeholder="123 Client St, City, Province, Postal Code, Country">
-                </div>
-                <div class="form-group">
-                    <label for="clientTaxId">Tax ID / VAT Number</label>
-                    <input type="text" id="clientTaxId" name="client_tax_id" class="form-control" 
-                           placeholder="XX-XXXXXXX">
-                </div>
-            </div>
-
-            <!-- Invoice Details Section -->
-            <div class="card">
-                <h3 class="card-title">Invoice Details</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="invoiceNumber">Invoice Number</label>
-                        <input type="text" id="invoiceNumber" name="invoice_number" class="form-control" 
-                               placeholder="Will be auto-generated" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="currency">Currency</label>
-                        <select id="currency" name="currency" class="form-control" onchange="updateCurrency()">
-                            <option value="ZAR" selected>ZAR - South African Rand (R)</option>
-                            <option value="USD">USD - US Dollar ($)</option>
-                            <option value="EUR">EUR - Euro (€)</option>
-                            <option value="GBP">GBP - British Pound (£)</option>
-                            <option value="JPY">JPY - Japanese Yen (¥)</option>
-                            <option value="CAD">CAD - Canadian Dollar (C$)</option>
-                            <option value="AUD">AUD - Australian Dollar (A$)</option>
-                            <option value="CHF">CHF - Swiss Franc (CHF)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="issueDate">Issue Date *</label>
-                        <input type="date" id="issueDate" name="issue_date" class="form-control" 
-                               value="{{ today_date }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="dueDate">Due Date</label>
-                        <input type="date" id="dueDate" name="due_date" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" name="status" class="form-control">
-                            <option value="draft">Draft</option>
-                            <option value="sent">Sent</option>
-                            <option value="paid">Paid</option>
-                            <option value="overdue">Overdue</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
+            <!-- Client section -->
+            <div class="editor-section">
+                <button class="section-toggle" type="button" onclick="toggleSection('clientBody', this)" aria-expanded="true">
+                    <span class="st-left"><i data-lucide="user"></i> Client</span>
+                    <i data-lucide="chevron-down" class="st-icon"></i>
+                </button>
+                <div class="section-body" id="clientBody">
+                    <div class="editor-grid two-col">
+                        <input id="clientName" placeholder="Client Name" required>
+                        <input id="clientEmail" type="email" placeholder="Client Email" required>
+                        <input id="clientCompany" placeholder="Company">
+                        <input id="clientPhone" type="tel" placeholder="Phone">
+                        <input id="clientAddress" placeholder="Address">
+                        <input id="clientTaxId" placeholder="Tax ID / VAT">
                     </div>
                 </div>
             </div>
 
-            <!-- Line Items Section -->
-            <div class="card">
-                <h3 class="card-title">Line Items</h3>
-                <div class="line-items-container">
-                    <table class="table line-items-table" id="lineItemsTable">
+            <!-- Line items -->
+            <div class="editor-section line-items-section">
+                <div class="section-header-inline">
+                    <h3><i data-lucide="list"></i> Line Items</h3>
+                    <button class="btn btn-primary btn-sm" type="button" onclick="addLineItem()"><i data-lucide="plus"></i> Add Item</button>
+                </div>
+                <div class="line-items-wrap">
+                    <table class="iv-line-table">
                         <thead>
                             <tr>
-                                <th style="width: 30%;">Description *</th>
-                                <th style="width: 10%;">Qty *</th>
-                                <th style="width: 12%;">Price *</th>
-                                <th style="width: 10%;">Discount %</th>
-                                <th style="width: 10%;">Tax %</th>
-                                <th style="width: 12%;">Total</th>
-                                <th style="width: 8%;">Actions</th>
+                                <th class="col-desc">Description</th>
+                                <th class="col-num">Qty</th>
+                                <th class="col-num">Price</th>
+                                <th class="col-num">Disc %</th>
+                                <th class="col-num">Tax %</th>
+                                <th class="col-num">Amount</th>
+                                <th class="col-action"></th>
                             </tr>
                         </thead>
-                        <tbody id="lineItemsBody">
-                            <!-- Line items will be added here dynamically -->
-                        </tbody>
-                    </table>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="addLineItem()">
-                        + Add Line Item
-                    </button>
-                </div>
-
-                <!-- Totals -->
-                <div class="totals-section">
-                    <div class="totals">
-                        <div class="total-row">
-                            <span>Subtotal:</span>
-                            <span id="subtotal">0.00</span>
-                        </div>
-                        <div class="total-row">
-                            <span>Total Discount:</span>
-                            <span id="totalDiscount">0.00</span>
-                        </div>
-                        <div class="total-row">
-                            <span>Total Tax:</span>
-                            <span id="totalTax">0.00</span>
-                        </div>
-                        <div class="total-row grand-total">
-                            <span>Grand Total:</span>
-                            <span id="grandTotal">0.00</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notes and Terms Section -->
-            <div class="card">
-                <h3 class="card-title">Notes, Terms & Payment</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" name="notes" class="form-control" rows="3" 
-                                  placeholder="Additional notes for the client..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="terms">Terms & Conditions</label>
-                        <textarea id="terms" name="terms" class="form-control" rows="3" 
-                                  placeholder="Payment terms, return policy, etc..."></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="paymentInstructions">Payment Instructions</label>
-                    <textarea id="paymentInstructions" name="payment_instructions" class="form-control" rows="2" 
-                              placeholder="Bank details, payment methods, etc..."></textarea>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="form-actions">
-                <button type="button" class="btn btn-complementary" onclick="previewInvoice()">Preview Invoice</button>
-                <button type="button" class="btn btn-primary" id="saveDraftBtn" onclick="saveDraft()">Save Draft</button>
-                <button type="submit" class="btn btn-success">Save & Send</button>
-                <button type="button" class="btn btn-secondary" onclick="downloadPDF()">Download PDF</button>
-                <button type="button" class="btn btn-primary" onclick="emailInvoice()">Send Email</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Invoice List Modal -->
-    <div id="invoiceListModal" class="modal">
-        <div class="modal-content" style="max-width: 900px;">
-            <div class="modal-header">
-                <h3 class="modal-title">All Invoices</h3>
-                <span class="close" onclick="closeModal('invoiceListModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table" id="invoicesTable">
-                        <thead>
-                            <tr>
-                                <th>Invoice #</th>
-                                <th>Client</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Due Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="invoicesTableBody">
-                            <!-- Invoices will be loaded here -->
-                        </tbody>
+                        <tbody id="lineItemsBody"></tbody>
                     </table>
                 </div>
+                <div class="totals-block">
+                    <div class="total-row"><span>Subtotal</span><span id="subtotal">R 0.00</span></div>
+                    <div class="total-row"><span>Discount</span><span id="totalDiscount">-R 0.00</span></div>
+                    <div class="total-row"><span>Tax</span><span id="totalTax">R 0.00</span></div>
+                    <div class="total-row total-grand"><span>Total</span><span id="grandTotal">R 0.00</span></div>
+                </div>
+            </div>
+
+            <!-- Notes & Terms -->
+            <div class="editor-section">
+                <button class="section-toggle" type="button" onclick="toggleSection('notesBody', this)" aria-expanded="false">
+                    <span class="st-left"><i data-lucide="file-text"></i> Notes &amp; Terms</span>
+                    <i data-lucide="chevron-down" class="st-icon"></i>
+                </button>
+                <div class="section-body collapsed" id="notesBody">
+                    <textarea id="notes" rows="2" placeholder="Additional notes for the client..."></textarea>
+                    <textarea id="terms" rows="2" placeholder="Terms &amp; Conditions..."></textarea>
+                    <textarea id="paymentInstructions" rows="2" placeholder="Payment Instructions..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Preview (right panel) ===== -->
+        <div class="iw-preview-panel" id="previewPanel">
+            <div class="preview-toolbar">
+                <label for="templateSelect" class="preview-toolbar-label">Template</label>
+                <select id="templateSelect" onchange="setTemplate(this.value)">
+                    <option value="default">Default</option>
+                    <option value="modern">Modern</option>
+                    <option value="minimal">Minimal</option>
+                </select>
+            </div>
+            <div class="preview-page-wrap">
+                <div class="invoice-a4 template-default" id="invoiceA4">
+                    <!-- live preview content injected here -->
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Preview Modal -->
-    <div id="previewModal" class="modal">
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <h3 class="modal-title">Invoice Preview</h3>
-                <span class="close" onclick="closeModal('previewModal')">&times;</span>
-            </div>
-            <div class="modal-body" id="previewContent">
-                <!-- Preview content will be rendered here -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('previewModal')">Close</button>
-                <button type="button" class="btn btn-primary" onclick="downloadPDF()">Download PDF</button>
-            </div>
-        </div>
-    </div>
+    <!-- Mobile bottom tabs -->
+    <nav class="iw-mobile-tabs" id="mobileTabs" aria-label="Switch between edit and preview">
+        <button class="iw-tab active" data-tab="edit" onclick="switchTab('edit')"><i data-lucide="pencil"></i><span>Edit</span></button>
+        <button class="iw-tab" data-tab="preview" onclick="switchTab('preview')"><i data-lucide="file-text"></i><span>Preview</span></button>
+    </nav>
+</div>
 
-    <!-- Email Modal -->
-    <div id="emailModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3 class="modal-title">Send Invoice via Email</h3>
-                <span class="close" onclick="closeModal('emailModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="emailTo">To:</label>
-                    <input type="email" id="emailTo" class="form-control" placeholder="client@example.com">
-                </div>
-                <div class="form-group">
-                    <label for="emailSubject">Subject:</label>
-                    <input type="text" id="emailSubject" class="form-control" 
-                           value="Invoice from Your Business">
-                </div>
-                <div class="form-group">
-                    <label for="emailBody">Message:</label>
-                    <textarea id="emailBody" class="form-control" rows="5" 
-                              placeholder="Additional message to client..."></textarea>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="attachPdf" checked>
-                    <label for="attachPdf">Attach PDF invoice</label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('emailModal')">Cancel</button>
-                <button type="button" class="btn btn-primary" id="sendEmailBtn" onclick="sendEmail()">Send Email</button>
-            </div>
-        </div>
-    </div>
+<script>
+/* =========================================================
+   State
+   ========================================================= */
+const CURRENCY_SYMBOLS = {USD:'$',EUR:'\u20ac',GBP:'\u00a3',ZAR:'R',JPY:'\u00a5',CAD:'C$',AUD:'A$',CHF:'CHF'};
+let lineItems = [];
+let currentInvoiceId = '';
+let invoiceToDelete = '';
+let _previewTimer = null;
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">
-                <h3 class="modal-title">Confirm Delete</h3>
-                <span class="close" onclick="closeModal('deleteModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this invoice? This action cannot be undone.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
-            </div>
-        </div>
-    </div>
+/* =========================================================
+   Init
+   ========================================================= */
+document.addEventListener('DOMContentLoaded', function(){
+    var tpl = localStorage.getItem('invoice-template') || 'default';
+    document.getElementById('templateSelect').value = tpl;
+    setTemplate(tpl);
+    addLineItem();
+    updatePreview();
+    loadInvoicesSlide();
+    lucide.createIcons();
+});
 
-    <script>
-        // Currency symbols
-        const currencySymbols = {
-            USD: '$', EUR: '€', GBP: '£', ZAR: 'R', JPY: '¥',
-            CAD: 'C$', AUD: 'A$', CHF: 'CHF'
+/* =========================================================
+   Preview: debounce + render
+   ========================================================= */
+function schedulePreviewUpdate(){
+    clearTimeout(_previewTimer);
+    _previewTimer = setTimeout(updatePreview, 150);
+}
+
+function updatePreview(){
+    var d = collectInvoiceData();
+    document.getElementById('invoiceA4').innerHTML = previewHTML(d);
+    lucide.createIcons({nameAttr:'data-lucide', parent: document.getElementById('invoiceA4')});
+}
+
+function collectInvoiceData(){
+    var client = {
+        name: gv('clientName'), email: gv('clientEmail'),
+        phone: gv('clientPhone'), address: gv('clientAddress'),
+        company: gv('clientCompany'), tax_id: gv('clientTaxId')
+    };
+    var business = {
+        name: gv('businessName'), email: gv('businessEmail'),
+        phone: gv('businessPhone'), address: gv('businessAddress')
+    };
+    var items = lineItems.map(function(it){
+        return {
+            description: it.description, sku: it.sku,
+            quantity: it.quantity, unit_price: it.unit_price,
+            discount_percent: it.discount_percent, tax_percent: it.tax_percent
         };
+    });
+    return {
+        invoice_id: currentInvoiceId,
+        invoice_number: gv('invoiceNumber'),
+        currency: gv('currency'),
+        issue_date: gv('issueDate'),
+        due_date: gv('dueDate'),
+        status: gv('status'),
+        business: business,
+        client: client,
+        line_items: items,
+        notes: gv('notes'),
+        terms: gv('terms'),
+        payment_instructions: gv('paymentInstructions')
+    };
+}
 
-        let lineItems = [];
-        let currentInvoiceId = '';
-        let invoiceToDelete = '';
+function gv(id){ return (document.getElementById(id)||{}).value||''; }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set minimum due date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('dueDate').min = today;
-            document.getElementById('issueDate').max = today;
+function previewHTML(d){
+    var s = CURRENCY_SYMBOLS[d.currency]||'$', st = d.status||'draft';
+    var brandName = d.business.name||'Your Business';
+    var itemsHTML = d.line_items.map(function(it){
+        var amt = lineTotal(it);
+        var sub = it.sku ? '<span class="iv-sku">'+esc(it.sku)+'</span>' : '';
+        return '<tr><td class="iv-desc">'+esc(it.description)+sub+'</td>'
+            +'<td class="text-right">'+fmtN(it.quantity)+'</td>'
+            +'<td class="text-right">'+s+fmtN(it.unit_price)+'</td>'
+            +'<td class="text-right">'+s+fmt2(amt)+'</td></tr>';
+    }).join('');
+    var sub = calcSubtotal(d), disc = calcDiscount(d), tax = calcTax(d), grand = calcGrand(d);
+    var notes = d.notes ? '<div class="iv-section"><div class="iv-section-label">Notes</div>'+esc(d.notes)+'</div>' : '';
+    var terms = d.terms ? '<div class="iv-section"><div class="iv-section-label">Terms</div>'+esc(d.terms)+'</div>' : '';
+    var pay   = d.payment_instructions ? '<div class="iv-section"><div class="iv-section-label">Payment</div>'+esc(d.payment_instructions)+'</div>' : '';
 
-            // Add first line item
-            addLineItem();
+    return ''
+    +'<div class="iv-header">'
+        +'<div class="iv-brand">'
+            +'<div class="iv-brand-name">'+esc(brandName)+'</div>'
+            +(d.business.address ? '<div>'+esc(d.business.address)+'</div>' : '')
+            +(d.business.email  ? '<div>'+esc(d.business.email)+'</div>'  : '')
+            +(d.business.phone  ? '<div>'+esc(d.business.phone)+'</div>'  : '')
+        +'</div>'
+        +'<div class="iv-meta">'
+            +'<div class="iv-doc-title">INVOICE</div>'
+            +'<div class="iv-doc-number">'+esc(d.invoice_number||'\u2014')+'</div>'
+            +'<div class="iv-doc-date"><span>Issued</span> '+esc(d.issue_date||'\u2014')+'</div>'
+            +'<div class="iv-doc-date"><span>Due</span> '+esc(d.due_date||'Upon receipt')+'</div>'
+            +'<span class="iv-status iv-status-'+st+'">'+st+'</span>'
+        +'</div>'
+    +'</div>'
+    +'<div class="iv-billto">'
+        +'<div class="iv-section-label">BILL TO</div>'
+        +'<div class="iv-client-name">'+esc(d.client.name||'Client Name')+'</div>'
+        +(d.client.company ? '<div>'+esc(d.client.company)+'</div>' : '')
+        +(d.client.address ? '<div>'+esc(d.client.address)+'</div>' : '')
+        +(d.client.email  ? '<div>'+esc(d.client.email)+'</div>'  : '')
+        +(d.client.tax_id ? '<div class="iv-tax-id">Tax ID: '+esc(d.client.tax_id)+'</div>' : '')
+    +'</div>'
+    +'<table class="iv-items">'
+        +'<thead><tr><th>Description</th><th class="text-right">Qty</th><th class="text-right">Price</th><th class="text-right">Amount</th></tr></thead>'
+        +'<tbody>'+itemsHTML+'</tbody>'
+    +'</table>'
+    +'<div class="iv-totals">'
+        +'<div class="iv-total-row"><span>Subtotal</span><span>'+s+fmt2(sub)+'</span></div>'
+        +'<div class="iv-total-row"><span>Discount</span><span>-'+s+fmt2(Math.abs(disc))+'</span></div>'
+        +'<div class="iv-total-row"><span>Tax</span><span>'+s+fmt2(tax)+'</span></div>'
+        +'<div class="iv-total-row iv-total-grand"><span>Total</span><span>'+s+fmt2(grand)+'</span></div>'
+    +'</div>'
+    +notes+terms+pay;
+}
 
-            // Load existing invoices
-            loadInvoices();
+/* =========================================================
+   Line items
+   ========================================================= */
+function addLineItem(){
+    lineItems.push({description:'', quantity:1, unit_price:0, discount_percent:0, tax_percent:0, sku:''});
+    renderLineItems();
+    schedulePreviewUpdate();
+}
+
+function removeLineItem(i){
+    if(lineItems.length<=1) return;
+    lineItems.splice(i,1);
+    renderLineItems();
+    calculateTotals();
+    schedulePreviewUpdate();
+}
+
+function updateLineItem(i, field, value, isNumber){
+    lineItems[i][field] = isNumber ? (parseFloat(value)||0) : value;
+    calculateTotals();
+    schedulePreviewUpdate();
+}
+
+function renderLineItems(){
+    var tbody = document.getElementById('lineItemsBody');
+    var sym = CURRENCY_SYMBOLS[gv('currency')]||'$';
+    tbody.innerHTML = '';
+    lineItems.forEach(function(item, i){
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td class="td-desc">'
+                +'<input type="text" placeholder="Description" value="'+escAttr(item.description)+'" '
+                    +'oninput="updateLineItem('+i+',\'description\',this.value)" required>'
+                +'<input type="text" class="input-sm" placeholder="SKU" value="'+escAttr(item.sku)+'" '
+                    +'oninput="updateLineItem('+i+',\'sku\',this.value)">'
+            +'</td>'
+            +'<td><input type="number" min="1" step="1" value="'+item.quantity+'" '
+                +'oninput="updateLineItem('+i+',\'quantity\',this.value,true)" required></td>'
+            +'<td><input type="number" min="0" step="0.01" value="'+item.unit_price+'" '
+                +'oninput="updateLineItem('+i+',\'unit_price\',this.value,true)" required></td>'
+            +'<td><input type="number" min="0" max="100" step="0.1" value="'+item.discount_percent+'" '
+                +'oninput="updateLineItem('+i+',\'discount_percent\',this.value,true)"></td>'
+            +'<td><input type="number" min="0" max="100" step="0.1" value="'+item.tax_percent+'" '
+                +'oninput="updateLineItem('+i+',\'tax_percent\',this.value,true)"></td>'
+            +'<td class="text-right"><span class="line-amount">'+sym+fmt2(lineTotal(item))+'</span></td>'
+            +'<td class="text-center"><button type="button" class="btn-icon btn-danger-icon" '
+                +'onclick="removeLineItem('+i+')" '+(lineItems.length<=1?'disabled':'')+'><i data-lucide="trash-2"></i></button></td>';
+        tbody.appendChild(tr);
+    });
+    calculateTotals();
+    lucide.createIcons();
+}
+
+/* =========================================================
+   Totals calculation
+   ========================================================= */
+function lineTotal(it){
+    var sub = it.quantity*it.unit_price;
+    var disc = sub*(it.discount_percent/100);
+    var net = sub-disc;
+    var tax = net*(it.tax_percent/100);
+    return net+tax;
+}
+
+function calcSubtotal(d){
+    return d.line_items.reduce(function(s,it){ return s + it.quantity*it.unit_price; },0);
+}
+function calcDiscount(d){
+    return d.line_items.reduce(function(s,it){
+        var sub = it.quantity*it.unit_price;
+        return s + sub*(it.discount_percent/100);
+    },0);
+}
+function calcTax(d){
+    return d.line_items.reduce(function(s,it){
+        var sub = it.quantity*it.unit_price;
+        var disc = sub*(it.discount_percent/100);
+        var net = sub-disc;
+        return s + net*(it.tax_percent/100);
+    },0);
+}
+function calcGrand(d){
+    return calcSubtotal(d)-calcDiscount(d)+calcTax(d);
+}
+
+function calculateTotals(){
+    var sym = CURRENCY_SYMBOLS[gv('currency')]||'$';
+    var sub=0,disc=0,tax=0,grand=0;
+    lineItems.forEach(function(it){
+        var s = it.quantity*it.unit_price;
+        var d = s*(it.discount_percent/100);
+        var n = s-d;
+        var t = n*(it.tax_percent/100);
+        sub+=s; disc+=d; tax+=t; grand+=n+t;
+    });
+    document.getElementById('subtotal').textContent    = sym+fmt2(sub);
+    document.getElementById('totalDiscount').textContent = '-'+sym+fmt2(disc);
+    document.getElementById('totalTax').textContent     = sym+fmt2(tax);
+    document.getElementById('grandTotal').textContent   = sym+fmt2(grand);
+}
+
+/* =========================================================
+   Save / Load / New
+   ========================================================= */
+function saveInvoice(){
+    var data = collectInvoiceData();
+    data.line_items = lineItems.map(function(it){
+        return {description:it.description,sku:it.sku,quantity:it.quantity,
+                unit_price:it.unit_price,discount_percent:it.discount_percent,tax_percent:it.tax_percent};
+    });
+    if(!data.client.name){ showToast('Please enter a client name','error'); return; }
+    if(!data.client.email){ showToast('Please enter a client email','error'); return; }
+    if(!lineItems.length || !lineItems[0].description){
+        showToast('Please add at least one line item','error'); return;
+    }
+    csrfFetch('{{ url_for("invoice.save_invoice") }}', {
+        method:'POST',
+        button:'#saveBtn',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams({invoice_data: JSON.stringify(data)})
+    }).then(function(r){return r.json();})
+      .then(function(res){
+        if(res.success){
+            currentInvoiceId = res.invoice_id;
+            showToast(res.message||'Invoice saved','success');
+            showSaveStatus('Saved');
+            loadInvoicesSlide();
+        } else {
+            showToast(res.message||'Save failed','error');
+        }
+    }).catch(function(e){ showToast('Error: '+e,'error'); });
+}
+
+function loadInvoice(id){
+    csrfFetch('{{ url_for("invoice.get_invoice") }}?id='+id)
+    .then(function(r){return r.json();})
+    .then(function(res){
+        if(!res.invoice) return showToast('Invoice not found','error');
+        var inv = res.invoice;
+        currentInvoiceId = inv.invoice_id;
+        document.getElementById('invoiceNumber').value = inv.invoice_number||'';
+        // Client
+        document.getElementById('clientName').value    = (inv.client||{}).name||'';
+        document.getElementById('clientEmail').value   = (inv.client||{}).email||'';
+        document.getElementById('clientCompany').value = (inv.client||{}).company||'';
+        document.getElementById('clientPhone').value   = (inv.client||{}).phone||'';
+        document.getElementById('clientAddress').value = (inv.client||{}).address||'';
+        document.getElementById('clientTaxId').value   = (inv.client||{}).tax_id||'';
+        // Business
+        document.getElementById('businessName').value    = inv.business_name||'';
+        document.getElementById('businessEmail').value   = inv.business_email||'';
+        document.getElementById('businessPhone').value   = inv.business_phone||'';
+        document.getElementById('businessAddress').value = inv.business_address||'';
+        // Invoice
+        document.getElementById('currency').value  = inv.currency||'ZAR';
+        document.getElementById('issueDate').value = inv.issue_date||'';
+        document.getElementById('dueDate').value   = inv.due_date||'';
+        document.getElementById('status').value    = inv.status||'draft';
+        // Notes
+        document.getElementById('notes').value                = inv.notes||'';
+        document.getElementById('terms').value                = inv.terms||'';
+        document.getElementById('paymentInstructions').value = inv.payment_instructions||'';
+        // Line items
+        lineItems = (inv.line_items||[]).map(function(it){
+            return {description:it.description,sku:it.sku||'',quantity:it.quantity,
+                    unit_price:it.unit_price,discount_percent:it.discount_percent||0,tax_percent:it.tax_percent||0};
         });
+        if(!lineItems.length) addLineItem(); else renderLineItems();
+        calculateTotals();
+        updatePreview();
+        closeInvoicesPanel();
+        showToast('Invoice loaded','success');
+    }).catch(function(e){ showToast('Error loading invoice','error'); });
+}
 
-        // Show modal
-        function showModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
+function newInvoice(){
+    currentInvoiceId = '';
+    document.getElementById('invoiceNumber').value = '';
+    document.getElementById('clientName').value = '';
+    document.getElementById('clientEmail').value = '';
+    document.getElementById('clientCompany').value = '';
+    document.getElementById('clientPhone').value = '';
+    document.getElementById('clientAddress').value = '';
+    document.getElementById('clientTaxId').value = '';
+    document.getElementById('notes').value = '';
+    document.getElementById('terms').value = '';
+    document.getElementById('paymentInstructions').value = '';
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('issueDate').value = today;
+    document.getElementById('dueDate').value = '';
+    document.getElementById('status').value = 'draft';
+    lineItems = [];
+    addLineItem();
+    calculateTotals();
+    updatePreview();
+    showSaveStatus('');
+    document.getElementById('iwEditor').scrollTop = 0;
+}
 
-        // Close modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
+/* =========================================================
+   All Invoices slide-out panel
+   ========================================================= */
+function openInvoicesPanel(){
+    loadInvoicesSlide();
+    document.getElementById('invoicesSlidePanel').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeInvoicesPanel(){
+    document.getElementById('invoicesSlidePanel').classList.remove('open');
+    document.body.style.overflow = '';
+}
 
-        // Add line item
-        function addLineItem() {
-            const index = lineItems.length;
-            lineItems.push({
-                description: '',
-                quantity: 1,
-                unit_price: 0,
-                discount_percent: 0,
-                tax_percent: 0,
-                sku: ''
-            });
-            renderLineItems();
-        }
-
-        // Remove line item
-        function removeLineItem(index) {
-            if (lineItems.length > 1) {
-                lineItems.splice(index, 1);
-                renderLineItems();
-                calculateTotals();
-            }
-        }
-
-        // Render line items
-        function renderLineItems() {
-            const tbody = document.getElementById('lineItemsBody');
-            tbody.innerHTML = '';
-
-            const currency = document.getElementById('currency').value;
-            const symbol = currencySymbols[currency];
-
-            lineItems.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <input type="text" class="form-control" 
-                               placeholder="Item description" 
-                               value="${escapeHtml(item.description)}"
-                               onchange="updateLineItem(${index}, 'description', this.value)"
-                               required>
-                        <input type="text" class="form-control form-control-sm" 
-                               style="margin-top: 5px; font-size: 0.8em;"
-                               placeholder="SKU (optional)" 
-                               value="${escapeHtml(item.sku)}"
-                               onchange="updateLineItem(${index}, 'sku', this.value)">
-                    </td>
-                    <td>
-                        <input type="number" class="form-control text-right" 
-                               min="1" step="1" 
-                               value="${item.quantity}"
-                               onchange="updateLineItem(${index}, 'quantity', this.value)"
-                               required>
-                    </td>
-                    <td>
-                        <input type="number" class="form-control text-right" 
-                               min="0" step="0.01" 
-                               value="${item.unit_price}"
-                               onchange="updateLineItem(${index}, 'unit_price', this.value)"
-                               required>
-                    </td>
-                    <td>
-                        <input type="number" class="form-control text-right" 
-                               min="0" max="100" step="0.1" 
-                               value="${item.discount_percent}"
-                               onchange="updateLineItem(${index}, 'discount_percent', this.value)">
-                    </td>
-                    <td>
-                        <input type="number" class="form-control text-right" 
-                               min="0" max="100" step="0.1" 
-                               value="${item.tax_percent}"
-                               onchange="updateLineItem(${index}, 'tax_percent', this.value)">
-                    </td>
-                    <td class="text-right">
-                        <span class="line-total">${symbol}${calculateItemTotal(index).toFixed(2)}</span>
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-danger btn-sm" 
-                                onclick="removeLineItem(${index})"
-                                ${lineItems.length === 1 ? 'disabled' : ''}>
-                            <i data-lucide="trash-2"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            
-            // Re-initialize Lucide icons for dynamically added elements
+function loadInvoicesSlide(){
+    var body = document.getElementById('invoicesSlideBody');
+    csrfFetch('{{ url_for("invoice.list_invoices") }}')
+    .then(function(r){return r.json();})
+    .then(function(res){
+        var invoices = res.invoices||[];
+        if(!invoices.length){
+            body.innerHTML = '<p class="text-muted" style="padding:20px;">No invoices yet. Click "New" to create one.</p>';
             lucide.createIcons();
+            return;
         }
+        var sym = CURRENCY_SYMBOLS;
+        var html = '<table class="invoices-slide-table"><thead><tr>'
+            +'<th>#</th><th>Client</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>';
+        invoices.forEach(function(inv){
+            var s = sym[inv.currency]||'$';
+            html += '<tr>'
+                +'<td class="inv-num">'+esc(inv.invoice_number)+'</td>'
+                +'<td>'+esc(inv.client_name)+'</td>'
+                +'<td class="text-right">'+s+fmt2(inv.grand_total)+'</td>'
+                +'<td><span class="iv-status iv-status-'+inv.status+'">'+inv.status+'</span></td>'
+                +'<td class="inv-actions">'
+                    +'<button class="btn-icon" onclick="loadInvoice(\''+inv.invoice_id+'\')" title="Edit"><i data-lucide="pencil"></i></button>'
+                    +'<button class="btn-icon btn-danger-icon" onclick="deleteInvoice(\''+inv.invoice_id+'\')" title="Delete"><i data-lucide="trash-2"></i></button>'
+                +'</td></tr>';
+        });
+        html += '</tbody></table>';
+        body.innerHTML = html;
+        lucide.createIcons();
+    }).catch(function(){
+        body.innerHTML = '<p class="text-muted" style="padding:20px;">Could not load invoices.</p>';
+    });
+}
 
-        // Update line item
-        function updateLineItem(index, field, value) {
-            if (field === 'quantity' || field === 'unit_price' || 
-                field === 'discount_percent' || field === 'tax_percent') {
-                value = parseFloat(value) || 0;
-            }
-            lineItems[index][field] = value;
-            renderLineItems();
-            calculateTotals();
+/* =========================================================
+   Delete
+   ========================================================= */
+function deleteInvoice(id){
+    invoiceToDelete = id;
+    showModal('deleteModal');
+}
+function confirmDelete(){
+    if(!invoiceToDelete) return;
+    csrfFetch('{{ url_for("invoice.delete_invoice") }}', {
+        method:'POST',
+        button:'#confirmDeleteBtn',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams({invoice_id:invoiceToDelete})
+    }).then(function(r){return r.json();})
+      .then(function(res){
+        if(res.success){
+            showToast('Invoice deleted','success');
+            loadInvoicesSlide();
+            if(currentInvoiceId===invoiceToDelete) newInvoice();
+        } else {
+            showToast(res.message||'Delete failed','error');
         }
+        closeModal('deleteModal');
+    }).catch(function(e){ showToast('Error: '+e,'error'); closeModal('deleteModal'); });
+}
 
-        // Calculate item total
-        function calculateItemTotal(index) {
-            const item = lineItems[index];
-            const subtotal = item.quantity * item.unit_price;
-            const discount = subtotal * (item.discount_percent / 100);
-            const discounted = subtotal - discount;
-            const tax = discounted * (item.tax_percent / 100);
-            return discounted + tax;
-        }
+/* =========================================================
+   Email
+   ========================================================= */
+function emailInvoice(){
+    var data = collectInvoiceData();
+    document.getElementById('emailTo').value = data.client.email||'';
+    document.getElementById('emailSubject').value =
+        'Invoice '+(data.invoice_number||'')+' from '+(data.business.name||'');
+    showModal('emailModal');
+}
+function sendEmail(){
+    var to = gv('emailTo');
+    if(!to){ showToast('Please enter recipient email','error'); return; }
+    var data = collectInvoiceData();
+    csrfFetch('{{ url_for("invoice.send_invoice_email") }}', {
+        method:'POST',
+        button:'#sendEmailBtn',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams({
+            invoice_data: JSON.stringify(data),
+            to_email: to,
+            subject: gv('emailSubject'),
+            email_body: gv('emailBody')
+        })
+    }).then(function(r){return r.json();})
+      .then(function(res){
+        if(res.success){ showToast('Invoice sent','success'); closeModal('emailModal'); }
+        else showToast(res.message||'Send failed','error');
+    }).catch(function(e){ showToast('Error: '+e,'error'); });
+}
 
-        // Calculate all totals
-        function calculateTotals() {
-            let subtotal = 0;
-            let totalDiscount = 0;
-            let totalTax = 0;
-            let grandTotal = 0;
+/* =========================================================
+   Download PDF (print-to-PDF)
+   ========================================================= */
+function downloadPDF(){
+    var d = collectInvoiceData();
+    d.line_items = lineItems;
+    var win = window.open('','_blank');
+    win.document.write(printHTML(d));
+    win.document.close();
+    setTimeout(function(){ win.print(); }, 300);
+}
 
-            lineItems.forEach(item => {
-                const itemSubtotal = item.quantity * item.unit_price;
-                const itemDiscount = itemSubtotal * (item.discount_percent / 100);
-                const itemDiscounted = itemSubtotal - itemDiscount;
-                const itemTax = itemDiscounted * (item.tax_percent / 100);
-                
-                subtotal += itemSubtotal;
-                totalDiscount += itemDiscount;
-                totalTax += itemTax;
-                grandTotal += itemDiscounted + itemTax;
-            });
+function printHTML(d){
+    var s = CURRENCY_SYMBOLS[d.currency]||'$';
+    var st = d.status||'draft';
+    var itemsHTML = d.line_items.map(function(it){
+        return '<tr><td>'+esc(it.description)+'</td>'
+            +'<td class="text-right">'+fmtN(it.quantity)+'</td>'
+            +'<td class="text-right">'+s+fmtN(it.unit_price)+'</td>'
+            +'<td class="text-right">'+s+fmt2(lineTotal(it))+'</td></tr>';
+    }).join('');
+    var sub=calcSubtotal(d),disc=calcDiscount(d),tax=calcTax(d),grand=calcGrand(d);
+    var tpl = localStorage.getItem('invoice-template')||'default';
+    var accent = tpl==='modern'?'#3b5998':tpl==='minimal'?'#111':'#007a55';
+    return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice '+(d.invoice_number||'')+'</title>'
+        +'<style>'
+        +'*{margin:0;padding:0;box-sizing:border-box;}'
+        +'body{font-family:Arial,sans-serif;font-size:12px;line-height:1.5;color:#333;padding:40px;}'
+        +'.hdr{display:flex;justify-content:space-between;margin-bottom:30px;padding-bottom:16px;border-bottom:2px solid '+accent+';}'
+        +'.brand-name{color:'+accent+';font-size:22px;font-weight:700;margin-bottom:8px;}'
+        +'.meta{text-align:right;}'
+        +'.meta h1{color:'+accent+';font-size:26px;margin-bottom:6px;}'
+        +'.meta .num{font-weight:600;}'
+        +'.billto{background:#f9f9f9;padding:12px;border-radius:4px;margin-bottom:20px;}'
+        +'.billto strong{color:'+accent+';}'
+        +'table{width:100%;border-collapse:collapse;margin-bottom:20px;}'
+        +'th{background:'+accent+';color:#fff;padding:8px 10px;text-align:left;}'
+        +'th:not(:first-child){text-align:right;}'
+        +'td{padding:8px 10px;border-bottom:1px solid #eee;}'
+        +'.text-right{text-align:right;}'
+        +'.totals{display:flex;justify-content:flex-end;}'
+        +'.totals .row{display:flex;justify-content:space-between;width:240px;padding:5px 0;}'
+        +'.totals .grand{background:'+accent+';color:#fff;padding:10px;font-weight:bold;margin-top:6px;font-size:14px;}'
+        +'.notes,.terms,.pay{margin-top:18px;padding:12px;background:#f9f9f9;border-radius:4px;}'
+        +'.notes strong,.terms strong,.pay strong{color:'+accent+';display:block;margin-bottom:4px;}'
+        +'.status{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase;color:#fff;background:'+accent+';}'
+        +'@media print{body{padding:0;}}'
+        +'</style></head><body>'
+        +'<div class="hdr">'
+            +'<div><div class="brand-name">'+esc(d.business.name||'Your Business')+'</div>'
+            +(d.business.address?'<div>'+esc(d.business.address)+'</div>':'')
+            +(d.business.email?'<div>'+esc(d.business.email)+'</div>':'')
+            +(d.business.phone?'<div>'+esc(d.business.phone)+'</div>':'')
+            +'</div>'
+            +'<div class="meta"><h1>INVOICE</h1>'
+            +'<div class="num">#'+esc(d.invoice_number||'')+'</div>'
+            +'<div>Issued: '+esc(d.issue_date||'')+'</div>'
+            +'<div>Due: '+esc(d.due_date||'Upon receipt')+'</div>'
+            +'<div style="margin-top:6px"><span class="status">'+st+'</span></div>'
+            +'</div>'
+        +'</div>'
+        +'<div class="billto"><strong>BILL TO</strong><div>'+esc(d.client.name||'')+'</div>'
+        +(d.client.company?'<div>'+esc(d.client.company)+'</div>':'')
+        +(d.client.address?'<div>'+esc(d.client.address)+'</div>':'')
+        +(d.client.email?'<div>'+esc(d.client.email)+'</div>':'')
+        +'</div>'
+        +'<table><thead><tr><th>Description</th><th class="text-right">Qty</th><th class="text-right">Price</th><th class="text-right">Amount</th></tr></thead>'
+        +'<tbody>'+itemsHTML+'</tbody></table>'
+        +'<div class="totals">'
+        +'<div class="row"><span>Subtotal</span><span>'+s+fmt2(sub)+'</span></div>'
+        +'<div class="row"><span>Discount</span><span>-'+s+fmt2(Math.abs(disc))+'</span></div>'
+        +'<div class="row"><span>Tax</span><span>'+s+fmt2(tax)+'</span></div>'
+        +'<div class="row grand"><span>Total</span><span>'+s+fmt2(grand)+'</span></div>'
+        +'</div>'
+        +(d.notes?'<div class="notes"><strong>Notes</strong>'+esc(d.notes)+'</div>':'')
+        +(d.terms?'<div class="terms"><strong>Terms</strong>'+esc(d.terms)+'</div>':'')
+        +(d.payment_instructions?'<div class="pay"><strong>Payment</strong>'+esc(d.payment_instructions)+'</div>':'')
+        +'</body></html>';
+}
 
-            const currency = document.getElementById('currency').value;
-            const symbol = currencySymbols[currency];
+/* =========================================================
+   Template
+   ========================================================= */
+function setTemplate(tpl){
+    localStorage.setItem('invoice-template', tpl);
+    var el = document.getElementById('invoiceA4');
+    el.className = el.className.replace(/template-\w+/g,'');
+    el.classList.add('template-'+tpl);
+    updatePreview();
+}
 
-            document.getElementById('subtotal').textContent = symbol + subtotal.toFixed(2);
-            document.getElementById('totalDiscount').textContent = '-' + symbol + totalDiscount.toFixed(2);
-            document.getElementById('totalTax').textContent = symbol + totalTax.toFixed(2);
-            document.getElementById('grandTotal').textContent = symbol + grandTotal.toFixed(2);
-        }
+/* =========================================================
+   Sections: toggle collapse
+   ========================================================= */
+function toggleSection(bodyId, btn){
+    var body = document.getElementById(bodyId);
+    body.classList.toggle('collapsed');
+    var expanded = !body.classList.contains('collapsed');
+    btn.setAttribute('aria-expanded', expanded);
+}
 
-        // Update currency
-        function updateCurrency() {
-            renderLineItems();
-            calculateTotals();
-        }
+/* =========================================================
+   Mobile tab switch
+   ========================================================= */
+function switchTab(tab){
+    var body = document.getElementById('iwBody');
+    document.querySelectorAll('.iw-tab').forEach(function(t){
+        t.classList.toggle('active', t.getAttribute('data-tab')===tab);
+    });
+    if(tab==='preview'){
+        body.classList.add('mobile-preview');
+    } else {
+        body.classList.remove('mobile-preview');
+        schedulePreviewUpdate();
+    }
+}
 
-        // Escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+/* =========================================================
+   Helpers
+   ========================================================= */
+function esc(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+function escAttr(t){ return (t||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function fmt2(n){ return Number(n||0).toFixed(2); }
+function fmtN(n){ return Number(n||0); }
+function showSaveStatus(txt){
+    var el = document.getElementById('saveStatus');
+    el.textContent = txt;
+    if(txt) setTimeout(function(){ el.textContent=''; }, 3000);
+}
+function showModal(id){ document.getElementById(id).style.display='block'; }
+function closeModal(id){ document.getElementById(id).style.display='none'; }
 
-        // Create new invoice
-        function createNewInvoice() {
-            currentInvoiceId = '';
-            document.getElementById('invoiceForm').reset();
-            document.getElementById('invoiceId').value = '';
-            document.getElementById('invoiceNumber').value = '';
-            
-            // Set issue date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('issueDate').value = today;
-            
-            lineItems = [];
-            addLineItem();
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+/* close modals on backdrop click */
+window.onclick = function(e){
+    if(e.target.classList.contains('modal')) e.target.style.display='none';
+};
 
-        // Validate form
-        function validateForm() {
-            const clientName = document.getElementById('clientName').value.trim();
-            const clientEmail = document.getElementById('clientEmail').value.trim();
-            
-            if (!clientName) {
-                alert('Please enter client name');
-                return false;
-            }
-            
-            if (!clientEmail) {
-                alert('Please enter client email');
-                return false;
-            }
-            
-            // Validate email format
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(clientEmail)) {
-                alert('Please enter a valid email address');
-                return false;
-            }
-            
-            // Check line items
-            let hasValidItem = false;
-            lineItems.forEach(item => {
-                if (item.description && item.quantity > 0 && item.unit_price >= 0) {
-                    hasValidItem = true;
-                }
-            });
-            
-            if (!hasValidItem) {
-                alert('Please add at least one valid line item');
-                return false;
-            }
-            
-            // Prepare invoice data
-            prepareInvoiceData();
-            return true;
-        }
+/* close slide panel on escape */
+document.addEventListener('keydown', function(e){
+    if(e.key==='Escape') closeInvoicesPanel();
+});
+</script>
 
-        // Prepare invoice data
-        function prepareInvoiceData() {
-            const invoiceData = {
-                invoice_id: currentInvoiceId || generateUUID(),
-                invoice_number: document.getElementById('invoiceNumber').value || 'Auto-generated',
-                client: {
-                    name: document.getElementById('clientName').value,
-                    email: document.getElementById('clientEmail').value,
-                    phone: document.getElementById('clientPhone').value,
-                    address: document.getElementById('clientAddress').value,
-                    company: document.getElementById('clientCompany').value,
-                    tax_id: document.getElementById('clientTaxId').value
-                },
-                business: {
-                    name: document.getElementById('businessName').value,
-                    email: document.getElementById('businessEmail').value,
-                    phone: document.getElementById('businessPhone').value,
-                    address: document.getElementById('businessAddress').value
-                },
-                currency: document.getElementById('currency').value,
-                issue_date: document.getElementById('issueDate').value,
-                due_date: document.getElementById('dueDate').value,
-                status: document.getElementById('status').value,
-                notes: document.getElementById('notes').value,
-                terms: document.getElementById('terms').value,
-                payment_instructions: document.getElementById('paymentInstructions').value,
-                line_items: lineItems,
-                totals: {
-                    subtotal: parseFloat(document.getElementById('subtotal').textContent.replace(/[^0-9.-]+/g, '')),
-                    discount: parseFloat(document.getElementById('totalDiscount').textContent.replace(/[^0-9.-]+/g, '')),
-                    tax: parseFloat(document.getElementById('totalTax').textContent.replace(/[^0-9.-]+/g, '')),
-                    grand_total: parseFloat(document.getElementById('grandTotal').textContent.replace(/[^0-9.-]+/g, ''))
-                }
-            };
-            
-            document.getElementById('invoiceData').value = JSON.stringify(invoiceData);
-        }
+<style>
+/* =============================================================
+   Invoice workspace
+   ============================================================= */
+.invoice-workspace{
+    display:flex; flex-direction:column;
+    height:calc(100vh - 60px); overflow:hidden;
+}
 
-        // Generate UUID
-        function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0;
-                const v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        }
+/* ---- Header ---- */
+.iw-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 20px; gap:12px;
+    border-bottom:1px solid var(--border-color, #e2e8f0);
+    background:var(--bg-primary, #fff); flex-shrink:0;
+}
+.iw-title{ font-size:18px; font-weight:700; white-space:nowrap; }
+.iw-save-status{ font-size:12px; color:var(--color-success, #22c55e); margin-left:8px; transition:opacity 0.3s; }
+.iw-header-right{ display:flex; gap:8px; align-items:center; flex-wrap:nowrap; }
+.iw-header-right .btn span{ display:inline; }
 
-        // Save draft
-        function saveDraft() {
-            prepareInvoiceData();
-            document.getElementById('status').value = 'draft';
-            
-            // Submit via AJAX
-            csrfFetch('{{ url_for("invoice.save_invoice") }}', {
-                method: 'POST',
-                button: '#saveDraftBtn',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    invoice_data: document.getElementById('invoiceData').value
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Draft saved successfully!');
-                    currentInvoiceId = data.invoice_id;
-                    document.getElementById('invoiceId').value = data.invoice_id;
-                } else {
-                    alert('Error saving draft: ' + data.message);
-                }
-            })
-            .catch(error => {
-                alert('Error saving draft: ' + error);
-            });
-        }
+/* ---- Body (editor + preview split) ---- */
+.iw-body{ display:flex; flex:1; overflow:hidden; }
 
-        // Preview invoice
-        function previewInvoice() {
-            prepareInvoiceData();
-            const invoiceData = JSON.parse(document.getElementById('invoiceData').value);
-            
-            const html = generatePreviewHTML(invoiceData);
-            document.getElementById('previewContent').innerHTML = html;
-            showModal('previewModal');
-        }
+/* ---- Editor ---- */
+.iw-editor{
+    flex:0 0 42%; overflow-y:auto; padding:16px 20px 80px;
+    border-right:1px solid var(--border-color, #e2e8f0);
+    background:var(--bg-primary, #fff);
+}
 
-        // Generate preview HTML
-        function generatePreviewHTML(data) {
-            const symbol = currencySymbols[data.currency] || '$';
-            
-            let lineItemsHTML = '';
-            data.line_items.forEach(item => {
-                const subtotal = item.quantity * item.unit_price;
-                const discount = subtotal * (item.discount_percent / 100);
-                const discounted = subtotal - discount;
-                const tax = discounted * (item.tax_percent / 100);
-                const total = discounted + tax;
-                
-                lineItemsHTML += `
-                    <tr>
-                        <td>${escapeHtml(item.description)}</td>
-                        <td class="text-center">${item.quantity}</td>
-                        <td class="text-right">${symbol}${item.unit_price.toFixed(2)}</td>
-                        <td class="text-center">${item.discount_percent}%</td>
-                        <td class="text-center">${item.tax_percent}%</td>
-                        <td class="text-right">${symbol}${total.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            
-            return `
-                <div class="invoice-preview">
-                    <div class="preview-header">
-                        <div class="company-details">
-                            <h2>${escapeHtml(data.business.name) || 'Your Business'}</h2>
-                            <p>${escapeHtml(data.business.address)}</p>
-                            <p>${escapeHtml(data.business.email)}</p>
-                            <p>${escapeHtml(data.business.phone)}</p>
-                        </div>
-                        <div class="invoice-title">
-                            <h1>INVOICE</h1>
-                            <p><strong>#${data.invoice_number}</strong></p>
-                            <p>Issue Date: ${data.issue_date}</p>
-                            <p>Due Date: ${data.due_date || 'Upon Receipt'}</p>
-                            <span class="status-badge status-${data.status}">${data.status}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="client-details">
-                        <h4>Bill To:</h4>
-                        <p><strong>${escapeHtml(data.client.name)}</strong></p>
-                        ${data.client.company ? `<p>${escapeHtml(data.client.company)}</p>` : ''}
-                        ${data.client.address ? `<p>${escapeHtml(data.client.address)}</p>` : ''}
-                        <p>${escapeHtml(data.client.email)}</p>
-                    </div>
-                    
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th class="text-center">Qty</th>
-                                <th class="text-right">Price</th>
-                                <th class="text-center">Discount</th>
-                                <th class="text-center">Tax</th>
-                                <th class="text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${lineItemsHTML}
-                        </tbody>
-                    </table>
-                    
-                    <div class="preview-totals">
-                        <div class="total-row">
-                            <span>Subtotal:</span>
-                            <span>${symbol}${data.totals.subtotal.toFixed(2)}</span>
-                        </div>
-                        <div class="total-row">
-                            <span>Total Discount:</span>
-                            <span>-${symbol}${Math.abs(data.totals.discount).toFixed(2)}</span>
-                        </div>
-                        <div class="total-row">
-                            <span>Total Tax:</span>
-                            <span>${symbol}${data.totals.tax.toFixed(2)}</span>
-                        </div>
-                        <div class="total-row grand-total">
-                            <span>Grand Total:</span>
-                            <span>${symbol}${data.totals.grand_total.toFixed(2)}</span>
-                        </div>
-                    </div>
-                    
-                    ${data.notes ? `<div class="notes"><h4>Notes:</h4><p>${escapeHtml(data.notes)}</p></div>` : ''}
-                    ${data.terms ? `<div class="terms"><h4>Terms:</h4><p>${escapeHtml(data.terms)}</p></div>` : ''}
-                    ${data.payment_instructions ? `<div class="payment-info"><h4>Payment Instructions:</h4><p>${escapeHtml(data.payment_instructions)}</p></div>` : ''}
-                </div>
-            `;
-        }
+/* top row */
+.editor-top-row{
+    display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;
+    padding:10px 0 14px; margin-bottom:4px;
+    border-bottom:1px solid var(--border-light, #f0f0f0);
+}
+.etr-field{ flex:1; min-width:90px; }
+.etr-field label{ display:block; font-size:11px; font-weight:600; margin-bottom:3px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em; }
+.etr-field input, .etr-field select{ width:100%; padding:6px 8px; border:1px solid var(--border-color,#d1d5db); border-radius:4px; font-size:13px; background:var(--bg-secondary,#fafafa); }
+.etr-invoice-num input{ background:var(--bg-tertiary,#f3f4f6); color:var(--text-secondary); }
 
-        // Download PDF
-        function downloadPDF() {
-            prepareInvoiceData();
-            const invoiceData = JSON.parse(document.getElementById('invoiceData').value);
-            
-            // For demo purposes, we'll open the preview in a new window for printing
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(generatePrintHTML(invoiceData));
-            printWindow.document.close();
-            printWindow.print();
-        }
+/* sections */
+.editor-section{ margin:4px 0; }
+.section-toggle{
+    width:100%; display:flex; align-items:center; justify-content:space-between;
+    padding:8px 10px; border:none; background:var(--bg-secondary,#f9fafb);
+    border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;
+    color:var(--text-primary,#1f2937);
+    transition:background 0.15s;
+}
+.section-toggle:hover{ background:var(--bg-tertiary,#f3f4f6); }
+.st-left{ display:flex; align-items:center; gap:6px; }
+.st-left i{ width:15px; height:15px; }
+.st-icon{ width:14px; height:14px; transition:transform 0.25s; }
+.section-toggle[aria-expanded="false"] .st-icon{ transform:rotate(-90deg); }
 
-        // Generate print HTML
-        function generatePrintHTML(data) {
-            return `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Invoice ${data.invoice_number}</title>
-                    <style>
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
-                        body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; color: #333; padding: 20px; }
-                        .invoice-header { display: flex; justify-content: space-between; margin-bottom: 30px; }
-                        .company-details h1 { color: #007a55; font-size: 24px; }
-                        .invoice-title { text-align: right; }
-                        .invoice-title h1 { color: #007a55; font-size: 28px; }
-                        .client-details { margin-bottom: 20px; padding: 15px; background: #f9f9f9; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-                        th { background: #007a55; color: white; }
-                        .text-right { text-align: right; }
-                        .text-center { text-align: center; }
-                        .preview-totals { display: flex; justify-content: flex-end; }
-                        .preview-totals .total-row { display: flex; justify-content: space-between; width: 250px; padding: 5px 0; }
-                        .grand-total { background: #007a55; color: white; padding: 10px; font-weight: bold; }
-                        .notes, .terms, .payment-info { margin-top: 20px; }
-                        @media print { body { padding: 0; } }
-                    </style>
-                </head>
-                <body>
-                    ${generatePreviewHTML(data)}
-                </body>
-                </html>
-            `;
-        }
+.section-body{
+    max-height:600px; overflow:hidden;
+    transition:max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    padding:10px 4px 4px; opacity:1;
+}
+.section-body.collapsed{ max-height:0; padding-top:0; padding-bottom:0; opacity:0; pointer-events:none; }
 
-        // Email invoice
-        function emailInvoice() {
-            prepareInvoiceData();
-            const invoiceData = JSON.parse(document.getElementById('invoiceData').value);
-            
-            document.getElementById('emailTo').value = invoiceData.client.email;
-            document.getElementById('emailSubject').value = `Invoice ${invoiceData.invoice_number} from ${invoiceData.business.name}`;
-            
-            showModal('emailModal');
-        }
+.editor-grid{ display:grid; gap:8px; }
+.editor-grid.two-col{ grid-template-columns:1fr 1fr; }
+.editor-grid input{
+    width:100%; padding:7px 10px; border:1px solid var(--border-color,#d1d5db);
+    border-radius:4px; font-size:13px; background:var(--bg-secondary,#fafafa);
+}
 
-        // Send email
-        function sendEmail() {
-            const to = document.getElementById('emailTo').value;
-            const subject = document.getElementById('emailSubject').value;
-            const body = document.getElementById('emailBody').value;
-            const attachPdf = document.getElementById('attachPdf').checked;
-            
-            if (!to) {
-                alert('Please enter recipient email');
-                return;
-            }
-            
-            // Prepare invoice data
-            prepareInvoiceData();
-            const invoiceData = JSON.parse(document.getElementById('invoiceData').value);
-            
-            // Submit via AJAX
-            csrfFetch('{{ url_for("invoice.send_invoice_email") }}', {
-                method: 'POST',
-                button: '#sendEmailBtn',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    invoice_data: JSON.stringify(invoiceData),
-                    to_email: to,
-                    subject: subject,
-                    email_body: body,
-                    attach_pdf: attachPdf
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Invoice sent successfully!');
-                    closeModal('emailModal');
-                } else {
-                    alert('Error sending invoice: ' + data.message);
-                }
-            })
-            .catch(error => {
-                alert('Error sending invoice: ' + error);
-            });
-        }
+/* ---- Line items table ---- */
+.line-items-section{ margin-top:6px; }
+.section-header-inline{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.section-header-inline h3{ display:flex; align-items:center; gap:6px; font-size:14px; font-weight:600; }
+.section-header-inline h3 i{ width:15px; height:15px; }
+.line-items-wrap{ overflow-x:auto; }
+.iv-line-table{ width:100%; border-collapse:collapse; font-size:12px; }
+.iv-line-table th{ font-size:10px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary,#6b7280); padding:4px 4px 6px; border-bottom:1px solid var(--border-color,#e5e7eb); text-align:left; }
+.iv-line-table th.col-num{ text-align:right; }
+.iv-line-table th.col-action{ width:28px; text-align:center; }
+.iv-line-table td{ padding:3px 4px; vertical-align:top; }
+.iv-line-table .td-desc{ width:35%; }
+.iv-line-table input[type="text"],
+.iv-line-table input[type="number"]{
+    width:100%; padding:5px 6px; border:1px solid var(--border-color,#d1d5db);
+    border-radius:3px; font-size:12px; background:var(--bg-secondary,#fafafa);
+}
+.iv-line-table input.input-sm{ font-size:11px; padding:3px 6px; margin-top:3px; }
+.line-amount{ font-weight:600; color:var(--color-primary,#007a55); white-space:nowrap; }
 
-        // Load invoices
-        function loadInvoices() {
-            csrfFetch('{{ url_for("invoice.list_invoices") }}')
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.getElementById('invoicesTableBody');
-                tbody.innerHTML = '';
-                
-                if (data.invoices && data.invoices.length > 0) {
-                    data.invoices.forEach(inv => {
-                        const tr = document.createElement('tr');
-                        const symbol = currencySymbols[inv.currency] || '$';
-                        tr.innerHTML = `
-                            <td>${inv.invoice_number}</td>
-                            <td>${escapeHtml(inv.client_name)}</td>
-                            <td>${symbol}${inv.grand_total.toFixed(2)}</td>
-                            <td><span class="status-badge status-${inv.status}">${inv.status}</span></td>
-                            <td>${inv.due_date || '-'}</td>
-                            <td>
-                                <button type="button" class="btn btn-primary btn-sm" 
-                                        onclick="loadInvoice('${inv.invoice_id}')">Edit</button>
-                                <button type="button" class="btn btn-danger btn-sm" 
-                                        onclick="deleteInvoice('${inv.invoice_id}')">Delete</button>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">No invoices found</td></tr>';
-                }
-            })
-            .catch(error => {
-                console.error('Error loading invoices:', error);
-            });
-        }
+/* totals */
+.totals-block{ margin-top:8px; padding-top:8px; border-top:1px solid var(--border-color,#e5e7eb); }
+.totals-block .total-row{ display:flex; justify-content:flex-end; gap:16px; padding:3px 0; font-size:13px; }
+.totals-block .total-grand{ font-weight:700; font-size:15px; color:var(--color-primary,#007a55); margin-top:4px; padding-top:6px; border-top:2px solid var(--color-primary,#007a55); }
 
-        // Load invoice for editing
-        function loadInvoice(invoiceId) {
-            csrfFetch(`{{ url_for("invoice.get_invoice") }}?id=${invoiceId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.invoice) {
-                    const inv = data.invoice;
-                    currentInvoiceId = inv.invoice_id;
-                    
-                    document.getElementById('invoiceId').value = inv.invoice_id;
-                    document.getElementById('invoiceNumber').value = inv.invoice_number;
-                    
-                    // Client details
-                    document.getElementById('clientName').value = inv.client.name || '';
-                    document.getElementById('clientEmail').value = inv.client.email || '';
-                    document.getElementById('clientPhone').value = inv.client.phone || '';
-                    document.getElementById('clientAddress').value = inv.client.address || '';
-                    document.getElementById('clientCompany').value = inv.client.company || '';
-                    document.getElementById('clientTaxId').value = inv.client.tax_id || '';
-                    
-                    // Business details
-                    document.getElementById('businessName').value = inv.business_name || '';
-                    document.getElementById('businessEmail').value = inv.business_email || '';
-                    document.getElementById('businessPhone').value = inv.business_phone || '';
-                    document.getElementById('businessAddress').value = inv.business_address || '';
-                    
-                    // Invoice details
-                    document.getElementById('currency').value = inv.currency || 'USD';
-                    document.getElementById('issueDate').value = inv.issue_date || '';
-                    document.getElementById('dueDate').value = inv.due_date || '';
-                    document.getElementById('status').value = inv.status || 'draft';
-                    
-                    // Notes and terms
-                    document.getElementById('notes').value = inv.notes || '';
-                    document.getElementById('terms').value = inv.terms || '';
-                    document.getElementById('paymentInstructions').value = inv.payment_instructions || '';
-                    
-                    // Line items
-                    lineItems = inv.line_items.map(item => ({
-                        description: item.description,
-                        quantity: item.quantity,
-                        unit_price: item.unit_price,
-                        discount_percent: item.discount_percent || 0,
-                        tax_percent: item.tax_percent || 0,
-                        sku: item.sku || ''
-                    }));
-                    
-                    renderLineItems();
-                    calculateTotals();
-                    closeModal('invoiceListModal');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            })
-            .catch(error => {
-                alert('Error loading invoice: ' + error);
-            });
-        }
+/* notes textarea */
+.section-body textarea{
+    width:100%; padding:8px 10px; border:1px solid var(--border-color,#d1d5db);
+    border-radius:4px; font-size:13px; resize:vertical; font-family:inherit;
+    background:var(--bg-secondary,#fafafa); margin-bottom:6px;
+}
 
-        // Delete invoice
-        function deleteInvoice(invoiceId) {
-            invoiceToDelete = invoiceId;
-            showModal('deleteModal');
-        }
+/* =============================================================
+   Preview panel
+   ============================================================= */
+.iw-preview-panel{
+    flex:1; display:flex; flex-direction:column; overflow:hidden;
+    background:var(--bg-preview,#f0f2f5);
+}
+.preview-toolbar{
+    display:flex; align-items:center; justify-content:flex-end; gap:8px;
+    padding:10px 16px; flex-shrink:0;
+}
+.preview-toolbar-label{ font-size:11px; font-weight:600; text-transform:uppercase; color:var(--text-secondary); }
+.preview-toolbar select{ padding:5px 8px; border-radius:4px; border:1px solid var(--border-color,#d1d5db); font-size:12px; }
+.preview-page-wrap{ flex:1; overflow-y:auto; padding:12px 20px 40px; display:flex; justify-content:center; }
 
-        // Confirm delete
-        function confirmDelete() {
-            csrfFetch('{{ url_for("invoice.delete_invoice") }}', {
-                method: 'POST',
-                button: '#confirmDeleteBtn',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    invoice_id: invoiceToDelete
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Invoice deleted successfully');
-                    loadInvoices();
-                    if (currentInvoiceId === invoiceToDelete) {
-                        createNewInvoice();
-                    }
-                } else {
-                    alert('Error deleting invoice: ' + data.message);
-                }
-                closeModal('deleteModal');
-            })
-            .catch(error => {
-                alert('Error deleting invoice: ' + error);
-            });
-        }
+/* A4 page */
+.invoice-a4{
+    width:100%; max-width:560px;
+    background:#fff; border-radius:2px;
+    box-shadow:0 1px 6px rgba(0,0,0,0.08),0 4px 20px rgba(0,0,0,0.06);
+    padding:36px 32px 28px;
+    font-family:'Inter',Arial,sans-serif; font-size:12px; line-height:1.55; color:#1f2937;
+    min-height:600px;
+}
 
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        };
-    </script>
+/* =============================================================
+   A4 preview inner styles (shared across templates)
+   ============================================================= */
+.iv-header{ display:flex; justify-content:space-between; margin-bottom:24px; padding-bottom:16px; gap:16px; flex-wrap:wrap; }
+.iv-brand{ min-width:140px; }
+.iv-brand-name{ font-size:20px; font-weight:700; margin-bottom:4px; }
+.iv-meta{ text-align:right; min-width:140px; }
+.iv-doc-title{ font-size:26px; font-weight:800; letter-spacing:0.03em; margin-bottom:2px; }
+.iv-doc-number{ font-weight:600; margin-bottom:4px; }
+.iv-doc-date{ font-size:11px; color:#6b7280; }
+.iv-doc-date span{ font-weight:600; }
+.iv-status{ display:inline-block; padding:2px 10px; border-radius:12px; font-size:10px; font-weight:700; text-transform:uppercase; margin-top:6px; }
+.iv-section-label{ font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
+.iv-billto{ margin-bottom:18px; padding:10px 12px; border-radius:4px; font-size:11.5px; }
+.iv-client-name{ font-size:14px; font-weight:600; }
+.iv-tax-id{ font-size:11px; color:#6b7280; }
+.iv-items{ width:100%; border-collapse:collapse; margin-bottom:12px; font-size:11.5px; }
+.iv-items th{ text-align:left; padding:6px 8px; font-size:10px; text-transform:uppercase; letter-spacing:0.04em; border-bottom-width:1.5px; border-bottom-style:solid; }
+.iv-items th.text-right{ text-align:right; }
+.iv-items td{ padding:6px 8px; border-bottom:1px solid #f0f0f0; }
+.iv-items .text-right{ text-align:right; }
+.iv-desc{ vertical-align:top; }
+.iv-sku{ display:block; font-size:10px; color:#9ca3af; margin-top:1px; }
+.iv-totals{ display:flex; justify-content:flex-end; margin-top:8px; }
+.iv-totals-inner{ width:230px; }
+.iv-total-row{ display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+.iv-total-grand{ font-weight:700; font-size:14px; margin-top:4px; padding:7px 8px; border-radius:3px; }
+.iv-section{ margin-top:12px; font-size:11px; line-height:1.5; }
+.iv-section + .iv-section{ margin-top:8px; }
 
-    <style>
-        /* Invoice-specific styles */
-        .invoice-preview {
-            background: white;
-            padding: 20px;
-        }
+/* ---- Template: Default (green) ---- */
+.template-default .iv-brand-name,
+.template-default .iv-doc-title{ color:#007a55; }
+.template-default .iv-header{ border-bottom:2px solid #007a55; }
+.template-default .iv-section-label{ color:#007a55; }
+.template-default .iv-status{ background:#007a55; color:#fff; }
+.template-default .iv-status-draft{ background:#6b7280; }
+.template-default .iv-status-paid{ background:#22c55e; }
+.template-default .iv-billto{ background:#f0fdf4; }
+.template-default .iv-items th{ background:#007a55; color:#fff; }
+.template-default .iv-total-grand{ background:#007a55; color:#fff; }
 
-        .preview-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #007a55;
-        }
+/* ---- Template: Modern (blue) ---- */
+.template-modern .iv-brand-name,
+.template-modern .iv-doc-title{ color:#3b5998; }
+.template-modern .iv-header{ border-bottom:none; }
+.template-modern .iv-section-label{ color:#3b5998; }
+.template-modern .iv-status{ background:#3b5998; color:#fff; }
+.template-modern .iv-status-draft{ background:#6b7280; }
+.template-modern .iv-status-paid{ background:#2563eb; }
+.template-modern .iv-billto{ background:#eff6ff; }
+.template-modern .iv-items th{ background:#3b5998; color:#fff; }
+.template-modern .iv-items td{ border-bottom:1px solid #e5e7eb; }
+.template-modern .iv-total-grand{ background:#3b5998; color:#fff; }
 
-        .company-details h2 {
-            color: #007a55;
-            margin-bottom: 10px;
-        }
+/* ---- Template: Minimal (monochrome) ---- */
+.template-minimal .iv-brand-name,
+.template-minimal .iv-doc-title{ color:#111; }
+.template-minimal .iv-header{ border-bottom:1px solid #111; }
+.template-minimal .iv-section-label{ color:#111; }
+.template-minimal .iv-status{ background:#111; color:#fff; }
+.template-minimal .iv-status-draft{ background:#9ca3af; }
+.template-minimal .iv-status-paid{ background:#333; }
+.template-minimal .iv-billto{ background:#fafafa; border:1px solid #e5e7eb; }
+.template-minimal .iv-items th{ background:#111; color:#fff; }
+.template-minimal .iv-total-grand{ background:#111; color:#fff; }
 
-        .invoice-title {
-            text-align: right;
-        }
+/* =============================================================
+   Slide-out All Invoices panel
+   ============================================================= */
+.invoices-slide-panel{ position:fixed; inset:0; z-index:1000; pointer-events:none; }
+.invoices-slide-panel.open{ pointer-events:auto; }
+.invoices-slide-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,0.35); opacity:0; transition:opacity 0.3s; }
+.invoices-slide-panel.open .invoices-slide-backdrop{ opacity:1; }
+.invoices-slide-content{
+    position:absolute; top:0; left:0; width:420px; max-width:90vw; height:100vh;
+    background:var(--bg-primary,#fff); box-shadow:2px 0 20px rgba(0,0,0,0.15);
+    transform:translateX(-100%); transition:transform 0.3s ease;
+    display:flex; flex-direction:column; z-index:1;
+}
+.invoices-slide-panel.open .invoices-slide-content{ transform:translateX(0); }
+.invoices-slide-header{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border-color,#e5e7eb); flex-shrink:0; }
+.invoices-slide-header h3{ font-size:16px; font-weight:700; }
+.invoices-slide-body{ flex:1; overflow-y:auto; padding:0; }
+.invoices-slide-table{ width:100%; border-collapse:collapse; font-size:13px; }
+.invoices-slide-table th{ padding:10px 14px; text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary,#6b7280); border-bottom:1px solid var(--border-color,#e5e7eb); position:sticky; top:0; background:var(--bg-primary,#fff); }
+.invoices-slide-table td{ padding:10px 14px; border-bottom:1px solid var(--border-light,#f3f4f6); }
+.invoices-slide-table tr:hover{ background:var(--bg-secondary,#f9fafb); }
+.inv-num{ font-weight:600; white-space:nowrap; }
+.inv-actions{ text-align:right; white-space:nowrap; }
 
-        .invoice-title h1 {
-            color: #007a55;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
+/* =============================================================
+   Mobile tab bar
+   ============================================================= */
+.iw-mobile-tabs{ display:none; }
 
-        .client-details {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
+/* =============================================================
+   Button helpers
+   ============================================================= */
+.btn-icon{ display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border:none; background:transparent; border-radius:4px; cursor:pointer; color:var(--text-secondary,#6b7280); transition:background 0.15s,color 0.15s; }
+.btn-icon:hover{ background:var(--bg-tertiary,#f3f4f6); color:var(--text-primary,#1f2937); }
+.btn-icon:disabled{ opacity:0.35; cursor:default; }
+.btn-danger-icon{ color:#ef4444; }
+.btn-danger-icon:hover{ background:#fef2f2; color:#dc2626; }
+.text-muted{ color:var(--text-secondary,#6b7280); font-size:13px; }
+.btn-ghost{ background:transparent; border:1px solid transparent; color:var(--text-secondary,#6b7280); }
+.btn-ghost:hover{ background:var(--bg-tertiary,#f3f4f6); color:var(--text-primary); }
 
-        .client-details h4 {
-            color: #007a55;
-            margin-bottom: 10px;
-        }
+/* =============================================================
+   Responsive
+   ============================================================= */
+@media (max-width:1024px){
+    .iw-header{ padding:8px 12px; }
+    .iw-header-right .btn span{ display:none; }
+    .iw-header-right .btn{ padding:6px 8px; }
 
-        .preview-totals {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
+    .iw-body{ flex-direction:column; }
+    .iw-editor{ flex:0 0 100%; overflow-y:auto; padding:12px 14px 100px; border-right:none; }
+    .iw-preview-panel{ display:none; }
+    .iw-body.mobile-preview .iw-editor{ display:none; }
+    .iw-body.mobile-preview .iw-preview-panel{ display:flex; flex:1; }
+    .iw-body.mobile-preview{ flex-direction:column; }
 
-        .preview-totals .total-row {
-            display: flex;
-            justify-content: space-between;
-            width: 280px;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
+    .invoice-a4{ max-width:100%; padding:20px 18px; font-size:11px; min-height:auto; }
 
-        .preview-totals .grand-total {
-            background: #007a55;
-            color: white;
-            padding: 12px;
-            margin-top: 10px;
-            font-size: 16px;
-            font-weight: bold;
-        }
+    .iw-mobile-tabs{
+        display:flex; position:fixed; bottom:0; left:0; right:0;
+        border-top:1px solid var(--border-color,#e2e8f0);
+        background:var(--bg-primary,#fff); z-index:900;
+        padding:0 16px;
+    }
+    .iw-tab{
+        flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+        padding:10px; border:none; background:transparent;
+        font-size:13px; font-weight:600; color:var(--text-secondary,#6b7280);
+        cursor:pointer; transition:color 0.15s;
+    }
+    .iw-tab.active{ color:var(--color-primary,#007a55); }
+    .iw-tab i{ width:16px; height:16px; }
 
-        .notes, .terms, .payment-info {
-            margin-top: 25px;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 4px;
-        }
+    .editor-top-row{ gap:6px; }
+    .etr-field{ min-width:80px; }
+    .editor-grid.two-col{ grid-template-columns:1fr; }
 
-        .notes h4, .terms h4, .payment-info h4 {
-            color: #007a55;
-            margin-bottom: 8px;
-        }
+    .invoices-slide-content{ width:100%; max-width:100%; }
+}
+</style>
 
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 4px;
-        }
-
-        .line-items-container {
-            margin-bottom: 20px;
-        }
-
-        .line-items-table input[type="number"],
-        .line-items-table input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-        }
-
-        .line-items-table .form-control-sm {
-            padding: 4px 8px;
-            font-size: 0.85em;
-        }
-
-        .line-total {
-            font-weight: bold;
-            color: #007a55;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .totals-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid #007a55;
-        }
-
-        .totals {
-            max-width: 300px;
-            margin-left: auto;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75em;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        .status-draft {
-            background: #6c757d;
-            color: white;
-        }
-
-        .status-sent {
-            background: #007a55;
-            color: white;
-        }
-
-        .status-paid {
-            background: #28a745;
-            color: white;
-        }
-
-        .status-overdue {
-            background: #dc3545;
-            color: white;
-        }
-
-        .status-cancelled {
-            background: #495057;
-            color: white;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .preview-header {
-                flex-direction: column;
-            }
-            
-            .invoice-title {
-                text-align: left;
-                margin-top: 20px;
-            }
-            
-            .preview-totals {
-                justify-content: flex-start;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-            }
-            
-            .form-actions .btn {
-                width: 100%;
-            }
-        }
-    </style>
 {% endblock %}
-

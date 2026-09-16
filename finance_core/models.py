@@ -172,6 +172,7 @@ class Category(SerializableMixin):
     color: str = "#007a55"
     parent_id: Optional[str] = None
     is_system: bool = False
+    is_active: bool = True
     
 
 @dataclass

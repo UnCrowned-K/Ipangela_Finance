@@ -35,7 +35,9 @@
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
-        {% block sidebar_toggle %}{% endblock %}
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Collapse sidebar" aria-expanded="true">
+            <i data-lucide="chevron-left"></i>
+        </button>
 
         <a href="{{ url_for('pages.home') }}" class="sidebar-logo" aria-label="Ipangela Finance Home">
             <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

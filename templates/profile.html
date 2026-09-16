@@ -24,17 +24,17 @@
             <div class="stats-grid fade-in delay-1">
                 <div class="stat-card">
                     <i data-lucide="file-text"></i>
-                    <div class="stat-value">127</div>
+                    <div class="stat-value" id="stat-invoices">0</div>
                     <div class="stat-label">Invoices Created</div>
                 </div>
                 <div class="stat-card">
                     <i data-lucide="trending-up"></i>
-                    <div class="stat-value">45</div>
+                    <div class="stat-value" id="stat-optimizations">0</div>
                     <div class="stat-label">Optimizations Run</div>
                 </div>
                 <div class="stat-card">
                     <i data-lucide="calendar"></i>
-                    <div class="stat-value">6</div>
+                    <div class="stat-value" id="stat-months">0</div>
                     <div class="stat-label">Months Active</div>
                 </div>
             </div>
@@ -48,33 +48,33 @@
                             <i data-lucide="user"></i>
                             Account Information
                         </h2>
-                        <button class="btn-profile btn-ghost">
+                        <button type="button" class="btn-profile btn-ghost" id="btn-edit-profile">
                             <i data-lucide="edit-2"></i>
                             Edit
                         </button>
                     </div>
                     
                     <div class="avatar-section">
-                        <div class="avatar">JD</div>
+                        <div class="avatar" id="avatar-initials">?</div>
                         <div class="avatar-info">
-                            <h3>John Doe</h3>
-                            <p>Premium Member</p>
+                            <h3 id="display-username">Loading...</h3>
+                            <p id="display-email"></p>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
-                        <input type="text" class="form-input" value="John Doe" placeholder="Enter your full name">
+                        <input type="text" class="form-input" id="profile-name" placeholder="Enter your full name" disabled>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Email Address</label>
-                        <input type="email" class="form-input" value="john.doe@example.com" placeholder="Enter your email">
+                        <input type="email" class="form-input" id="profile-email" placeholder="Enter your email" disabled>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Company Name</label>
-                        <input type="text" class="form-input" value="Doe's Business" placeholder="Enter company name">
+                        <input type="text" class="form-input" id="profile-company" placeholder="Enter company name" disabled>
                     </div>
                 </div>
 
@@ -93,7 +93,7 @@
                             <span>Receive email updates about your account</span>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox" checked>
+                            <input type="checkbox" id="pref-email-notifications" checked>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -104,7 +104,7 @@
                             <span>Switch between light and dark themes</span>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox">
+                            <input type="checkbox" id="pref-dark-mode">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -115,7 +115,7 @@
                             <span>Automatically save your work</span>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox" checked>
+                            <input type="checkbox" id="pref-auto-save" checked>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -126,78 +126,27 @@
                             <span>Add an extra layer of security</span>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox">
+                            <input type="checkbox" id="pref-two-factor">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Activity Card -->
-            <div class="profile-card fade-in">
-                <div class="profile-card-header">
-                    <h2 class="profile-card-title">
-                        <i data-lucide="clock"></i>
-                        Recent Activity
-                    </h2>
-                    <button class="btn-profile btn-ghost">View All</button>
-                </div>
-                
-                <ul class="activity-list">
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i data-lucide="file-text"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Invoice #127 Generated</h4>
-                            <p>Successfully created invoice for Acme Corp</p>
-                        </div>
-                        <span class="activity-time">2 hours ago</span>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i data-lucide="trending-up"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Optimization Complete</h4>
-                            <p>Budget allocation optimized successfully</p>
-                        </div>
-                        <span class="activity-time">Yesterday</span>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i data-lucide="user"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Profile Updated</h4>
-                            <p>You updated your account information</p>
-                        </div>
-                        <span class="activity-time">3 days ago</span>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i data-lucide="download"></i>
-                        </div>
-                        <div class="activity-content">
-                            <h4>Export Downloaded</h4>
-                            <p>Exported optimization results to JSON</p>
-                        </div>
-                        <span class="activity-time">1 week ago</span>
-                    </li>
-                </ul>
-            </div>
-
             <!-- Action Buttons -->
             <div style="margin-top: 32px; display: flex; gap: 16px; flex-wrap: wrap;">
-                <button class="btn-profile btn-primary">
+                <button class="btn-profile btn-primary" id="btn-save-profile" type="button">
                     <i data-lucide="save"></i>
                     Save Changes
                 </button>
-                <button class="btn-profile btn-secondary">
+                <button class="btn-profile btn-secondary" id="btn-cancel-profile" type="button">
                     <i data-lucide="x"></i>
                     Cancel
                 </button>
             </div>
+
+            <!-- Save feedback -->
+            <div id="profile-feedback" style="display:none; margin-top:16px; padding:12px 16px; border-radius:6px; font-weight:500;"></div>
         </main>
     </div>
 
@@ -205,10 +154,133 @@
         // Initialize Lucide icons
         lucide.createIcons();
 
-        // Mobile menu toggle - toggles sidebar on mobile
+        // ---------- Helpers ----------
+        function getInitials(name, username) {
+            const src = (name || username || '').trim();
+            if (!src) return '?';
+            const parts = src.split(/\s+/);
+            return parts.length > 1
+                ? (parts[0][0] + parts[1][0]).toUpperCase()
+                : src.slice(0, 2).toUpperCase();
+        }
+
+        function showFeedback(msg, ok) {
+            const el = document.getElementById('profile-feedback');
+            el.textContent = msg;
+            el.style.display = 'block';
+            el.style.background = ok ? 'var(--settlement-green, #007a55)20' : 'var(--error-color, #dc3545)20';
+            el.style.color = ok ? 'var(--settlement-green, #007a55)' : 'var(--error-color, #dc3545)';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+
+        function setEditable(editable) {
+            ['profile-name', 'profile-email', 'profile-company'].forEach(id => {
+                document.getElementById(id).disabled = !editable;
+            });
+            document.getElementById('btn-edit-profile').style.display = editable ? 'none' : '';
+            document.getElementById('btn-save-profile').style.display = editable ? '' : 'none';
+            document.getElementById('btn-cancel-profile').style.display = editable ? '' : 'none';
+        }
+
+        // ---------- Load data ----------
+        let originalData = {};
+
+        async function loadProfile() {
+            try {
+                const resp = await csrfFetch('/api/profile');
+                const json = await resp.json();
+                if (!json.success) { showFeedback(json.message || 'Failed to load profile', false); return; }
+
+                const d = json.data;
+                originalData = d;
+
+                // Stats
+                document.getElementById('stat-invoices').textContent   = d.stats.invoices;
+                document.getElementById('stat-optimizations').textContent = d.stats.optimizations;
+                document.getElementById('stat-months').textContent     = d.stats.months_active;
+
+                // Username / email display
+                document.getElementById('display-username').textContent = d.username;
+                document.getElementById('display-email').textContent   = d.email || d.username;
+                document.getElementById('avatar-initials').textContent = getInitials(d.name, d.username);
+
+                // Editable fields
+                document.getElementById('profile-name').value    = d.name || '';
+                document.getElementById('profile-email').value   = d.email || '';
+                document.getElementById('profile-company').value = d.company || '';
+
+                // Preferences
+                const prefs = d.preferences || {};
+                document.getElementById('pref-email-notifications').checked = prefs.email_notifications !== false;
+                document.getElementById('pref-dark-mode').checked           = prefs.dark_mode === true;
+                document.getElementById('pref-auto-save').checked           = prefs.auto_save !== false;
+                document.getElementById('pref-two-factor').checked          = prefs.two_factor === true;
+            } catch (e) {
+                showFeedback('Could not load profile: ' + e.message, false);
+            }
+        }
+
+        // ---------- Save ----------
+        async function saveProfile() {
+            const payload = {
+                name:    document.getElementById('profile-name').value.trim(),
+                email:   document.getElementById('profile-email').value.trim(),
+                company: document.getElementById('profile-company').value.trim(),
+                email_notifications: document.getElementById('pref-email-notifications').checked,
+                dark_mode:           document.getElementById('pref-dark-mode').checked,
+                auto_save:           document.getElementById('pref-auto-save').checked,
+                two_factor:          document.getElementById('pref-two-factor').checked,
+            };
+
+            try {
+                const resp = await csrfFetch('/api/profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const json = await resp.json();
+                if (json.success) {
+                    showFeedback('Profile updated successfully', true);
+                    setEditable(false);
+                    loadProfile();  // refresh display
+                } else {
+                    showFeedback(json.message || 'Failed to save', false);
+                }
+            } catch (e) {
+                showFeedback('Error: ' + e.message, false);
+            }
+        }
+
+        // ---------- Event wiring ----------
+        document.getElementById('btn-edit-profile').addEventListener('click', () => setEditable(true));
+
+        document.getElementById('btn-save-profile').addEventListener('click', saveProfile);
+
+        document.getElementById('btn-cancel-profile').addEventListener('click', () => {
+            // restore original values
+            document.getElementById('profile-name').value    = originalData.name || '';
+            document.getElementById('profile-email').value   = originalData.email || '';
+            document.getElementById('profile-company').value = originalData.company || '';
+            const prefs = originalData.preferences || {};
+            document.getElementById('pref-email-notifications').checked = prefs.email_notifications !== false;
+            document.getElementById('pref-dark-mode').checked           = prefs.dark_mode === true;
+            document.getElementById('pref-auto-save').checked           = prefs.auto_save !== false;
+            document.getElementById('pref-two-factor').checked          = prefs.two_factor === true;
+            setEditable(false);
+        });
+
+        // Auto-save preference changes on toggle (debounced)
+        let prefsTimeout = null;
+        document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+            toggle.addEventListener('change', () => {
+                clearTimeout(prefsTimeout);
+                prefsTimeout = setTimeout(saveProfile, 500);
+            });
+        });
+
+        // Mobile menu toggle
         const menuToggle = document.querySelector('.mobile-menu-toggle');
         const sidebar = document.querySelector('.sidebar');
-        
         if (menuToggle && sidebar) {
             menuToggle.addEventListener('click', () => {
                 const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -221,61 +293,34 @@
         // Header scroll effect
         const header = document.getElementById('header');
         if (header) {
-            let lastScroll = 0;
-
             window.addEventListener('scroll', () => {
-                const currentScroll = window.pageYOffset;
-                
-                if (currentScroll > 100) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-                
-                lastScroll = currentScroll;
+                header.classList.toggle('scrolled', window.pageYOffset > 100);
             });
         }
 
-        // Intersection Observer for animations
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                     observer.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
+        }, { rootMargin: '0px', threshold: 0.1 });
 
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-        // Form validation feedback
-        const formInputs = document.querySelectorAll('.form-input');
-        
-        formInputs.forEach(input => {
+        // Input blur feedback
+        document.querySelectorAll('.form-input').forEach(input => {
             input.addEventListener('blur', function() {
-                if (this.value.trim() === '') {
-                    this.style.borderColor = 'var(--error-color)';
-                } else {
-                    this.style.borderColor = 'var(--border-color)';
-                }
+                this.style.borderColor = this.value.trim() === ''
+                    ? 'var(--error-color, #dc3545)'
+                    : 'var(--border-color)';
             });
         });
 
-        // Toggle switch visual feedback
-        const toggles = document.querySelectorAll('.toggle-switch input');
-        
-        toggles.forEach(toggle => {
-            toggle.addEventListener('change', function() {
-                console.log('Toggle changed:', this.checked);
-            });
-        });
+        // Initial load
+        loadProfile();
+        setEditable(false);
     </script>
 {% endblock %}
