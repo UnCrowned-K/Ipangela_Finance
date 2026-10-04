@@ -3,6 +3,7 @@ __pycache__/
 
 # Runtime data – regenerated on first request
 data/
+data/users.json
 invoices/
 saved/
 uploads/
