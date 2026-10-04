@@ -66,6 +66,65 @@ class AlertType(Enum):
     LOW_BALANCE = "low_balance"
     LARGE_TRANSACTION = "large_transaction"
     RECURRING_PATTERN = "recurring_pattern"
+    RECEIVABLE_OVERDUE = "receivable_overdue"
+    PAYABLE_OVERDUE = "payable_overdue"
+    TAX_DUE = "tax_due"
+    PROFIT_WARNING = "profit_warning"
+
+
+class ContactRole(Enum):
+    """Whether a contact owes us money, we owe them, or both."""
+    CUSTOMER = "customer"
+    SUPPLIER = "supplier"
+    BOTH = "both"
+
+
+class LedgerStatus(Enum):
+    """Lifecycle of a receivable or payable."""
+    OPEN = "open"
+    PARTIAL = "partial"
+    PAID = "paid"
+    OVERDUE = "overdue"
+    WRITTEN_OFF = "written_off"
+
+
+class TaxType(Enum):
+    """South African tax types tracked by the compliance module."""
+    VAT = "vat"
+    PROVISIONAL_TAX = "provisional_tax"
+    INCOME_TAX = "income_tax"
+    PAYE = "paye"
+    UIF = "uif"
+    SDL = "sdl"
+    DIVIDENDS_TAX = "dividends_tax"
+    TURNOVER_TAX = "turnover_tax"
+    EMPLOYEES_TAX = "employees_tax"
+    OTHER = "other"
+
+
+class TaxStatus(Enum):
+    ESTIMATED = "estimated"
+    DECLARED = "declared"
+    PAID = "paid"
+    OVERDUE = "overdue"
+    NOT_APPLICABLE = "not_applicable"
+
+
+class PayrollStatus(Enum):
+    DRAFT = "draft"
+    PROCESSED = "processed"
+    PAID = "paid"
+
+
+class EntityType(Enum):
+    """South African business structures."""
+    SOLE_PROPRIETORSHIP = "sole_proprietorship"
+    PARTNERSHIP = "partnership"
+    CLOSE_CORPORATION = "close_corporation"
+    PRIVATE_COMPANY = "private_company"
+    TRUST = "trust"
+    NON_PROFIT = "non_profit"
+    OTHER = "other"
 
 def _coerce_value(tp: Any, value: Any) -> Any:
     """Coerce a raw JSON value to the declared field type.
@@ -237,5 +296,138 @@ class Alert(SerializableMixin):
     is_read: bool = False
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
     data: Dict = field(default_factory=dict)
+
+
+@dataclass
+class Contact(SerializableMixin):
+    """A client or supplier the business transacts with."""
+    id: str
+    name: str
+    role: str = "customer"  # 'customer', 'supplier', 'both'
+    contact_person: str = ""
+    email: str = ""
+    phone: str = ""
+    tax_number: str = ""
+    notes: str = ""
+    is_active: bool = True
+    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+
+@dataclass
+class Receivable(SerializableMixin):
+    """Money a customer owes the business ('what you're owed')."""
+    id: str
+    contact_id: str
+    amount: float
+    issue_date: str
+    account_id: str = ""
+    due_date: Optional[str] = None
+    amount_paid: float = 0.0
+    description: str = ""
+    reference: str = ""  # e.g. linked invoice number
+    terms_days: int = 30
+    status: str = "open"  # open, partial, paid, overdue, written_off
+    notes: str = ""
+    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+
+@dataclass
+class Payable(SerializableMixin):
+    """Money the business owes a supplier ('what you owe')."""
+    id: str
+    contact_id: str
+    amount: float
+    issue_date: str
+    account_id: str = ""
+    due_date: Optional[str] = None
+    amount_paid: float = 0.0
+    description: str = ""
+    reference: str = ""  # e.g. supplier statement number
+    category_id: str = ""
+    terms_days: int = 30
+    status: str = "open"  # open, partial, paid, overdue, written_off
+    notes: str = ""
+    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+
+@dataclass
+class TaxRecord(SerializableMixin):
+    """A single tax obligation or estimate for a period."""
+    id: str
+    tax_type: str
+    period_start: str
+    period_end: str
+    due_date: str
+    taxable_amount: float = 0.0
+    tax_amount: float = 0.0
+    status: str = "estimated"  # estimated, declared, paid, overdue, not_applicable
+    reference: str = ""
+    provider: str = ""  # responsible accountant / tax practitioner
+    notes: str = ""
+    paid_date: Optional[str] = None
+    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+
+@dataclass
+class PayrollRun(SerializableMixin):
+    """A South African payroll run, including PAYE/UIF/SDL."""
+    id: str
+    period_start: str
+    period_end: str
+    pay_date: str
+    gross_pay: float = 0.0
+    paye: float = 0.0
+    uif: float = 0.0
+    other_deductions: float = 0.0
+    sdl: float = 0.0
+    employer_uif: float = 0.0
+    employer_pension: float = 0.0
+    employee_count: int = 0
+    status: str = "draft"  # draft, processed, paid
+    notes: str = ""
+    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+
+@dataclass
+class EntityProfile(SerializableMixin):
+    """The business's legal and tax identity (one per user)."""
+    registered_name: str = ""
+    trading_name: str = ""
+    entity_type: str = "sole_proprietorship"
+    registration_number: str = ""
+    tax_number: str = ""
+    vat_number: str = ""
+    financial_year_end_month: int = 2  # 1-12; 2 = February (SA SARS year)
+    vat_registered: bool = False
+    vat_interval: str = "monthly"  # monthly, bi_monthly, quarterly, four_monthly
+    industry: str = ""
+    employee_count: int = 0
+    address: str = ""
+    accountant_name: str = ""
+    accountant_contact: str = ""
+    notes: str = ""
+    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
+
+
+@dataclass
+class ForecastScenario(SerializableMixin):
+    """Saved assumptions for a forward financial projection."""
+    id: str
+    name: str
+    projection_months: int = 6
+    baseline_months: int = 3
+    income_growth_pct: float = 0.0
+    expense_growth_pct: float = 0.0
+    one_off_income: float = 0.0
+    one_off_expenses: float = 0.0
+    notes: str = ""
+    is_active: bool = True
+    created_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
     
 

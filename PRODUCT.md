@@ -39,9 +39,23 @@ A decision-support tool rather than a ledger: the optimization solver is the cen
 - **Optimizer**: ILP solve via PuLP/CBC; variables with lower/upper bounds, cost, profit, and multiplier; budget and capacity constraints; save/restore and export results; delete/clear/edit variables.
 - **Invoices**: multi-currency, unlimited line items with quantity/price/discount/tax, sequential numbering `INV-YYYY-XXXXXX`, statuses (Draft, Sent, Paid, Overdue, Cancelled), PDF generation, email-to-client, client management, preview.
 - **Finance**: accounts; income/expense/transfer transactions with categories and tags; budgets; reports; CSV export and import; optional subscription-account tier.
+- **Finance accounting**: money position (the five questions — in, out, owed, owing, actually made); customer and supplier ledger with contacts, invoices, bills, partial settlement, write-offs and aging buckets; financial statements on both a cash and an accrual basis, plus balance sheet, cash flow and expense analysis.
+- **Finance compliance**: South African business profile and structuring checklist; VAT, PAYE, UIF, SDL, provisional and income tax obligations with deadlines and statuses; payroll runs; ZAR default with a configurable financial year end (February default) and 15% VAT.
+- **Finance planning**: records-completeness health score with named fixes; funding readiness across revenue, margin, current ratio, DSO, runway, stability and growth, separating blockers from warnings; forecast scenarios projected from the user's own recent averages.
 - **Pages**: marketing home, about, contact; auth (register/login/logout); profile with settings.
-- Technical: Flask + server-rendered Jinja templates, consolidated single `style.css`, shared `app.js`, dark mode, reduced-motion support, 71 automated tests.
+- Technical: Flask + server-rendered Jinja templates, consolidated single `style.css`, shared `app.js`, dark mode, reduced-motion support, 236 automated tests.
 - Undecided: no pricing/billing tiers, no team roles, no public API commitments were confirmed.
+
+### Accounting basis
+
+Documented deliberately, because these choices are visible to the user and will not agree with each other:
+
+- Cash basis counts money that moved; accrual basis counts what was earned and incurred. Both are always shown together.
+- Settling a customer invoice or supplier bill is tagged, and accrual figures count the invoice or bill rather than the payment, so nothing is counted twice.
+- Owner equity is a balancing plug. Inventory, fixed assets and depreciation are not tracked.
+- Opening cash is derived from closing cash, since dated historical account balances are not stored.
+- Cost of sales is inferred from category names and can be overridden by recategorising.
+- Tax, payroll and funding figures are planning estimates from the user's own records. They support professional advice; they do not replace SARS or an accountant's judgement, and the UI and API both say so.
 
 ## Brand Commitments
 
@@ -51,7 +65,7 @@ None binding. The incumbent identity is green-accented with the name "Ipangela";
 
 - README feature inventory.
 - Working application: finance dashboard, optimizer, invoice generator, import/export flows.
-- 71 passing tests covering finance logic, optimizer state, file operations, CSRF, security, page rendering, and validators.
+- 236 passing tests covering finance logic, accounting and reporting, compliance, forecasting, the finance page markup and its JavaScript wiring, optimizer state, file operations, CSRF, security, page rendering, and validators.
 - No testimonials, case studies, press, or user research; none should be fabricated.
 
 ## Product Principles

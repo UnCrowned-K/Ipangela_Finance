@@ -32,9 +32,21 @@ def optimizer():
     result = {}
 
     if request.method == "POST":
+        # The budget is a constraint, not a preference: the solver has nothing to
+        # maximise against without one. Reading it wherever it arrives keeps the
+        # field and the stored value from drifting apart.
+        posted_budget = None
+        if "budget" in request.form:
+            try:
+                posted_budget = float(request.form["budget"])
+            except (TypeError, ValueError):
+                posted_budget = None
+
         if "update_budget" in request.form:
             try:
-                new_budget = int(request.form["budget"])
+                # Cents matter on a Rand budget, and the field advertises them.
+                # int() here used to reject "1500.50" as invalid.
+                new_budget = float(request.form["budget"])
                 if new_budget <= 0:
                     raise ValueError("Budget must be positive")
                 budget = new_budget
@@ -52,14 +64,20 @@ def optimizer():
                     variables_dicts.append(var.to_dict())
                     optimizer_state.set_variables(variables_dicts)
                     variables = [IntegerVariable.from_dict(d) for d in variables_dicts]
-                    flash("Variable added successfully!", "success")
+                    flash("Item added successfully!", "success")
                 except OptimizationError as e:
                     flash(str(e), "error")
 
         elif "optimize" in request.form:
             if not variables:
                 flash("No items to optimize. Add items first.", "error")
+            elif posted_budget is None:
+                flash("Enter a spending budget before running the optimization.", "error")
+            elif posted_budget <= 0:
+                flash("The budget must be more than zero.", "error")
             else:
+                budget = posted_budget
+                optimizer_state.set_budget(budget)
                 try:
                     max_profit, result = optimize(variables, budget)
                     optimizer_state.increment_optimizations()

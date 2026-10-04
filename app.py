@@ -129,7 +129,7 @@ def create_app(config_class=Config) -> Flask:
 
 PUBLIC_ENDPOINTS = {
     'static',
-    'pages.home', 'pages.about', 'pages.contact',
+    'pages.home', 'pages.about', 'pages.contact', 'pages.contact_send',
     'auth.login', 'auth.logout', 'auth.register',
 }
 

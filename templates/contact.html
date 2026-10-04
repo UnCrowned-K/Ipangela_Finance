@@ -139,15 +139,16 @@
     </section>
 
     <!-- Contact form — one ruled page -->
-    <section class="features-club" id="contact-form">
+    <section class="features-club" id="contact">
         <div class="tool-doors-heading">
             <h2>Send a message</h2>
-            <p>Fill in the form — it routes to the same place.</p>
+            <p>Saved to this install's messages file so you can read and reply to it.</p>
         </div>
-        <form id="contact-form" class="features-club-grid" style="max-width: 720px;">
+        <form id="contact-form" class="features-club-grid" style="max-width: 720px;" action="{{ url_for('pages.contact_send') }}" method="post" novalidate data-contact-form>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="feature-club-item" style="grid-column: 1 / -1;">
                 <div class="ledger-form">
+                    <div class="form-feedback" id="contact-feedback" role="status" aria-live="polite" hidden></div>
                     <div class="ledger-row form-field-row">
                         <div class="form-group">
                             <label for="name">Name</label>
@@ -310,12 +311,47 @@
             });
         });
 
-        // Contact form submission
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your message! We will get back to you soon.');
-            this.reset();
-        });
+        // Contact form submission.
+        // The form posts to a real endpoint and confirms inline. It used to
+        // preventDefault and alert(), which told the sender their message had
+        // arrived while throwing it away.
+        const contactForm = document.querySelector('[data-contact-form]');
+        const contactFeedback = document.getElementById('contact-feedback');
+
+        function sayContact(message, ok) {
+            contactFeedback.textContent = message;
+            contactFeedback.classList.toggle('is-error', !ok);
+            contactFeedback.hidden = false;
+        }
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const button = contactForm.querySelector('button[type="submit"]');
+                const label = button.innerHTML;
+                button.disabled = true;
+
+                try {
+                    const response = await fetch(contactForm.action, {
+                        method: 'POST',
+                        body: new FormData(contactForm),
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    const result = await response.json().catch(() => ({}));
+                    if (!response.ok || !result.success) {
+                        sayContact(result.message || 'That did not send. Please try again.', false);
+                        return;
+                    }
+                    contactForm.reset();
+                    sayContact(result.message || 'Thanks — your message has been saved.', true);
+                } catch (error) {
+                    sayContact('Could not reach the server. Your message was not sent.', false);
+                } finally {
+                    button.disabled = false;
+                    button.innerHTML = label;
+                }
+            });
+        }
     </script>
 </body>
 </html>

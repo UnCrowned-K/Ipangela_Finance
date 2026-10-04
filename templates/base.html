@@ -28,6 +28,8 @@
     {% block head_scripts %}{% endblock %}
 </head>
 <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer" aria-live="polite" aria-label="Notifications"></div>
 
@@ -35,30 +37,34 @@
 
     <!-- Top navigation -->
     <header class="top-nav" id="topNav">
-        <a href="{{ url_for('pages.home') }}" class="top-nav-brand" aria-label="Ipangela Finance Home">
-            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect width="40" height="40" rx="8" fill="currentColor"/>
-                <path d="M10 28V12h6c2.2 0 4 1.8 4 4s-1.8 4-4 4h-3v4h3c2.2 0 4 1.8 4 4s-1.8 4-4 4h-6zm4-8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm0 8h3c1.1 0 2-.9 2-2s-.9-2-2-2h-3v4zm8-8h-4v8h6c1.1 0 2-.9 2-2s-.9-2-2-2h-2v-4z" fill="white"/>
+        <a href="{{ url_for('pages.home') }}" class="top-nav-brand" aria-label="Ipangela — home">
+            <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" focusable="false">
+                <path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/>
+                <path d="M3 7.5 12 12l9-4.5"/>
+                <path d="M12 12v9"/>
             </svg>
             <span class="top-nav-name">Ipangela</span>
         </a>
 
         <div class="top-nav-panel" id="navPanel">
             <nav class="top-nav-links" aria-label="Main navigation">
-                <a href="{{ url_for('optimizer.optimizer') }}" {% if request.endpoint and request.endpoint.startswith('optimizer.') %}class="active"{% endif %}><i data-lucide="trending-up"></i><span>Optimizer</span></a>
-                <a href="{{ url_for('finance.finance') }}" {% if request.endpoint == 'finance.finance' %}class="active"{% endif %}><i data-lucide="wallet"></i><span>Finance</span></a>
-                <a href="{{ url_for('invoice.invoice') }}" {% if request.endpoint and request.endpoint.startswith('invoice.') %}class="active"{% endif %}><i data-lucide="file-text"></i><span>Invoices</span></a>
+                <a href="{{ url_for('optimizer.optimizer') }}" {% if request.endpoint and request.endpoint.startswith('optimizer.') %}class="active" aria-current="page"{% endif %}><i data-lucide="trending-up"></i><span>Optimizer</span></a>
+                <a href="{{ url_for('finance.finance') }}" {% if request.endpoint == 'finance.finance' %}class="active" aria-current="page"{% endif %}><i data-lucide="wallet"></i><span>Finance</span></a>
+                <a href="{{ url_for('invoice.invoice') }}" {% if request.endpoint and request.endpoint.startswith('invoice.') %}class="active" aria-current="page"{% endif %}><i data-lucide="file-text"></i><span>Invoices</span></a>
                 {% block nav_extra %}{% endblock %}
             </nav>
         </div>
 
         <div class="top-nav-actions">
-            <button type="button" class="top-nav-btn theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <button type="button" class="top-nav-btn theme-toggle" id="themeToggle"
+                    aria-label="Toggle dark mode" aria-pressed="false">
                 <i data-lucide="moon" class="theme-icon-dark"></i>
                 <i data-lucide="sun" class="theme-icon-light"></i>
             </button>
             <div class="nav-user" id="navUser">
-                <button type="button" class="top-nav-btn nav-user-toggle" id="navUserToggle" aria-label="Account menu" aria-expanded="false">
+                <button type="button" class="top-nav-btn nav-user-toggle" id="navUserToggle" aria-label="Account menu" aria-expanded="false" aria-haspopup="true" aria-controls="navUserMenu">
                     <i data-lucide="circle-user"></i>
                     <i data-lucide="chevron-down" class="nav-user-caret"></i>
                 </button>
@@ -69,13 +75,15 @@
                     <a href="{{ url_for('auth.logout') }}" class="nav-user-signout"><i data-lucide="log-out"></i><span>Sign Out</span></a>
                 </div>
             </div>
-            <button type="button" class="top-nav-hamburger" id="navHamburger" aria-label="Open navigation menu" aria-expanded="false">
+            <button type="button" class="top-nav-hamburger" id="navHamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navPanel">
                 <i data-lucide="menu"></i>
             </button>
         </div>
     </header>
 
+    <main id="main" tabindex="-1">
     {% block content %}{% endblock %}
+    </main>
 
     {% block scripts %}
     <script src="{{ url_for('static', filename='app.js') }}"></script>

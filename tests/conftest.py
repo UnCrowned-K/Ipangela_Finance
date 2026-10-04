@@ -34,7 +34,9 @@ def app_instance(tmp_path):
     app.config['SAVED_FOLDER'] = str(tmp_path / 'saved')
     app.config['FINANCE_DATA_FOLDER'] = str(tmp_path / 'finance_data')
     app.config['INVOICE_STORAGE_FOLDER'] = str(tmp_path / 'invoices')
-    for name in ('uploads', 'exports', 'saved', 'finance_data', 'invoices'):
+    app.config['MESSAGE_FOLDER'] = str(tmp_path / 'messages')
+    for name in ('uploads', 'exports', 'saved', 'finance_data', 'invoices',
+                 'messages'):
         os.makedirs(str(tmp_path / name), exist_ok=True)
     yield app
     _login_attempts.clear()

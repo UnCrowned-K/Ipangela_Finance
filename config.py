@@ -26,6 +26,8 @@ class Config:
     # Per-user data roots
     FINANCE_DATA_FOLDER = os.path.join(BASE_DIR, 'data', 'finance')
     INVOICE_STORAGE_FOLDER = os.path.join(BASE_DIR, 'invoices')
+    # Messages sent through the contact form, readable by the operator on disk.
+    MESSAGE_FOLDER = os.path.join(BASE_DIR, 'data', 'messages')
     
     # Ensure upload and export directories exist
     @staticmethod
@@ -39,11 +41,13 @@ class Config:
                 app.config['OPTIMIZER_STATE_FOLDER'] = '/tmp/optimizer_state'
                 app.config['FINANCE_DATA_FOLDER'] = '/tmp/data/finance'
                 app.config['INVOICE_STORAGE_FOLDER'] = '/tmp/invoices'
+                app.config['MESSAGE_FOLDER'] = '/tmp/data/messages'
             
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             os.makedirs(app.config['EXPORT_FOLDER'], exist_ok=True)
             os.makedirs(app.config['SAVED_FOLDER'], exist_ok=True)
             os.makedirs(app.config['OPTIMIZER_STATE_FOLDER'], exist_ok=True)
+            os.makedirs(app.config['MESSAGE_FOLDER'], exist_ok=True)
         except Exception as e:
             # Log error but don't crash the app
             print(f"Warning: Could not create directories: {str(e)}")

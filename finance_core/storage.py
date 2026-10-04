@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+from datetime import datetime
 from typing import Any, List, Optional, Tuple, Dict
 
 logging.basicConfig(
@@ -31,6 +32,15 @@ class DataStorage:
         self.categories_file = os.path.join(self.storage_dir, 'categories.json')
         self.alerts_file = os.path.join(self.storage_dir, 'alerts.json')
         self.users_file = os.path.join(self.storage_dir, 'users.json')
+
+        # Ledger, compliance and forecasting files
+        self.contacts_file = os.path.join(self.storage_dir, 'contacts.json')
+        self.receivables_file = os.path.join(self.storage_dir, 'receivables.json')
+        self.payables_file = os.path.join(self.storage_dir, 'payables.json')
+        self.tax_records_file = os.path.join(self.storage_dir, 'tax_records.json')
+        self.payroll_runs_file = os.path.join(self.storage_dir, 'payroll_runs.json')
+        self.entity_profile_file = os.path.join(self.storage_dir, 'entity_profile.json')
+        self.forecasts_file = os.path.join(self.storage_dir, 'forecasts.json')
     
     def _ensure_directories(self):
         """Ensure storage directories exist."""
@@ -126,7 +136,62 @@ class DataStorage:
     
     def save_users(self, users: List[Dict]) -> bool:
         return self._write_json(self.users_file, users)
-    
+
+    # Ledger
+    def get_contacts(self) -> List[Dict]:
+        return self._read_json(self.contacts_file, [])
+
+    def save_contacts(self, contacts: List[Dict]) -> bool:
+        return self._write_json(self.contacts_file, contacts)
+
+    def get_receivables(self) -> List[Dict]:
+        return self._read_json(self.receivables_file, [])
+
+    def save_receivables(self, receivables: List[Dict]) -> bool:
+        return self._write_json(self.receivables_file, receivables)
+
+    def get_payables(self) -> List[Dict]:
+        return self._read_json(self.payables_file, [])
+
+    def save_payables(self, payables: List[Dict]) -> bool:
+        return self._write_json(self.payables_file, payables)
+
+    # Compliance
+    def get_tax_records(self) -> List[Dict]:
+        return self._read_json(self.tax_records_file, [])
+
+    def save_tax_records(self, records: List[Dict]) -> bool:
+        return self._write_json(self.tax_records_file, records)
+
+    def get_payroll_runs(self) -> List[Dict]:
+        return self._read_json(self.payroll_runs_file, [])
+
+    def save_payroll_runs(self, runs: List[Dict]) -> bool:
+        return self._write_json(self.payroll_runs_file, runs)
+
+    def get_entity_profile(self) -> Optional[Dict]:
+        """Return the stored business profile, or None when never saved."""
+        return self._read_json(self.entity_profile_file, None)
+
+    def save_entity_profile(self, profile: Dict) -> bool:
+        return self._write_json(self.entity_profile_file, profile)
+
+    # Forecasting
+    def get_forecasts(self) -> List[Dict]:
+        return self._read_json(self.forecasts_file, [])
+
+    def save_forecasts(self, forecasts: List[Dict]) -> bool:
+        return self._write_json(self.forecasts_file, forecasts)
+
+    #: Every file written by :class:`DataStorage`, used by backup and wipe.
+    DATA_FILES = (
+        'transactions.json', 'accounts.json', 'budgets.json',
+        'categories.json', 'alerts.json', 'users.json',
+        'contacts.json', 'receivables.json', 'payables.json',
+        'tax_records.json', 'payroll_runs.json', 'entity_profile.json',
+        'forecasts.json',
+    )
+
     def backup_data(self, backup_dir: str = None) -> bool:
         """Create a backup of all data files."""
         if backup_dir is None:
@@ -136,12 +201,7 @@ class DataStorage:
             os.makedirs(backup_dir, exist_ok=True)
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             
-            files = [
-                'transactions.json', 'accounts.json', 'budgets.json',
-                'categories.json', 'alerts.json', 'users.json'
-            ]
-            
-            for filename in files:
+            for filename in self.DATA_FILES:
                 src = os.path.join(self.storage_dir, filename)
                 if os.path.exists(src):
                     dst = os.path.join(backup_dir, f'{timestamp}_{filename}')

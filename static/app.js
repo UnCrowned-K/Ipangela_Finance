@@ -219,6 +219,7 @@ function initTopNav() {
 function setThemeLabel(isDark) {
     var toggle = document.getElementById('themeToggle');
     if (!toggle) return;
+    toggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
     var label = toggle.querySelector('span');
     if (label && !label.querySelector('i')) {
         label.textContent = isDark ? 'Light mode' : 'Dark mode';
@@ -262,7 +263,15 @@ function showToast(message, type) {
     var icons = { success: 'check-circle', error: 'x-circle', warning: 'alert-triangle', info: 'info' };
     var toast = document.createElement('div');
     toast.className = 'toast ' + type;
-    toast.setAttribute('role', 'status');
+    // Failures and warnings interrupt; confirmations wait their turn. A toast
+    // that only lands in the polite queue can be missed entirely, which is
+    // exactly the case where the operator most needs to read it.
+    if (type === 'error' || type === 'warning') {
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+    } else {
+        toast.setAttribute('role', 'status');
+    }
 
     toast.append(Object.assign(document.createElement('i'), { 'data-lucide': icons[type] || 'info' }));
 
@@ -282,13 +291,93 @@ function showToast(message, type) {
         lucide.createIcons();
     }
 
-    setTimeout(function () {
-        toast.remove();
-    }, 4000);
+    var dismiss = function () {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+    };
+    var timer = setTimeout(dismiss, type === 'error' ? 8000 : 4000);
+    close.addEventListener('click', function () {
+        clearTimeout(timer);
+        dismiss();
+    });
 }
 
+// Native confirm() is a browser dialog in a product that has its own visual
+// world; it reads as an interruption from somewhere else. This is the same
+// plate as every other dialog, so a destructive action looks like the product.
+window.confirmAction = function (message, options) {
+    options = options || {};
+    return new Promise(function (resolve) {
+        var dialog = document.createElement('div');
+        dialog.className = 'modal modal-confirm';
+        dialog.innerHTML =
+            '<div class="modal-content modal-content-confirm">' +
+            '<div class="modal-header">' +
+            '<h2 class="modal-title"></h2>' +
+            '<button type="button" class="close" aria-label="Close dialog">&times;</button>' +
+            '</div>' +
+            '<div class="modal-body"><p class="confirm-message"></p></div>' +
+            '<div class="modal-footer">' +
+            '<button type="button" class="btn btn-secondary confirm-cancel"></button>' +
+            '<button type="button" class="btn btn-danger confirm-accept"></button>' +
+            '</div></div>';
+
+        var title = dialog.querySelector('.modal-title');
+        var body = dialog.querySelector('.confirm-message');
+        var cancel = dialog.querySelector('.confirm-cancel');
+        var accept = dialog.querySelector('.confirm-accept');
+
+        title.textContent = options.title || 'Are you sure?';
+        body.textContent = message;
+        cancel.textContent = options.cancelLabel || 'Cancel';
+        accept.textContent = options.confirmLabel || 'Delete';
+
+        var opener = document.activeElement;
+        function done(result) {
+            dialog.remove();
+            document.body.style.overflow = 'auto';
+            if (opener && document.contains(opener)) opener.focus();
+            resolve(result);
+        }
+
+        cancel.addEventListener('click', function () { done(false); });
+        accept.addEventListener('click', function () { done(true); });
+        dialog.querySelector('.close').addEventListener('click', function () { done(false); });
+        dialog.addEventListener('mousedown', function (event) {
+            if (event.target === dialog) done(false);
+        });
+        dialog.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                event.stopPropagation();
+                done(false);
+            }
+        });
+
+        document.body.appendChild(dialog);
+        document.body.style.overflow = 'hidden';
+        accept.focus();
+    });
+};
+
+var FOCUSABLE = [
+    'a[href]', 'button:not([disabled])', 'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])', 'textarea:not([disabled])', '[tabindex]:not([tabindex="-1"])'
+].join(',');
+
+function isVisible(el) {
+    if (!el || !el.getClientRects().length) return false;
+    return window.getComputedStyle(el).visibility !== 'hidden';
+}
+
+function openDialogs() {
+    return Array.prototype.filter.call(
+        document.querySelectorAll('.modal, .modal-overlay'),
+        isVisible
+    );
+}
+
+// A modal that lets Tab walk out of it into the page behind is not a modal.
+// This keeps focus on the plate, and hands focus back to whatever opened it.
 function initModalBehavior() {
-    // Label modals for assistive tech and enforce dialog semantics
     document.querySelectorAll('.modal').forEach(function (modal) {
         if (!modal.hasAttribute('role')) {
             modal.setAttribute('role', 'dialog');
@@ -297,29 +386,114 @@ function initModalBehavior() {
         if (!modal.getAttribute('aria-label')) {
             var heading = modal.querySelector('.modal-header h2, .modal-header h3, .modal-title');
             if (heading && heading.textContent.trim()) {
-                modal.setAttribute('aria-label', heading.textContent.trim());
+                if (heading.id) {
+                    modal.setAttribute('aria-labelledby', heading.id);
+                } else {
+                    modal.setAttribute('aria-label', heading.textContent.trim());
+                }
             }
         }
     });
 
-    document.addEventListener('keydown', function (event) {
-        if (event.key !== 'Escape') {
-            return;
+    // Close buttons are spans in the page markup, which is not reachable by
+    // keyboard and is not announced as a control. Promote them.
+    document.querySelectorAll('.modal .close, .modal .close-modal').forEach(function (el) {
+        if (el.tagName !== 'BUTTON') {
+            var button = document.createElement('button');
+            button.type = 'button';
+            button.className = el.className;
+            button.setAttribute('aria-label', 'Close dialog');
+            button.innerHTML = el.innerHTML;
+            el.parentNode.replaceChild(button, el);
+        } else {
+            el.setAttribute('type', 'button');
+            if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', 'Close dialog');
         }
-        var visible = null;
-        document.querySelectorAll('.modal, .modal-overlay').forEach(function (el) {
-            if (!visible && el.style && el.style.display === 'block') {
-                visible = el;
+    });
+
+    var lastFocused = null;
+
+    function topDialog() {
+        var open = openDialogs();
+        return open.length ? open[open.length - 1] : null;
+    }
+
+    function focusablesIn(dialog) {
+        return Array.prototype.filter.call(dialog.querySelectorAll(FOCUSABLE), isVisible);
+    }
+
+    // Page scripts toggle display directly, so watch the tree instead of
+    // patching every one of their open/close paths.
+    var observer = new MutationObserver(function () {
+        var open = openDialogs();
+        if (open.length) {
+            var dialog = open[open.length - 1];
+            if (dialog !== lastFocused) {
+                lastFocused = dialog;
+                if (!dialog.hasAttribute('data-focus-seeded')) {
+                    dialog.setAttribute('data-focus-seeded', 'true');
+                    var fields = focusablesIn(dialog);
+                    (fields[1] || fields[0] || dialog).focus();
+                }
             }
-        });
-        if (visible) {
-            var closeBtn = visible.querySelector('.close-modal, .close');
+        } else if (lastFocused) {
+            var opener = lastFocused;
+            lastFocused = null;
+            document.querySelectorAll('[data-focus-seeded]').forEach(function (el) {
+                el.removeAttribute('data-focus-seeded');
+            });
+            var restore = opener.__opener;
+            if (restore && document.contains(restore)) {
+                restore.focus();
+            } else {
+                var skip = document.getElementById('main');
+                if (skip) skip.focus({ preventScroll: true });
+            }
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
+
+    document.addEventListener('mousedown', function (event) {
+        var dialog = topDialog();
+        if (!dialog) return;
+        var trigger = event.target.closest('[data-modal-open], .btn, button');
+        if (trigger) {
+            openDialogs().forEach(function (open) { open.__opener = trigger; });
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            var dialog = topDialog();
+            if (!dialog) return;
+            event.stopPropagation();
+            var closeBtn = dialog.querySelector('.close-modal, .close');
             if (closeBtn) {
                 closeBtn.click();
             } else {
-                visible.style.display = 'none';
+                dialog.style.display = 'none';
                 document.body.style.overflow = 'auto';
             }
+            return;
+        }
+
+        if (event.key !== 'Tab') return;
+        var dialog = topDialog();
+        if (!dialog) return;
+        var fields = focusablesIn(dialog);
+        if (!fields.length) {
+            event.preventDefault();
+            dialog.focus();
+            return;
+        }
+        var first = fields[0];
+        var last = fields[fields.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
         }
     });
 

@@ -9,6 +9,9 @@ from finance_core.managers import (
     CategoryManager, AccountManager, TransactionManager,
     BudgetManager, AlertManager, UserManager
 )
+from finance_core.ledger import ContactManager, ReceivableManager, PayableManager
+from finance_core.compliance import TaxManager, PayrollManager, EntityManager, ForecastManager
+from finance_core.statements import StatementBuilder
 
 logging.basicConfig(
     level=logging.INFO,
@@ -38,7 +41,38 @@ class FinanceCore:
         self.budget_manager = BudgetManager(self.storage, self.transaction_manager)
         self.alert_manager = AlertManager(self.storage, self.budget_manager)
         self.user_manager = UserManager(self.storage)
-        
+
+        # Customers, suppliers and the money they are owed
+        self.contact_manager = ContactManager(self.storage)
+        self.receivable_manager = ReceivableManager(
+            self.storage, self.contact_manager, self.transaction_manager
+        )
+        self.payable_manager = PayableManager(
+            self.storage, self.contact_manager, self.transaction_manager
+        )
+
+        # Tax, payroll, entity structuring and projections
+        self.entity_manager = EntityManager(self.storage)
+        self.tax_manager = TaxManager(
+            self.storage, self.transaction_manager, self.entity_manager
+        )
+        self.payroll_manager = PayrollManager(self.storage)
+        self.forecast_manager = ForecastManager(
+            self.storage, self.transaction_manager, self.account_manager
+        )
+
+        # Financial statements and lender-facing metrics
+        self.statement_builder = StatementBuilder(
+            transaction_manager=self.transaction_manager,
+            account_manager=self.account_manager,
+            receivable_manager=self.receivable_manager,
+            payable_manager=self.payable_manager,
+            category_manager=self.category_manager,
+            tax_manager=self.tax_manager,
+            payroll_manager=self.payroll_manager,
+            entity_manager=self.entity_manager,
+        )
+
         logger.info("Finance Core initialized successfully")
     
     # =========================================================================
@@ -404,14 +438,113 @@ class FinanceCore:
         self.storage._write_json(self.storage.accounts_file, [])
         self.storage._write_json(self.storage.budgets_file, [])
         self.storage._write_json(self.storage.alerts_file, [])
-        
-        self._transactions = None
-        self._accounts = None
-        self._budgets = None
-        self._alerts = None
-        
+
+        # Ledger and compliance collections
+        self.storage._write_json(self.storage.contacts_file, [])
+        self.storage._write_json(self.storage.receivables_file, [])
+        self.storage._write_json(self.storage.payables_file, [])
+        self.storage._write_json(self.storage.tax_records_file, [])
+        self.storage._write_json(self.storage.payroll_runs_file, [])
+        self.storage._write_json(self.storage.forecasts_file, [])
+        if os.path.exists(self.storage.entity_profile_file):
+            os.remove(self.storage.entity_profile_file)
+
+        # Drop the in-memory caches so the next read comes from disk
+        self.category_manager._categories = None
+        self.account_manager._accounts = None
+        self.transaction_manager._transactions = None
+        self.budget_manager._budgets = None
+        self.alert_manager._alerts = None
+        self.contact_manager._contacts = None
+        self.receivable_manager._items = None
+        self.payable_manager._items = None
+        self.tax_manager._records = None
+        self.payroll_manager._runs = None
+        self.forecast_manager._scenarios = None
+        self.entity_manager._profile = None
+        self.entity_manager._saved = False
+
         logger.warning("All financial data has been cleared")
         return True
+
+    # =========================================================================
+    # LEDGER AND COMPLIANCE
+    # =========================================================================
+
+    def get_ledger_overview(self, reference: str = None) -> Dict[str, Any]:
+        """Everything owed in and out, with aging on both sides."""
+        from finance_core import periods as _periods
+
+        ref = _periods.parse_date(reference) if reference else _periods.today()
+        return {
+            'as_of': ref.isoformat(),
+            'receivables': self.receivable_manager.list_entries(reference=ref),
+            'payables': self.payable_manager.list_entries(reference=ref),
+            'receivable_totals': self.receivable_manager.totals(ref),
+            'payable_totals': self.payable_manager.totals(ref),
+            'receivable_aging': self.receivable_manager.aging(ref),
+            'payable_aging': self.payable_manager.aging(ref),
+            'contacts': [c.to_dict() for c in self.contact_manager.get_active_contacts()],
+        }
+
+    def get_compliance_overview(self, reference: str = None) -> Dict[str, Any]:
+        """Tax, payroll and structuring status in one payload."""
+        from finance_core import periods as _periods
+
+        ref = _periods.parse_date(reference) if reference else _periods.today()
+        vat = self.tax_manager.estimate_vat(
+            _periods.month_start(ref).isoformat(), ref.isoformat()
+        )
+        return {
+            'as_of': ref.isoformat(),
+            'profile': self.entity_manager.profile.to_dict(),
+            'tax': {
+                'records': self.tax_manager.list_records(reference=ref),
+                'upcoming': self.tax_manager.upcoming_obligations(reference=ref),
+                'vat_estimate': vat,
+            },
+            'payroll': {
+                'runs': self.payroll_manager.list_runs(ref.year),
+                'flags': self.payroll_manager.compliance_flags(ref),
+                'totals': self.payroll_manager.totals(ref.year),
+            },
+            'structuring': self.entity_manager.structuring_checklist(self.account_manager),
+        }
+
+    def get_money_position(self, start: str = None, end: str = None,
+                           reference: str = None) -> Dict[str, Any]:
+        """The five questions answered for a period."""
+        from finance_core import periods as _periods
+
+        return self.statement_builder.money_position(
+            start, end,
+            _periods.parse_date(reference) if reference else None,
+        )
+
+    def get_financial_statements(self, report_type: str, start: str = None,
+                                end: str = None, **options) -> Dict[str, Any]:
+        """Build one of the formal statements.
+
+        Supported types: profit_loss, balance_sheet, cash_flow,
+        expense_analysis, records_health, funding_readiness.
+        """
+        builders = {
+            'profit_loss': lambda: self.statement_builder.profit_and_loss(
+                start, end, options.get('account_id')),
+            'balance_sheet': lambda: self.statement_builder.balance_sheet(end),
+            'cash_flow': lambda: self.statement_builder.cash_flow(
+                start, end, options.get('account_id')),
+            'expense_analysis': lambda: self.statement_builder.expense_analysis(start, end),
+            'records_health': lambda: self.statement_builder.records_health(end),
+            'funding_readiness': lambda: self.statement_builder.funding_readiness(
+                end, options.get('months', 12)),
+        }
+        if report_type not in builders:
+            raise ValueError(
+                f"Unknown report type '{report_type}'. Use one of: "
+                f"{', '.join(sorted(builders))}"
+            )
+        return builders[report_type]()
 
 
 # =============================================================================

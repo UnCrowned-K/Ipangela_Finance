@@ -261,6 +261,16 @@ function updatePreview(){
     lucide.createIcons({nameAttr:'data-lucide', parent: document.getElementById('invoiceA4')});
 }
 
+// Local calendar date as YYYY-MM-DD.
+// Avoids toISOString(), which reports UTC: in SAST (UTC+2) any moment before
+// 02:00 returns yesterday, dating new invoices a day in the past.
+function isoToday(){
+    var d = new Date();
+    return d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0');
+}
+
 function collectInvoiceData(){
     var client = {
         name: gv('clientName'), email: gv('clientEmail'),
@@ -536,7 +546,7 @@ function newInvoice(){
     document.getElementById('notes').value = '';
     document.getElementById('terms').value = '';
     document.getElementById('paymentInstructions').value = '';
-    var today = new Date().toISOString().split('T')[0];
+    var today = isoToday();
     document.getElementById('issueDate').value = today;
     document.getElementById('dueDate').value = '';
     document.getElementById('status').value = 'draft';
@@ -814,6 +824,9 @@ document.addEventListener('keydown', function(e){
 }
 .iw-title{ font-size:18px; font-weight:700; white-space:nowrap; }
 .iw-save-status{ font-size:12px; color:var(--color-success, #22c55e); margin-left:8px; transition:opacity 0.3s; }
+/* The title is an h1, so without this the save status falls to its own line
+   under it instead of sitting beside it where the margin-left implies. */
+.iw-header-left{ display:flex; align-items:center; gap:8px; min-width:0; }
 .iw-header-right{ display:flex; gap:8px; align-items:center; flex-wrap:nowrap; }
 .iw-header-right .btn span{ display:inline; }
 
@@ -875,6 +888,7 @@ document.addEventListener('keydown', function(e){
 .line-items-wrap{ overflow-x:auto; }
 .iv-line-table{ width:100%; border-collapse:collapse; font-size:12px; }
 .iv-line-table th{ font-size:10px; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary,#6b7280); padding:4px 4px 6px; border-bottom:1px solid var(--border-color,#e5e7eb); text-align:left; }
+.iv-line-table th.col-desc{ width:100%; text-align:left; }
 .iv-line-table th.col-num{ text-align:right; }
 .iv-line-table th.col-action{ width:28px; text-align:center; }
 .iv-line-table td{ padding:3px 4px; vertical-align:top; }

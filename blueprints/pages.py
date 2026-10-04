@@ -2,6 +2,7 @@
 Pages blueprint: static informational pages, file listing pages and downloads.
 """
 
+import json
 import os
 from datetime import datetime
 
@@ -46,6 +47,76 @@ def about():
 def contact():
     """Contact page."""
     return render_template("contact.html")
+
+
+@pages_bp.route("/contact", methods=["POST"])
+def contact_send():
+    """Store a message from the contact form.
+
+    The form used to prevent its own submit and show an alert, which told the
+    sender their message had arrived while discarding it. Messages are appended
+    to a JSON file the operator can read from disk, which suits an app that is
+    installed and run locally.
+    """
+    name = (request.form.get('name') or '').strip()
+    email = (request.form.get('email') or '').strip()
+    subject = (request.form.get('subject') or '').strip()
+    message = (request.form.get('message') or '').strip()
+
+    wants_json = request.is_json or request.accept_mimetypes.best == 'application/json'
+    errors = []
+
+    if not name:
+        errors.append('Please add your name.')
+    if not email or '@' not in email:
+        errors.append('Please add an email address we can reply to.')
+    if not subject:
+        errors.append('Please choose a subject.')
+    if len(message) < 10:
+        errors.append('Please describe the problem in a sentence or two.')
+    if len(message) > 5000:
+        errors.append('That message is too long. Please keep it under 5000 characters.')
+
+    if errors:
+        if wants_json:
+            return {'success': False, 'message': ' '.join(errors)}, 400
+        for error in errors:
+            flash(error, 'error')
+        return redirect(url_for('pages.contact'))
+
+    record = {
+        'name': name[:200],
+        'email': email[:320],
+        'subject': subject[:200],
+        'message': message[:5000],
+        'received_at': datetime.now().isoformat(timespec='seconds'),
+        'user_id': session.get('user_id'),
+    }
+
+    folder = current_app.config.get('MESSAGE_FOLDER') or os.path.join(
+        current_app.root_path, 'data', 'messages')
+    os.makedirs(folder, exist_ok=True)
+    store = os.path.join(folder, 'messages.json')
+
+    entries = []
+    if os.path.exists(store):
+        try:
+            with open(store, encoding='utf-8') as handle:
+                loaded = json.load(handle)
+            if isinstance(loaded, list):
+                entries = loaded
+        except (ValueError, OSError):
+            # A corrupt store must not block someone reaching support.
+            entries = []
+    entries.append(record)
+    with open(store, 'w', encoding='utf-8') as handle:
+        json.dump(entries, handle, indent=2, ensure_ascii=False)
+
+    if wants_json:
+        return {'success': True, 'message': 'Thanks — your message has been saved.'}
+
+    flash('Thanks — your message has been saved.', 'success')
+    return redirect(url_for('pages.contact'))
 
 
 @pages_bp.route("/profile", methods=["GET"])

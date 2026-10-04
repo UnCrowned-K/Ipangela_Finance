@@ -26,9 +26,21 @@ A comprehensive web-based application for business management, featuring integer
 - **Multi-Account Support**: Manage checking, savings, credit, cash, investment, and loan accounts
 - **Budget Planning**: Create and track budgets with alert thresholds
 - **Category Management**: Pre-configured categories with auto-categorization
+- **Money In / Out**: The five questions worth answering at any moment — what came in, what went out, what you owe, what you are owed, and what you actually made
+- **Customer and Supplier Ledger**: Contacts, customer invoices and supplier bills with partial settlement, write-offs and aging buckets (not yet due, 1–30, 31–60, 61–90, 90+ days)
+- **Financial Statements**: Profit and loss on both a cash and an accrual basis, balance sheet, cash flow, and expense analysis — built on ZAR and a configurable South African financial year
+- **Tax and Payroll**: Business profile, structuring checklist, VAT/PAYE/UIF/provisional tax obligations with deadlines, and payroll runs with PAYE and UIF tracking
+- **Records Health**: Scores your records completeness and names exactly what to fix
+- **Funding Readiness**: Revenue, margin, current ratio, days sales outstanding, runway, income stability and growth, with blockers called out separately from warnings
+- **Forecasting**: Scenarios built from your own recent averages, with break-even and cash-runway projections
 - **Financial Reports**: Generate summary, income/expense, and category reports
 - **Data Import/Export**: Export data as JSON or CSV, import from external sources
 - **Visual Charts**: Interactive charts for income vs expenses and spending by category
+
+> **Professional advice**: the tax, payroll and funding figures in this module are
+> planning estimates produced from your own records. They support the advice of a
+> registered tax practitioner or bookkeeper; they do not replace it. Confirm every
+> amount, rate and deadline with SARS or your accountant before you file or pay.
 
 ## Tech Stack
 
@@ -177,6 +189,68 @@ The application will start at `http://localhost:5000` and automatically open in 
 - `POST /api/finance/export` - Export financial data
 - `POST /api/finance/export/csv` - Export transactions as CSV
 - `POST /api/finance/import` - Import financial data
+
+#### Contacts and ledger
+
+- `GET /api/finance/contacts` - List or search contacts (`?q=`, `?role=`)
+- `POST /api/finance/contact` - Create a customer or supplier
+- `PUT /api/finance/contact/<id>` - Update a contact
+- `DELETE /api/finance/contact/<id>` - Delete a contact with no ledger history
+- `GET /api/finance/ledger` - Invoices, bills, totals and aging on both sides (`?as_of=`)
+- `POST /api/finance/receivable` - Bill a customer
+- `PUT /api/finance/receivable/<id>` - Edit a customer invoice
+- `POST /api/finance/receivable/<id>/payment` - Record cash received (supports partial)
+- `POST /api/finance/receivable/<id>/write-off` - Write off as uncollectable
+- `DELETE /api/finance/receivable/<id>` - Delete an unpaid customer invoice
+- `POST /api/finance/payable` - Record a supplier bill
+- `PUT /api/finance/payable/<id>` - Edit a supplier bill
+- `POST /api/finance/payable/<id>/payment` - Record cash paid (supports partial)
+- `DELETE /api/finance/payable/<id>` - Delete an unpaid supplier bill
+
+#### Compliance
+
+- `GET /api/finance/compliance` - Profile, tax, payroll and structuring in one payload
+- `POST /api/finance/entity-profile` - Save business profile (entity type, VAT, year end)
+- `GET /api/finance/tax-schedule` - Planned South African filing periods
+- `POST /api/finance/tax-schedule/seed` - Turn the planned schedule into tracked obligations
+- `POST /api/finance/tax` - Record a tax obligation
+- `POST /api/finance/tax/<id>/status` - Mark paid, filed or re-estimated
+- `GET /api/finance/vat-estimate` - Rough net VAT payable for a period
+- `POST /api/finance/payroll` - Record a payroll run
+- `PUT /api/finance/payroll/<id>` - Update a payroll run
+- `DELETE /api/finance/payroll/<id>` - Delete a payroll run
+
+#### Statements and planning
+
+- `GET /api/finance/money-position` - The five questions for a period (`?start=`, `?end=`)
+- `GET /api/finance/statement` - `type=` `profit_loss`, `balance_sheet`, `cash_flow`,
+  `expense_analysis`, `records_health` or `funding_readiness`
+- `GET /api/finance/forecast` - List forecast scenarios
+- `POST /api/finance/forecast` - Create a scenario
+- `POST /api/finance/forecast/<id>/project` - Project a scenario
+
+### Accounting basis and limitations
+
+Worth knowing before you rely on the numbers:
+
+- **Cash basis counts money that moved. Accrual basis counts what you earned and
+  what it cost you.** Both are shown side by side, because they answer different
+  questions and will not agree.
+- **Settlements are not double counted.** A payment against a customer invoice or
+  supplier bill is tagged, and accrual figures include the invoice or bill rather
+  than the payment that settled it.
+- **Owner equity is a balancing figure** (assets minus liabilities). Inventory, fixed
+  assets and depreciation are not tracked, so a balance sheet is not a substitute for
+  one prepared by your bookkeeper.
+- **Opening cash in the cash flow statement is derived** by backing the period's net
+  movement out of your current closing cash, because dated historical account
+  balances are not recorded.
+- **Cost of sales is detected automatically** from category names. Recategorise
+  anything the heuristic gets wrong.
+- **Tax and payroll figures are planning estimates** from your own records, not
+  calculations or filings. Confirm them with SARS or your registered tax practitioner.
+- **Funding readiness is an internal view** built from your own data. It is not a
+  credit assessment and no lender will treat it as one.
 
 ## Project Structure
 

@@ -62,7 +62,7 @@ hr {
 .form-input:focus {
     outline: none;
     border-color: var(--color-primary-500);
-    box-shadow: 0 0 0 3px rgba(0, 122, 85, 0.1);
+    box-shadow: 0 0 0 3px var(--wash-2);
 }
 
 /* Buttons - Base */
@@ -112,7 +112,7 @@ hr {
 .btn-primary:hover {
     background: var(--color-primary-600);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 122, 85, 0.3);
+    box-shadow: 0 4px 12px var(--rule-accent-strong);
 }
 
 .btn-primary:active {
@@ -722,15 +722,15 @@ hr {
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
     --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
     --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
-    --shadow-primary: 0 10px 40px rgba(0, 122, 85, 0.15);
-    --shadow-primary-hover: 0 20px 60px rgba(0, 122, 85, 0.25);
+    --shadow-primary: 0 10px 40px var(--wash-3);
+    --shadow-primary-hover: 0 20px 60px var(--rule-accent);
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
     --gradient-hero: linear-gradient(135deg, #0d1f17 0%, #1a2e25 50%, #0f1f18 100%);
     --gradient-accent: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-accent) 100%);
     --gradient-text: linear-gradient(90deg, var(--color-accent-light), var(--color-accent));
-    --gradient-glow: radial-gradient(circle at center, rgba(0, 122, 85, 0.3) 0%, transparent 70%);
+    --gradient-glow: radial-gradient(circle at center, var(--rule-accent-strong) 0%, transparent 70%);
 
     /* Transitions */
     --transition-fast: 0.15s ease;
@@ -856,7 +856,7 @@ a:hover {
 .nav-link:hover,
 .nav-link.active {
     color: var(--primary-color);
-    background: rgba(0, 122, 85, 0.08);
+    background: var(--wash-2);
 }
 
 .mobile-menu-toggle {
@@ -965,7 +965,7 @@ a:hover {
     width: 300px;
     height: 300px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 122, 85, 0.2) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--rule-accent) 0%, transparent 70%);
     animation: floatParticle 8s ease-in-out infinite;
 }
 
@@ -1011,8 +1011,8 @@ a:hover {
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-2) var(--space-5);
-    background: rgba(0, 122, 85, 0.2);
-    border: 1px solid rgba(0, 122, 85, 0.3);
+    background: var(--rule-accent);
+    border: 1px solid var(--rule-accent-strong);
     border-radius: var(--radius-full);
     font-size: var(--text-sm);
     font-weight: 500;
@@ -1472,7 +1472,7 @@ a:hover {
     width: 50px;
     height: 50px;
     margin: 0 auto var(--space-3);
-    background: rgba(0, 122, 85, 0.1);
+    background: var(--wash-2);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1658,7 +1658,7 @@ a:hover {
 .feature-icon-wrapper {
     width: 56px;
     height: 56px;
-    background: rgba(0, 122, 85, 0.1);
+    background: var(--wash-2);
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
@@ -3275,7 +3275,7 @@ a:hover {
 .form-control:focus {
     outline: none;
     border-color: var(--color-primary-500);
-    box-shadow: 0 0 0 3px rgba(0, 122, 85, 0.1);
+    box-shadow: 0 0 0 3px var(--wash-2);
 }
 
 /* Buttons - Enhanced */
@@ -3322,7 +3322,7 @@ a:hover {
 .btn-primary:hover {
     background: var(--color-primary-600);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 122, 85, 0.3);
+    box-shadow: 0 4px 12px var(--rule-accent-strong);
 }
 
 .btn-secondary {
@@ -3910,7 +3910,7 @@ a:hover {
 .form-control:focus {
     outline: none;
     border-color: var(--color-primary-500);
-    box-shadow: 0 0 0 3px rgba(0, 122, 85, 0.1);
+    box-shadow: 0 0 0 3px var(--wash-2);
 }
 
 .form-control-sm {
@@ -3960,7 +3960,7 @@ a:hover {
 }
 
 .line-items-table tbody tr:hover {
-    background-color: rgba(0, 122, 85, 0.03);
+    background-color: var(--wash-1);
 }
 
 .line-items-table input[type="number"],
@@ -3979,7 +3979,7 @@ a:hover {
 .line-items-table input[type="text"]:focus {
     border-color: var(--color-primary-500);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 122, 85, 0.1);
+    box-shadow: 0 0 0 3px var(--wash-2);
 }
 
 .line-items-table input[type="number"],
@@ -4272,7 +4272,7 @@ a:hover {
 }
 
 .invoice-preview tbody tr:hover {
-    background-color: rgba(0, 122, 85, 0.03);
+    background-color: var(--wash-1);
 }
 
 /* Print Styles */
@@ -4571,7 +4571,7 @@ a:hover {
 .download-btn:hover {
     background: var(--color-primary-600);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 122, 85, 0.3);
+    box-shadow: 0 4px 12px var(--rule-accent-strong);
 }
 
 .delete-btn {
@@ -4730,7 +4730,7 @@ a:hover {
 }
 
 .nav-menu li a:hover {
-    background: rgba(0, 122, 85, 0.08);
+    background: var(--wash-2);
     color: var(--primary-color);
 }
 
@@ -4863,12 +4863,12 @@ a:hover {
 }
 
 .sidebar-nav .nav-menu li a:hover {
-    background: rgba(0, 122, 85, 0.05);
+    background: var(--wash-1);
     color: var(--primary-color);
 }
 
 .sidebar-nav .nav-menu li a.active {
-    background: rgba(0, 122, 85, 0.1);
+    background: var(--wash-2);
     color: var(--primary-color);
     border-left-color: var(--color-primary-500);
 }
@@ -4914,12 +4914,12 @@ a:hover {
 }
 
 .sidebar-menu li a:hover {
-    background: rgba(0, 122, 85, 0.05);
+    background: var(--wash-1);
     color: var(--primary-color);
 }
 
 .sidebar-menu li a.active {
-    background: rgba(0, 122, 85, 0.1);
+    background: var(--wash-2);
     color: var(--primary-color);
     border-left-color: var(--color-primary-500);
 }
@@ -5063,7 +5063,7 @@ a:hover {
 .form-input:focus {
     outline: none;
     border-color: var(--color-primary-500);
-    box-shadow: 0 0 0 3px rgba(0, 122, 85, 0.1);
+    box-shadow: 0 0 0 3px var(--wash-2);
 }
 
 .form-input::placeholder {
@@ -5100,7 +5100,7 @@ a:hover {
 .btn-primary:hover {
     background: var(--color-primary-600);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 122, 85, 0.3);
+    box-shadow: 0 4px 12px var(--rule-accent-strong);
 }
 
 .btn-secondary {
@@ -5118,7 +5118,7 @@ a:hover {
 }
 
 .btn-ghost:hover {
-    background: rgba(0, 122, 85, 0.08);
+    background: var(--wash-2);
 }
 
 /* Stats Section */
@@ -5225,7 +5225,7 @@ a:hover {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(0, 122, 85, 0.1);
+    background: var(--wash-2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5545,6 +5545,19 @@ textarea.is-invalid {
     --border-color: var(--color-gray-200);
     --border-default: var(--color-gray-200);
 
+    /* Accent washes: the one green, tinted from the register it sits on.
+       These replace the old hardcoded emerald so hover, focus and selected
+       states retheme with the light and dark grounds instead of staying
+       one fixed green. Washes are the only place the accent is allowed to
+       spread; the fill and the hairline carry the real meaning. */
+    --wash-1: rgba(15, 107, 68, 0.06);
+    --wash-2: rgba(15, 107, 68, 0.10);
+    --wash-3: rgba(15, 107, 68, 0.15);
+    --rule-accent: rgba(15, 107, 68, 0.26);
+    --rule-accent-strong: rgba(15, 107, 68, 0.42);
+    --focus-ring: rgba(31, 168, 104, 0.18);
+    --led-halo: rgba(15, 107, 68, 0.22);
+
     /* Spacing System (8px base) */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
@@ -5618,6 +5631,16 @@ html[data-theme="dark"] {
     --light-bg: #0a0f0c;
     --border-color: rgba(255, 255, 255, 0.13);
     --border-default: rgba(255, 255, 255, 0.13);
+
+    /* Accent washes on the black ground: money green at a low alpha, so a
+       selected nav item reads as a lit block rather than a dark green stain. */
+    --wash-1: rgba(61, 220, 142, 0.08);
+    --wash-2: rgba(61, 220, 142, 0.14);
+    --wash-3: rgba(61, 220, 142, 0.20);
+    --rule-accent: rgba(61, 220, 142, 0.30);
+    --rule-accent-strong: rgba(61, 220, 142, 0.48);
+    --focus-ring: rgba(61, 220, 142, 0.22);
+    --led-halo: rgba(61, 220, 142, 0.28);
 
     /* Text */
     --text-color: #eef4ef;
@@ -5770,7 +5793,7 @@ html[data-theme="dark"] input {
 .theme-toggle:hover {
     color: var(--primary-color);
     border-color: var(--color-primary-400);
-    background: rgba(0, 122, 85, 0.08);
+    background: var(--wash-2);
 }
 
 .theme-toggle [data-lucide] {
@@ -6635,14 +6658,14 @@ html[data-theme="dark"] .sidebar-nav .nav-menu li a.active {
 
 .top-nav-links a:hover {
     color: var(--primary-color);
-    background: rgba(0, 122, 85, 0.06);
-    border-color: rgba(0, 122, 85, 0.18);
+    background: var(--wash-1);
+    border-color: var(--rule-accent);
 }
 
 .top-nav-links a.active {
     color: var(--color-primary-500);
-    background: rgba(0, 122, 85, 0.1);
-    border-color: rgba(0, 122, 85, 0.25);
+    background: var(--wash-2);
+    border-color: var(--rule-accent);
     font-weight: 600;
 }
 
@@ -6678,8 +6701,8 @@ html[data-theme="dark"] .sidebar-nav .nav-menu li a.active {
 
 .top-nav-btn:hover {
     color: var(--primary-color);
-    background: rgba(0, 122, 85, 0.06);
-    border-color: rgba(0, 122, 85, 0.18);
+    background: var(--wash-1);
+    border-color: var(--rule-accent);
 }
 
 .top-nav .theme-toggle {
@@ -6709,7 +6732,7 @@ html[data-theme="dark"] .sidebar-nav .nav-menu li a.active {
 
 .top-nav-hamburger:hover {
     color: var(--primary-color);
-    background: rgba(0, 122, 85, 0.06);
+    background: var(--wash-1);
 }
 
 /* Account user menu */
@@ -6765,7 +6788,7 @@ html[data-theme="dark"] .sidebar-nav .nav-menu li a.active {
 
 .nav-user-menu a:hover {
     color: var(--primary-color);
-    background: rgba(0, 122, 85, 0.06);
+    background: var(--wash-1);
 }
 
 .nav-user-menu a.nav-user-signout {
@@ -7074,14 +7097,14 @@ html[data-theme="dark"] .nav-user-menu {
 
 .app-sidebar-link:hover {
     color: var(--primary-color);
-    background: rgba(0, 122, 85, 0.06);
-    border-color: rgba(0, 122, 85, 0.18);
+    background: var(--wash-1);
+    border-color: var(--rule-accent);
 }
 
 .app-sidebar-link.active {
     color: var(--color-primary-500);
-    background: rgba(0, 122, 85, 0.1);
-    border-color: rgba(0, 122, 85, 0.25);
+    background: var(--wash-2);
+    border-color: var(--rule-accent);
     font-weight: 600;
 }
 
@@ -7117,4 +7140,1934 @@ html[data-theme="dark"] .nav-user-menu {
     .app-sidebar-nav {
         flex-direction: row;
     }
+}
+
+/* ============================================
+   Finance — accounting, compliance, records and
+   forecasting surfaces.
+   Adds card header/body, the section tab strip,
+   money position, ledger, statements, records
+   health, funding readiness and forecast styling.
+   ============================================ */
+
+/* --- Section tab strip ------------------------------------------- */
+.section-tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin: var(--space-6) 0;
+    padding-bottom: var(--space-1);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    border-bottom: 2px solid var(--border-default);
+}
+
+.section-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex: 0 0 auto;
+    padding: var(--space-3) var(--space-4);
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    background: none;
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.section-tab:hover {
+    color: var(--text-primary);
+    background: var(--color-gray-100);
+}
+
+.section-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.section-tab svg,
+.section-tab [data-lucide] {
+    width: 16px;
+    height: 16px;
+}
+
+/* --- Section intros ---------------------------------------------- */
+.section-intro {
+    margin-bottom: var(--space-5);
+    max-width: 65ch;
+}
+
+.section-intro h2 {
+    font-size: var(--text-xl);
+    margin: 0 0 var(--space-2);
+    color: var(--text-primary);
+}
+
+.section-intro p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+}
+
+/* --- Card header and body (also used by existing sections) ------- */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.card-header h3,
+.card-header h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-header h3 svg,
+.card-header h4 svg {
+    width: 18px;
+    height: 18px;
+    color: var(--primary-color);
+}
+
+.card-body {
+    padding: var(--space-5);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.hint-text {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin: var(--space-3) 0 0;
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+}
+
+.hint-text svg,
+.hint-text [data-lucide] {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+}
+
+.preset-buttons {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-end;
+}
+
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.checkbox-label input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.chart-container {
+    position: relative;
+    height: 320px;
+}
+
+/* --- Money position ---------------------------------------------- */
+.position-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.position-card {
+    padding: var(--space-5);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-top: 4px solid var(--color-gray-300);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.position-card.tone-cash {
+    border-top-color: var(--color-success);
+}
+
+.position-card.tone-ledger {
+    border-top-color: var(--color-info);
+}
+
+.position-card.tone-profit {
+    border-top-color: var(--primary-color);
+    background: linear-gradient(180deg, var(--color-primary-50), var(--bg-card) 70%);
+}
+
+.position-card-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.position-card-label svg,
+.position-card-label [data-lucide] {
+    width: 16px;
+    height: 16px;
+}
+
+.position-card-amount {
+    margin: var(--space-3) 0 var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.position-card-basis {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+}
+
+.position-card-help {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    line-height: var(--leading-relaxed);
+}
+
+.position-summary {
+    margin-top: var(--space-4);
+}
+
+/* --- Shared summary rows ----------------------------------------- */
+.summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4);
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.summary-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+}
+
+.summary-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.summary-value.positive {
+    color: var(--color-success);
+}
+
+.summary-value.negative {
+    color: var(--color-danger);
+}
+
+/* --- Aging ------------------------------------------------------- */
+.aging-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.aging-card {
+    padding: var(--space-5);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+}
+
+.aging-card.owed {
+    border-left: 4px solid var(--color-success);
+}
+
+.aging-card.owe {
+    border-left: 4px solid var(--color-warning);
+}
+
+.aging-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.aging-header h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.aging-header h3 svg,
+.aging-header h3 [data-lucide] {
+    width: 16px;
+    height: 16px;
+}
+
+.aging-total {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.aging-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.aging-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--border-default);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.aging-list li.has-amount {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.aging-list li span:last-child {
+    font-family: var(--font-mono);
+}
+
+.aging-footer {
+    margin: var(--space-4) 0 0;
+}
+
+.ledger-toolbar {
+    margin-bottom: var(--space-5);
+}
+
+/* --- Badges ------------------------------------------------------ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--color-gray-100);
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-warning {
+    background: rgba(245, 158, 11, 0.14);
+    color: #92600a;
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.14);
+    color: var(--color-primary-700);
+}
+
+.badge-note {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: capitalize;
+    white-space: nowrap;
+    background: var(--color-gray-100);
+    color: var(--text-secondary);
+}
+
+.status-badge.success {
+    background: rgba(16, 185, 129, 0.14);
+    color: var(--color-primary-700);
+}
+
+.status-badge.warning {
+    background: rgba(245, 158, 11, 0.16);
+    color: #92600a;
+}
+
+.status-badge.danger {
+    background: rgba(239, 68, 68, 0.14);
+    color: #a51f1f;
+}
+
+.row-overdue td {
+    background: rgba(239, 68, 68, 0.04);
+}
+
+/* --- Compliance grids -------------------------------------------- */
+.compliance-grid,
+.records-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
+}
+
+/* --- Checklists -------------------------------------------------- */
+.checklist-progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.progress-bar {
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-gray-100);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: var(--primary-color);
+    transition: width var(--transition-base);
+}
+
+.checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--border-default);
+}
+
+.checklist-item svg,
+.checklist-item [data-lucide] {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--text-muted);
+}
+
+.checklist-item.done svg,
+.checklist-item.done [data-lucide] {
+    color: var(--color-success);
+}
+
+.checklist-item.issue svg,
+.checklist-item.issue [data-lucide] {
+    color: var(--color-warning);
+}
+
+.checklist-item.issue.critical svg,
+.checklist-item.issue.critical [data-lucide] {
+    color: var(--color-danger);
+}
+
+.checklist-label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.checklist-hint {
+    margin-top: 2px;
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+}
+
+.checklist-count {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-warning);
+}
+
+.checklist-clear {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) 0;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-success);
+}
+
+.checklist-clear svg,
+.checklist-clear [data-lucide] {
+    width: 18px;
+    height: 18px;
+}
+
+.all-checks {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+}
+
+.all-checks summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* --- Payroll flags ---------------------------------------------- */
+.flag-list {
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.flag-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+}
+
+.flag-list svg,
+.flag-list [data-lucide] {
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    color: var(--color-warning);
+}
+
+.flag-label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.flag-hint {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+/* --- Statements -------------------------------------------------- */
+.statement-output {
+    margin-top: var(--space-5);
+}
+
+.statement-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--border-default);
+}
+
+.statement-header h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+}
+
+.statement-period {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.statement-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.statement-panel {
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+}
+
+.statement-columns .statement-panel {
+    margin-bottom: 0;
+}
+
+.statement-panel h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.statement-panel h4 svg,
+.statement-panel h4 [data-lucide] {
+    width: 16px;
+    height: 16px;
+    color: var(--primary-color);
+}
+
+.statement-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-2) 0;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.statement-line.emphasis {
+    margin-top: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 2px solid var(--border-default);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.statement-label {
+    min-width: 0;
+}
+
+.line-note {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.statement-value {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.statement-value.positive {
+    color: var(--color-success);
+}
+
+.statement-value.negative {
+    color: var(--color-danger);
+}
+
+.sub-line {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-1) 0 var(--space-1) var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+.statement-subhead {
+    margin: var(--space-5) 0 0;
+    font-size: var(--text-sm);
+}
+
+.basis-comparison {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-4);
+}
+
+.basis-panel {
+    padding: var(--space-5);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+}
+
+.basis-panel.accent {
+    border-color: var(--primary-color);
+    background: linear-gradient(180deg, var(--color-primary-50), var(--bg-card) 55%);
+}
+
+.basis-panel h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-base);
+}
+
+.basis-panel h4 svg,
+.basis-panel h4 [data-lucide] {
+    width: 18px;
+    height: 18px;
+    color: var(--primary-color);
+}
+
+.basis-sub {
+    margin: var(--space-1) 0 var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.basis-margin {
+    margin: var(--space-3) 0 0;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.basis-legend {
+    margin-bottom: var(--space-4);
+}
+
+.statement-gap {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-gray-100);
+    border-radius: var(--radius-md);
+}
+
+.statement-gap svg,
+.statement-gap [data-lucide] {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    color: var(--text-secondary);
+}
+
+.gap-label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+}
+
+.gap-value {
+    display: block;
+    margin: var(--space-1) 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 700;
+}
+
+.gap-hint {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.basis-note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin: var(--space-5) 0 0;
+    padding: var(--space-3);
+    background: var(--color-gray-100);
+    border-left: 3px solid var(--text-muted);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+}
+
+.basis-note svg,
+.basis-note [data-lucide] {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+}
+
+/* --- Insight and breakdown --------------------------------------- */
+.insight-box {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin: var(--space-5) 0;
+    padding: var(--space-4);
+    background: var(--color-primary-50);
+    border-radius: var(--radius-md);
+}
+
+.insight-box svg,
+.insight-box [data-lucide] {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    color: var(--primary-color);
+}
+
+.insight-label {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-primary-700);
+}
+
+.insight-text {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--text-primary);
+}
+
+.breakdown-row {
+    margin-bottom: var(--space-4);
+}
+
+.breakdown-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+}
+
+.breakdown-name {
+    font-weight: 600;
+}
+
+.breakdown-amount {
+    font-family: var(--font-mono);
+}
+
+.breakdown-meta {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+/* --- Records health ---------------------------------------------- */
+.score-display {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
+}
+
+.score-ring {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 116px;
+    height: 116px;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--primary-color) calc(var(--score, 0) * 1%),
+        var(--color-gray-100) 0
+    );
+}
+
+.score-ring::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    background: var(--bg-card);
+}
+
+.score-value,
+.score-max {
+    position: relative;
+    z-index: 1;
+}
+
+.score-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: 1;
+}
+
+.score-max {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+.score-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.score-band {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.score-band.good {
+    color: var(--color-success);
+}
+
+.score-band.warning {
+    color: var(--color-warning);
+}
+
+.score-band.critical {
+    color: var(--color-danger);
+}
+
+.score-detail {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.score-detail.warning {
+    color: var(--color-warning);
+    font-weight: 600;
+}
+
+/* --- Funding readiness ------------------------------------------- */
+.readiness-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+}
+
+.readiness-head.ready {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.readiness-head.not-ready {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.readiness-head svg,
+.readiness-head [data-lucide] {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+}
+
+.readiness-head.ready svg,
+.readiness-head.ready [data-lucide] {
+    color: var(--color-success);
+}
+
+.readiness-head.not-ready svg,
+.readiness-head.not-ready [data-lucide] {
+    color: var(--color-warning);
+}
+
+.readiness-label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 700;
+}
+
+.readiness-hint {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.funding-blockers,
+.funding-warnings {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+}
+
+.funding-heading {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+}
+
+.metric-list {
+    margin-top: var(--space-4);
+}
+
+.metric-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--border-default);
+}
+
+.metric-main {
+    min-width: 0;
+}
+
+.metric-label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.metric-reading {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+}
+
+.metric-value {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.metric-row.good .metric-value {
+    color: var(--color-success);
+}
+
+.metric-row.warning .metric-value {
+    color: var(--color-warning);
+}
+
+.metric-row.critical .metric-value {
+    color: var(--color-danger);
+}
+
+/* --- Forecast ---------------------------------------------------- */
+.forecast-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-5);
+}
+
+.forecast-toolbar .form-control {
+    width: auto;
+    min-width: 220px;
+}
+
+.forecast-reading {
+    margin-bottom: var(--space-5);
+}
+
+.reading-main {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-left: 4px solid var(--primary-color);
+    border-radius: var(--radius-lg);
+}
+
+.reading-main svg,
+.reading-main [data-lucide] {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    color: var(--primary-color);
+}
+
+.reading-text {
+    display: block;
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: var(--leading-relaxed);
+    color: var(--text-primary);
+}
+
+.reading-basis {
+    display: block;
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.reading-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+}
+
+.reading-stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+}
+
+.reading-stat-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+}
+
+.reading-stat-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.reading-stat-value.negative {
+    color: var(--color-danger);
+}
+
+/* --- Narrow screens ---------------------------------------------- */
+@media (max-width: 768px) {
+    .section-tabs {
+        margin: var(--space-4) 0;
+    }
+
+    .section-tab span {
+        display: none;
+    }
+
+    .section-tab {
+        padding: var(--space-3);
+    }
+
+    .score-display {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-4);
+    }
+
+    .metric-row {
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+
+    .card-header {
+        padding: var(--space-4);
+    }
+
+    .card-body {
+        padding: var(--space-4);
+    }
+}
+
+@media (max-width: 640px) {
+    .reading-grid,
+    .summary-row {
+        grid-template-columns: 1fr;
+    }
+
+    .statement-line {
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+}
+
+/* Ledger entry name and what the entry is for */
+.entry-contact {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.entry-note {
+    margin-top: 2px;
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: var(--text-muted);
+}
+
+/* --- Dark theme corrections --------------------------------------
+   The three values above are deliberately darkened for the light
+   "warm paper" ground. On the dark till theme they need to lift
+   again, otherwise amber and red text sinks into its own tint. */
+html[data-theme="dark"] .badge-warning,
+html[data-theme="dark"] .status-badge.warning {
+    color: var(--color-warning);
+}
+
+html[data-theme="dark"] .status-badge.danger {
+    color: var(--color-danger);
+}
+
+html[data-theme="dark"] .status-badge.success {
+    color: var(--color-success);
+}
+
+/* ============================================
+   Optimizer "plate" system
+   --------------------------------------------
+   The optimizer is a sequence, not a dashboard:
+   set a constraint, describe what you buy, then
+   read the one number that matters. Each step
+   gets one surface so the eye can follow the
+   order, and the payoff leads once it exists.
+   ============================================ */
+
+/* Screen-reader-only text. Used for the item names that
+   keep icon-only and abbreviated buttons unambiguous. */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: var(--space-4);
+    z-index: 2000;
+    padding: var(--space-3) var(--space-5);
+    background: var(--color-primary-500);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 0 0 8px 8px;
+    transition: top var(--transition-base);
+}
+
+.skip-link:focus {
+    top: 0;
+    color: #fff;
+}
+
+.top-nav-name {
+    font-weight: 700;
+    font-size: var(--text-lg);
+    letter-spacing: -0.01em;
+}
+
+/* The one-line explanation under the page title. Tells the
+   operator what the page does before they touch anything. */
+.section-lede {
+    max-width: 62ch;
+    margin: 0 0 var(--space-6);
+    color: var(--text-secondary);
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+}
+
+/* --- The surface every step sits on ------------------------- */
+.plate {
+    background: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.plate-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-5);
+}
+
+.plate-head:last-child {
+    margin-bottom: 0;
+}
+
+.plate-title {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+/* The small uppercase label that names a figure rather than a
+   section. Sits above the number it belongs to. */
+.plate-eyebrow {
+    margin: 0 0 var(--space-1);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.plate-hint {
+    margin: var(--space-1) 0 0;
+    max-width: 58ch;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--text-secondary);
+}
+
+.plate-actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+/* --- Step 1: the budget and the run ------------------------ */
+/* The constraint and the button it unlocks share a surface:
+   running without a budget is not something the solver can do. */
+.control-plate {
+    border-color: var(--color-primary-200);
+    background: linear-gradient(180deg, var(--color-primary-50) 0%, var(--bg-card) 70%);
+}
+
+.control-plate-form {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.control-field {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.control-field label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Rand prefix welded to the input, so the unit is impossible
+   to misread and cannot be typed into the field. */
+.money-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.money-input-prefix {
+    position: absolute;
+    left: var(--space-4);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.money-input .form-control {
+    padding-left: calc(var(--space-4) * 2 + 0.6em);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 600;
+}
+
+.control-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+}
+
+.control-blocked {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+/* A disabled primary button with no explanation reads as broken.
+   The reason sits directly under it instead. */
+.control-actions .btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* --- Step 2: the payoff ------------------------------------- */
+/* Leads the page once it exists: the figure the whole tool
+   exists to produce, then the ledger that produced it. */
+.result-plate {
+    border-color: var(--color-primary-300);
+    box-shadow: var(--shadow-lg);
+}
+
+.result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.result-figure {
+    margin: 0;
+    line-height: 1.1;
+    color: var(--color-primary-600);
+}
+
+.money-hero {
+    font-family: var(--font-mono);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-primary-500);
+}
+
+.result-actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+/* --- Step 3: the items ledger ------------------------------- */
+.items-plate {
+    padding-bottom: var(--space-2);
+}
+
+/* The add/edit form expands inside the ledger instead of
+   covering it in a modal: the operator edits a row while
+   still seeing the rows around it. */
+.ledger-form-row {
+    margin-top: var(--space-4);
+    padding: var(--space-5);
+    background: var(--color-primary-50);
+    border: 1px solid var(--color-primary-200);
+    border-radius: 10px;
+    animation: fadeIn var(--transition-base);
+}
+
+.ledger-form-row[hidden] {
+    display: none;
+}
+
+.ledger-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0 var(--space-4);
+}
+
+.ledger-form-grid .form-group {
+    margin-bottom: var(--space-4);
+}
+
+.ledger-form-grid .form-group.is-wide {
+    grid-column: 1 / -1;
+}
+
+.ledger-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-primary-200);
+}
+
+/* Row helpers */
+.ledger-item {
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: left;
+}
+
+/* Secondary line under a figure: pack arithmetic, or a
+   unit rate the primary number does not show. */
+.ledger-sub {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.ledger-actions {
+    white-space: nowrap;
+}
+
+.ledger-actions .inline-form {
+    display: inline-flex;
+}
+
+/* An unlimited upper bound is a real answer, not missing
+   data, so it gets a glyph rather than an empty cell. */
+.is-unbounded {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    color: var(--text-muted);
+    cursor: help;
+}
+
+.is-positive {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+/* --- Small shared pieces ------------------------------------ */
+.field-hint {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--text-xs);
+    line-height: var(--leading-normal);
+    color: var(--text-secondary);
+}
+
+.btn-lg {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--text-lg);
+    font-weight: 600;
+}
+
+.btn-danger-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    color: var(--color-danger);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-danger-ghost:hover {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    color: #fff;
+}
+
+/* Empty-file-state glyph on the saved/imported/exports pages */
+.empty-folder-icon {
+    font-size: 56px;
+    width: 56px;
+    height: 56px;
+    opacity: 0.35;
+    margin-bottom: var(--space-4);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: var(--text-secondary);
+}
+
+/* --- Responsive: the budget row and result head stack ------ */
+@media (max-width: 768px) {
+    .plate {
+        padding: var(--space-5) var(--space-4);
+    }
+
+    .control-plate-form {
+        align-items: stretch;
+    }
+
+    .control-field {
+        flex-basis: 100%;
+    }
+
+    .control-actions,
+    .result-actions,
+    .plate-actions {
+        width: 100%;
+    }
+
+    .control-actions .btn,
+    .result-actions .btn {
+        width: 100%;
+    }
+
+    .control-blocked {
+        text-align: center;
+    }
+
+    .money-hero {
+        font-size: var(--text-2xl);
+    }
+
+    .ledger-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .ledger-form-actions .btn {
+        width: 100%;
+    }
+}
+
+/* --- Dark theme ------------------------------------------- */
+/* The control plate's gradient and the ledger's wash are
+   built from light-theme tints, so they need their own
+   ground on the dark till theme. */
+html[data-theme="dark"] .control-plate {
+    background: linear-gradient(180deg, rgba(0, 122, 85, 0.16) 0%, var(--bg-card) 70%);
+    border-color: var(--color-primary-700);
+}
+
+html[data-theme="dark"] .result-plate {
+    border-color: var(--color-primary-600);
+}
+
+html[data-theme="dark"] .money-hero,
+html[data-theme="dark"] .result-figure {
+    color: var(--color-primary-300);
+}
+
+html[data-theme="dark"] .plate-eyebrow,
+html[data-theme="dark"] .ledger-sub,
+html[data-theme="dark"] .is-unbounded {
+    color: var(--text-secondary);
+}
+
+html[data-theme="dark"] .plate-hint,
+html[data-theme="dark"] .field-hint,
+html[data-theme="dark"] .control-blocked,
+html[data-theme="dark"] .section-lede {
+    color: var(--color-gray-300);
+}
+
+html[data-theme="dark"] .ledger-form-row {
+    background: rgba(0, 122, 85, 0.12);
+    border-color: var(--color-primary-700);
+}
+
+html[data-theme="dark"] .ledger-form-actions {
+    border-top-color: var(--color-primary-700);
+}
+
+html[data-theme="dark"] .is-positive {
+    color: var(--color-success);
+}
+
+html[data-theme="dark"] .btn-danger-ghost {
+    color: #f87171;
+}
+
+html[data-theme="dark"] .btn-danger-ghost:hover {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    color: #fff;
+}
+
+/* ============================================
+   Finance two-level navigation
+   --------------------------------------------
+   Twelve sections used to sit in one flat strip, which reads
+   as twelve equal peers and hides which job each belongs to.
+   They are grouped into the four jobs the product does, and
+   only the active group's tabs are on screen at a time.
+   ============================================ */
+.finance-nav {
+    margin: var(--space-6) 0;
+    position: sticky;
+    /* Must clear the sticky .top-nav: both stick to the top of the viewport, so
+       top:0 here would slide the group row underneath it and swallow the clicks
+       meant for these tabs. */
+    top: var(--top-nav-h);
+    z-index: 900;
+    background: var(--bg-primary);
+    padding-top: var(--space-2);
+}
+
+/* Group row: the primary choice. Four verbs, so it gets weight
+   and a filled treatment when active. */
+.finance-groups {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.finance-groups::-webkit-scrollbar {
+    display: none;
+}
+
+.finance-group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex: 0 0 auto;
+    padding: var(--space-3) var(--space-5);
+    border: 2px solid var(--border-default);
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color var(--transition-fast), background var(--transition-fast),
+                border-color var(--transition-fast);
+}
+
+.finance-group svg,
+.finance-group [data-lucide] {
+    width: 16px;
+    height: 16px;
+}
+
+.finance-group:hover {
+    color: var(--text-primary);
+    border-color: var(--color-primary-300);
+}
+
+.finance-group.active {
+    background: var(--color-primary-500);
+    border-color: var(--color-primary-500);
+    color: #fff;
+}
+
+.finance-group:focus-visible {
+    outline: 3px solid var(--color-primary-400);
+    outline-offset: 2px;
+}
+
+/* The tab row sits under the group row and is already styled as
+   .section-tabs; it only needs to clear the group row's padding. */
+.finance-nav .section-tabs {
+    margin: var(--space-4) 0 0;
+    border-bottom-color: transparent;
+}
+
+.finance-nav .section-tabs[hidden] {
+    display: none;
+}
+
+/* Key/value breakdown: a figure with the sentence that explains
+   it underneath. Used where a bare number would not be readable. */
+.breakdown-list {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.breakdown-list > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px dashed var(--border-default);
+}
+
+.breakdown-list > div:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.breakdown-list .breakdown-label {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+}
+
+.breakdown-list .breakdown-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+html[data-theme="dark"] .finance-nav {
+    background: var(--bg-primary);
+}
+
+/* showSection scrolls the panel into view, but two sticky bars (the top nav and
+   the section nav) sit above the content. Without a scroll margin the heading
+   of the section you just opened is hidden behind them. */
+.finance-nav ~ .tab-content,
+.tab-content[id$="-section"] {
+    scroll-margin-top: calc(var(--top-nav-h) + 108px);
+}
+
+html[data-theme="dark"] .finance-group {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+    color: var(--text-secondary);
+}
+
+html[data-theme="dark"] .finance-group.active {
+    background: var(--color-primary-600);
+    border-color: var(--color-primary-600);
+    color: #fff;
+}
+
+html[data-theme="dark"] .breakdown-list > div {
+    border-bottom-color: var(--border-default);
+}
+
+@media (max-width: 768px) {
+    .finance-nav {
+        position: static;
+    }
+
+    .finance-group {
+        padding: var(--space-2) var(--space-4);
+    }
+}
+
+/* A ledger table lives inside a .plate, which is already a raised surface.
+   Left as a .data-table it would be a card inside a card: double border,
+   double shadow, and a hover shade that reads as a nested control. Flatten it
+   and keep the header tint so the table still reads as the plate's content. */
+.data-table.ledger {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.data-table.ledger th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.data-table.ledger th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.data-table.ledger td {
+    border-bottom-color: var(--border-default);
+}
+
+.data-table.ledger tbody tr:hover td {
+    background: var(--color-primary-50);
+}
+
+.data-table.ledger tfoot th,
+.data-table.ledger tfoot td {
+    border-top: 2px solid var(--color-primary-300);
+    font-weight: 600;
+    color: var(--text-primary);
+    background: transparent;
+}
+
+html[data-theme="dark"] .data-table.ledger tbody tr:hover td {
+    background: rgba(0, 122, 85, 0.1);
+}
+
+html[data-theme="dark"] .data-table.ledger tfoot th,
+html[data-theme="dark"] .data-table.ledger tfoot td {
+    border-top-color: var(--color-primary-700);
+}
+
+/* A field-hint that reports a rejected amount. The hint stays in flow rather
+   than turning into an alert, so the message sits next to the input it is about
+   and does not move the layout. */
+.field-hint.is-invalid-text {
+    color: var(--color-danger);
+    font-weight: 500;
+}
+
+html[data-theme="dark"] .field-hint.is-invalid-text {
+    color: #f87171;
+}
+
+/* Inline result of a form submission. Sits above the fields so it is read
+   before them, and is a real status region so a screen reader announces it
+   without the focus having to move. */
+.form-feedback {
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
+    border: 1px solid var(--color-success);
+    border-left-width: 4px;
+    border-radius: var(--radius-sm);
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+}
+
+.form-feedback[hidden] {
+    display: none;
+}
+
+.form-feedback.is-error {
+    border-color: var(--color-danger);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+html[data-theme="dark"] .form-feedback {
+    color: var(--color-gray-200);
+    background: rgba(16, 185, 129, 0.16);
+}
+
+html[data-theme="dark"] .form-feedback.is-error {
+    background: rgba(239, 68, 68, 0.18);
 }

@@ -9,16 +9,19 @@
     <div class="finance-container">
         <!-- Header -->
         <div class="section-header">
-            <h1 class="section-title">Finance Manager</h1>
+            <h1 class="section-title">Finance</h1>
             <div class="quick-actions">
                 <button class="btn btn-primary" onclick="openModal('transactionModal')">
-                    <i data-lucide="plus"></i> Add Transaction
+                    <i data-lucide="plus"></i> Add transaction
                 </button>
                 <button class="btn btn-secondary" onclick="openModal('accountModal')">
-                    <i data-lucide="building"></i> Add Account
+                    <i data-lucide="building"></i> Add account
                 </button>
-                <button class="btn btn-success" onclick="openModal('budgetModal')">
-                    <i data-lucide="target"></i> Create Budget
+                <button class="btn btn-secondary" onclick="openModal('budgetModal')">
+                    <i data-lucide="target"></i> Create budget
+                </button>
+                <button class="btn btn-secondary" data-section="import-export" data-section-jump>
+                    <i data-lucide="arrow-down-up"></i> Import / export
                 </button>
             </div>
         </div>
@@ -26,8 +29,93 @@
         <!-- Alerts Section -->
         <div id="alerts-container"></div>
 
+        <!-- Twelve sections were one flat strip of peer tabs, which reads as a
+             wall of equals and hides which job each section belongs to. They are
+             grouped into the four jobs the product actually does, and only the
+             active group's tabs are rendered. -->
+        <nav class="finance-nav" id="financeNav" aria-label="Finance sections">
+            <div class="finance-groups" role="tablist" aria-label="Finance section groups" id="financeGroups">
+                <button type="button" class="finance-group active" role="tab" id="group-decide"
+                        aria-selected="true" aria-controls="tabs-decide" data-group="decide">
+                    <i data-lucide="gauge"></i><span>Decide</span>
+                </button>
+                <button type="button" class="finance-group" role="tab" id="group-money"
+                        aria-selected="false" aria-controls="tabs-money" data-group="money" tabindex="-1">
+                    <i data-lucide="wallet"></i><span>Money</span>
+                </button>
+                <button type="button" class="finance-group" role="tab" id="group-people"
+                        aria-selected="false" aria-controls="tabs-people" data-group="people" tabindex="-1">
+                    <i data-lucide="users"></i><span>People</span>
+                </button>
+                <button type="button" class="finance-group" role="tab" id="group-comply"
+                        aria-selected="false" aria-controls="tabs-comply" data-group="comply" tabindex="-1">
+                    <i data-lucide="landmark"></i><span>Comply</span>
+                </button>
+            </div>
+
+            <div class="section-tabs" id="tabs-decide" role="tablist" aria-label="Decide sections" data-tabs="decide">
+                <button type="button" class="section-tab active" role="tab" id="tab-dashboard"
+                        aria-selected="true" aria-controls="dashboard-section" data-section="dashboard">
+                    <i data-lucide="layout-dashboard"></i><span>Overview</span>
+                </button>
+                <button type="button" class="section-tab" role="tab" id="tab-forecast"
+                        aria-selected="false" aria-controls="forecast-section" data-section="forecast" tabindex="-1">
+                    <i data-lucide="trending-up"></i><span>Forecast</span>
+                </button>
+            </div>
+
+            <div class="section-tabs" id="tabs-money" role="tablist" aria-label="Money sections" data-tabs="money" hidden>
+                <button type="button" class="section-tab" role="tab" id="tab-position"
+                        aria-selected="false" aria-controls="position-section" data-section="position" tabindex="-1">
+                    <i data-lucide="scale"></i><span>Money in / out</span>
+                </button>
+                <button type="button" class="section-tab" role="tab" id="tab-transactions"
+                        aria-selected="false" aria-controls="transactions-section" data-section="transactions" tabindex="-1">
+                    <i data-lucide="list"></i><span>Transactions</span>
+                </button>
+                <button type="button" class="section-tab" role="tab" id="tab-accounts"
+                        aria-selected="false" aria-controls="accounts-section" data-section="accounts" tabindex="-1">
+                    <i data-lucide="building"></i><span>Accounts</span>
+                </button>
+                <button type="button" class="section-tab" role="tab" id="tab-budgets"
+                        aria-selected="false" aria-controls="budgets-section" data-section="budgets" tabindex="-1">
+                    <i data-lucide="target"></i><span>Budgets</span>
+                </button>
+            </div>
+
+            <div class="section-tabs" id="tabs-people" role="tablist" aria-label="People sections" data-tabs="people" hidden>
+                <button type="button" class="section-tab" role="tab" id="tab-ledger"
+                        aria-selected="false" aria-controls="ledger-section" data-section="ledger" tabindex="-1">
+                    <i data-lucide="contact"></i><span>Customers and suppliers</span>
+                </button>
+            </div>
+
+            <div class="section-tabs" id="tabs-comply" role="tablist" aria-label="Compliance sections" data-tabs="comply" hidden>
+                <button type="button" class="section-tab" role="tab" id="tab-compliance"
+                        aria-selected="false" aria-controls="compliance-section" data-section="compliance" tabindex="-1">
+                    <i data-lucide="landmark"></i><span>Tax and payroll</span>
+                </button>
+                <button type="button" class="section-tab" role="tab" id="tab-statements"
+                        aria-selected="false" aria-controls="statements-section" data-section="statements" tabindex="-1">
+                    <i data-lucide="file-text"></i><span>Statements</span>
+                </button>
+                <button type="button" class="section-tab" role="tab" id="tab-records"
+                        aria-selected="false" aria-controls="records-section" data-section="records" tabindex="-1">
+                    <i data-lucide="clipboard-check"></i><span>Records and funding</span>
+                </button>
+                <button type="button" class="section-tab" role="tab" id="tab-reports"
+                        aria-selected="false" aria-controls="reports-section" data-section="reports" tabindex="-1">
+                    <i data-lucide="bar-chart"></i><span>Reports</span>
+                </button>
+                <button type="button" class="section-tab" role="tab" id="tab-import-export"
+                        aria-selected="false" aria-controls="import-export-section" data-section="import-export" tabindex="-1">
+                    <i data-lucide="arrow-down-up"></i><span>Import / export</span>
+                </button>
+            </div>
+        </nav>
+
         <!-- Dashboard Section -->
-        <div id="dashboard-section" class="tab-content active">
+        <div id="dashboard-section" class="tab-content active" role="tabpanel" aria-labelledby="tab-dashboard" tabindex="0">
             <!-- Stats Cards -->
             <div class="dashboard-grid">
                 <div class="stat-card">
@@ -91,8 +179,456 @@
             </div>
         </div>
 
+        <!-- Money In / Out Section -->
+        <div id="position-section" class="tab-content" role="tabpanel" aria-labelledby="tab-position" tabindex="0" hidden>
+            <div class="section-intro">
+                <h2>Where your money stands</h2>
+                <p>The five questions worth being able to answer at any moment, for any period.</p>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label for="position-start">From</label>
+                        <input type="date" class="form-control" id="position-start">
+                    </div>
+                    <div class="form-group">
+                        <label for="position-end">To</label>
+                        <input type="date" class="form-control" id="position-end">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div class="preset-buttons">
+                            <button type="button" class="btn btn-sm" data-range="month">This month</button>
+                            <button type="button" class="btn btn-sm" data-range="quarter">Last 3 months</button>
+                            <button type="button" class="btn btn-sm" data-range="year">Last 12 months</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="position-grid" id="position-cards">
+                <!-- populated by loadMoneyPosition -->
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="scale"></i> How these numbers are worked out</h3>
+                </div>
+                <div class="card-body">
+                    <div class="basis-legend" id="position-basis-note"></div>
+                    <div class="position-summary" id="position-summary"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers and Suppliers Section -->
+        <div id="ledger-section" class="tab-content" role="tabpanel" aria-labelledby="tab-ledger" tabindex="0" hidden>
+            <div class="section-intro">
+                <h2>Who owes you, and who you owe</h2>
+                <p>Customer invoices and supplier bills, with how late each one is.</p>
+            </div>
+
+            <div class="ledger-toolbar">
+                <div class="filter-row">
+                    <div class="form-group search-box">
+                        <i data-lucide="search"></i>
+                        <input type="text" class="form-control" id="contact-search"
+                               placeholder="Search customers and suppliers"
+                               oninput="filterLedger()">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-secondary" onclick="openModal('contactModal')">
+                            <i data-lucide="user-plus"></i> Add Contact
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-primary" onclick="openModal('receivableModal')">
+                            <i data-lucide="file-plus"></i> Bill a Customer
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-secondary" onclick="openModal('payableModal')">
+                            <i data-lucide="file-minus"></i> Record a Bill
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aging-grid" id="aging-cards"></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="contact"></i> Customers and suppliers</h3>
+                    <span class="badge" id="contact-count">0</span>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Contact person</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Tax number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contacts-table">
+                            <tr><td colspan="7" class="empty-state">No customers or suppliers yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="file-incoming"></i> Customer invoices</h3>
+                    <span class="badge" id="receivable-count">0</span>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Issued</th>
+                                <th>Due</th>
+                                <th class="text-right">Amount</th>
+                                <th class="text-right">Outstanding</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="receivables-table">
+                            <tr><td colspan="7" class="empty-state">No customer invoices yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="file-outgoing"></i> Supplier bills</h3>
+                    <span class="badge" id="payable-count">0</span>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Issued</th>
+                                <th>Due</th>
+                                <th class="text-right">Amount</th>
+                                <th class="text-right">Outstanding</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payables-table">
+                            <tr><td colspan="7" class="empty-state">No supplier bills yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax and Payroll Section -->
+        <div id="compliance-section" class="tab-content" role="tabpanel" aria-labelledby="tab-compliance" tabindex="0" hidden>
+            <div class="section-intro">
+                <h2>Tax and payroll</h2>
+                <p>
+                    Planning estimates for South African obligations. Confirm every figure and
+                    deadline with SARS or your accountant before you file or pay.
+                </p>
+            </div>
+
+            <div class="compliance-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i data-lucide="building-2"></i> Business profile</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="entity-profile-form" data-validate>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="profile-registered-name">Registered name</label>
+                                    <input type="text" class="form-control" id="profile-registered-name"
+                                           placeholder="As on your CIPC registration" maxlength="150">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-trading-name">Trading name</label>
+                                    <input type="text" class="form-control" id="profile-trading-name"
+                                           placeholder="What customers call you" maxlength="150">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="profile-entity-type">Entity type</label>
+                                    <select class="form-control" id="profile-entity-type">
+                                        <option value="sole_trader">Sole trader</option>
+                                        <option value="partnership">Partnership</option>
+                                        <option value="private_company">Private company (Pty) Ltd</option>
+                                        <option value="close_corporation">Close corporation (CC)</option>
+                                        <option value="trust">Trust</option>
+                                        <option value="non_profit">Non-profit</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-registration-number">Registration number</label>
+                                    <input type="text" class="form-control" id="profile-registration-number"
+                                           placeholder="CIPC number" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="profile-tax-number">Tax number</label>
+                                    <input type="text" class="form-control" id="profile-tax-number"
+                                           placeholder="SARS income tax number" maxlength="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-vat-number">VAT number</label>
+                                    <input type="text" class="form-control" id="profile-vat-number"
+                                           placeholder="SARS VAT number" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="profile-year-end">Financial year end</label>
+                                    <select class="form-control" id="profile-year-end">
+                                        <option value="2">February (SARS tax year)</option>
+                                        <option value="12">December</option>
+                                        <option value="6">June</option>
+                                        <option value="3">March</option>
+                                    </select>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="profile-vat-registered">
+                                        <span>VAT registered</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-accountant">Accountant or tax practitioner</label>
+                                <input type="text" class="form-control" id="profile-accountant"
+                                       placeholder="Who you file through" maxlength="150">
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="saveEntityProfile()">
+                                <i data-lucide="save"></i> Save Profile
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i data-lucide="clipboard-list"></i> Structuring checklist</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="hint-text">What a lender, auditor or tax practitioner will ask for.</p>
+                        <div id="structuring-checklist" class="checklist"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="receipt"></i> Tax obligations</h3>
+                    <div class="header-actions">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="seedTaxSchedule()">
+                            <i data-lucide="calendar-plus"></i> Generate this year's periods
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="openModal('taxModal')">
+                            <i data-lucide="plus"></i> Add Obligation
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" id="tax-summary"></div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Period</th>
+                                <th>Due</th>
+                                <th class="text-right">Taxable</th>
+                                <th class="text-right">Tax</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tax-table">
+                            <tr><td colspan="7" class="empty-state">No tax obligations tracked yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="users"></i> Payroll runs</h3>
+                    <div class="header-actions">
+                        <span class="badge badge-warning" id="payroll-flags"></span>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="openModal('payrollModal')">
+                            <i data-lucide="plus"></i> Add Payroll Run
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" id="payroll-summary"></div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Pay date</th>
+                                <th class="text-right">Gross</th>
+                                <th class="text-right">PAYE</th>
+                                <th class="text-right">Net pay</th>
+                                <th class="text-right">Employer cost</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payroll-table">
+                            <tr><td colspan="8" class="empty-state">No payroll runs recorded yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statements Section -->
+        <div id="statements-section" class="tab-content" role="tabpanel" aria-labelledby="tab-statements" tabindex="0" hidden>
+            <div class="section-intro">
+                <h2>Financial statements</h2>
+                <p>
+                    Profit shown on both a cash basis and an accrual basis, because they answer
+                    different questions. Cash basis is what moved through the bank. Accrual basis
+                    is what you earned and what it cost you.
+                </p>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label for="statement-type">Statement</label>
+                        <select class="form-control" id="statement-type" onchange="loadStatement()">
+                            <option value="profit_loss">Profit and loss</option>
+                            <option value="balance_sheet">Balance sheet</option>
+                            <option value="cash_flow">Cash flow</option>
+                            <option value="expense_analysis">Where the money goes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="statement-start">From</label>
+                        <input type="date" class="form-control" id="statement-start">
+                    </div>
+                    <div class="form-group">
+                        <label for="statement-end">To</label>
+                        <input type="date" class="form-control" id="statement-end">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-primary" onclick="loadStatement()">
+                            <i data-lucide="refresh-cw"></i> Build
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="statement-output" class="statement-output">
+                <div class="empty-state">Choose a statement and press Build</div>
+            </div>
+        </div>
+
+        <!-- Records and Funding Section -->
+        <div id="records-section" class="tab-content" role="tabpanel" aria-labelledby="tab-records" tabindex="0" hidden>
+            <div class="section-intro">
+                <h2>Your records and funding readiness</h2>
+                <p>Software only helps if it is kept up to date. This measures the records themselves.</p>
+            </div>
+
+            <div class="records-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i data-lucide="clipboard-check"></i> Records completeness</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="score-display" id="records-score"></div>
+                        <div id="records-issues" class="checklist"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i data-lucide="briefcase"></i> Funding readiness</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="funding-metrics" class="metric-list"></div>
+                        <p class="hint-text" id="funding-disclaimer"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forecast Section -->
+        <div id="forecast-section" class="tab-content" role="tabpanel" aria-labelledby="tab-forecast" tabindex="0" hidden>
+            <div class="section-intro">
+                <h2>What happens next</h2>
+                <p>Projections built from your own recent averages. A planning range, not a promise.</p>
+            </div>
+
+            <div class="forecast-toolbar">
+                <button type="button" class="btn btn-primary" onclick="openModal('forecastModal')">
+                    <i data-lucide="plus"></i> New Scenario
+                </button>
+                <select class="form-control" id="forecast-scenario" onchange="runForecast()"></select>
+            </div>
+
+            <div id="forecast-reading" class="forecast-reading"></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="trending-up"></i> Projected monthly position</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i data-lucide="table"></i> Month by month</h3>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th class="text-right">Income</th>
+                                <th class="text-right">Expenses</th>
+                                <th class="text-right">Net</th>
+                                <th class="text-right">Running total</th>
+                                <th class="text-right">Cash at month end</th>
+                            </tr>
+                        </thead>
+                        <tbody id="forecast-table">
+                            <tr><td colspan="6" class="empty-state">Create a scenario to see a projection</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- Transactions Section -->
-        <div id="transactions-section" class="tab-content">
+        <div id="transactions-section" class="tab-content" role="tabpanel" aria-labelledby="tab-transactions" tabindex="0" hidden>
             <div class="filter-section">
                 <div class="filter-row">
                     <div class="form-group search-box">
@@ -153,7 +689,7 @@
         </div>
 
         <!-- Budgets Section -->
-        <div id="budgets-section" class="tab-content">
+        <div id="budgets-section" class="tab-content" role="tabpanel" aria-labelledby="tab-budgets" tabindex="0" hidden>
             <div class="summary-grid">
                 <div class="summary-card">
                     <div class="value" id="total-budget">R0.00</div>
@@ -186,7 +722,7 @@
         </div>
 
         <!-- Accounts Section -->
-        <div id="accounts-section" class="tab-content">
+        <div id="accounts-section" class="tab-content" role="tabpanel" aria-labelledby="tab-accounts" tabindex="0" hidden>
             <div class="account-grid" id="accounts-list">
                 <div class="empty-state">
                     <i data-lucide="building"></i>
@@ -200,7 +736,7 @@
         </div>
 
         <!-- Reports Section -->
-        <div id="reports-section" class="tab-content">
+        <div id="reports-section" class="tab-content" role="tabpanel" aria-labelledby="tab-reports" tabindex="0" hidden>
             <div class="filter-section">
                 <div class="filter-row">
                     <div class="form-group">
@@ -238,7 +774,7 @@
         </div>
 
         <!-- Import/Export Section -->
-        <div id="import-export-section" class="tab-content">
+        <div id="import-export-section" class="tab-content" role="tabpanel" aria-labelledby="tab-import-export" tabindex="0" hidden>
             <div class="charts-grid">
                 <div class="chart-card">
                     <h3><i data-lucide="download"></i> Export Data</h3>
@@ -488,6 +1024,461 @@
         </div>
     </div>
 
+    <!-- Contact Modal -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="contact-modal-title"><i data-lucide="user-plus"></i> Add Contact</h2>
+                <button class="close-modal" onclick="closeModal('contactModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="contact-form" data-validate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-name">Name</label>
+                            <input type="text" class="form-control" id="contact-name"
+                                   placeholder="Acme Ltd" required maxlength="150">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-role">Role</label>
+                            <select class="form-control" id="contact-role">
+                                <option value="customer">Customer (they owe you)</option>
+                                <option value="supplier">Supplier (you owe them)</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-person">Contact person</label>
+                            <input type="text" class="form-control" id="contact-person"
+                                   placeholder="Who you speak to" maxlength="150">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Email</label>
+                            <input type="email" class="form-control" id="contact-email"
+                                   placeholder="name@company.co.za" maxlength="150">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-phone">Phone</label>
+                            <input type="text" class="form-control" id="contact-phone"
+                                   placeholder="011 123 4567" maxlength="40">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-tax-number">Tax number</label>
+                            <input type="text" class="form-control" id="contact-tax-number"
+                                   placeholder="Their VAT or income tax number" maxlength="50">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-notes">Notes</label>
+                        <textarea class="form-control" id="contact-notes" rows="2"
+                                  placeholder="Payment terms, delivery notes" maxlength="1000"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('contactModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveContact()">
+                    <i data-lucide="save"></i> Save Contact
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receivable Modal -->
+    <div class="modal-overlay" id="receivableModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i data-lucide="file-plus"></i> Bill a Customer</h2>
+                <button class="close-modal" onclick="closeModal('receivableModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="hint-text">
+                    Use this when you have done the work or shipped the goods but have not been
+                    paid yet. Recording it here is what makes the amount show up in your profit.
+                </p>
+                <form id="receivable-form" data-validate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label for="receivable-contact">Customer</label>
+                        <select class="form-control" id="receivable-contact" required></select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="receivable-amount">Amount (ZAR)</label>
+                            <input type="number" class="form-control" id="receivable-amount"
+                                   step="0.01" min="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="receivable-terms">Payment terms (days)</label>
+                            <input type="number" class="form-control" id="receivable-terms"
+                                   value="30" min="0" max="365">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="receivable-issue-date">Issue date</label>
+                            <input type="date" class="form-control" id="receivable-issue-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="receivable-due-date">Due date</label>
+                            <input type="date" class="form-control" id="receivable-due-date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="receivable-account">Settle into account</label>
+                        <select class="form-control" id="receivable-account"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="receivable-description">What it's for</label>
+                        <input type="text" class="form-control" id="receivable-description"
+                               placeholder="Consulting, March invoice" maxlength="500">
+                    </div>
+                    <div class="form-group">
+                        <label for="receivable-reference">Invoice number</label>
+                        <input type="text" class="form-control" id="receivable-reference"
+                               placeholder="INV-001" maxlength="500">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('receivableModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveReceivable()">
+                    <i data-lucide="save"></i> Save Invoice
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i data-lucide="banknote"></i> Record a Payment</h2>
+                <button class="close-modal" onclick="closeModal('paymentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="hint-text" id="payment-context"></p>
+                <form id="payment-form" data-validate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" id="payment-entry-id">
+                    <input type="hidden" id="payment-kind">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-amount">Amount (ZAR)</label>
+                            <input type="number" class="form-control" id="payment-amount"
+                                   step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-date">Date</label>
+                            <input type="date" class="form-control" id="payment-date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-account">Account</label>
+                        <select class="form-control" id="payment-account" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-reference">Reference</label>
+                        <input type="text" class="form-control" id="payment-reference"
+                               placeholder="EFT reference or cheque number" maxlength="500">
+                    </div>
+                    <div class="form-row" id="payment-category-group">
+                        <div class="form-group">
+                            <label for="payment-category">Category</label>
+                            <select class="form-control" id="payment-category"></select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('paymentModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="savePayment()">
+                    <i data-lucide="save"></i> Record Payment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payable Modal -->
+    <div class="modal-overlay" id="payableModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i data-lucide="file-minus"></i> Record a Supplier Bill</h2>
+                <button class="close-modal" onclick="closeModal('payableModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="hint-text">
+                    A bill you have received but not yet paid. Recording it now means the cost
+                    shows up in your profit even though the money has not left yet.
+                </p>
+                <form id="payable-form" data-validate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label for="payable-contact">Supplier</label>
+                        <select class="form-control" id="payable-contact" required></select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payable-amount">Amount (ZAR)</label>
+                            <input type="number" class="form-control" id="payable-amount"
+                                   step="0.01" min="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="payable-terms">Payment terms (days)</label>
+                            <input type="number" class="form-control" id="payable-terms"
+                                   value="30" min="0" max="365">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payable-issue-date">Issue date</label>
+                            <input type="date" class="form-control" id="payable-issue-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="payable-due-date">Due date</label>
+                            <input type="date" class="form-control" id="payable-due-date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="payable-account">Pay from account</label>
+                        <select class="form-control" id="payable-account"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payable-category">Expense category</label>
+                        <select class="form-control" id="payable-category"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payable-description">What it's for</label>
+                        <input type="text" class="form-control" id="payable-description"
+                               placeholder="Raw material, January invoice" maxlength="500">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('payableModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="savePayable()">
+                    <i data-lucide="save"></i> Save Bill
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tax Modal -->
+    <div class="modal-overlay" id="taxModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="tax-modal-title"><i data-lucide="receipt"></i> Add Tax Obligation</h2>
+                <button class="close-modal" onclick="closeModal('taxModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="tax-form" data-validate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label for="tax-type">Type</label>
+                        <select class="form-control" id="tax-type" required>
+                            <option value="vat">VAT</option>
+                            <option value="paye">PAYE</option>
+                            <option value="uif">UIF</option>
+                            <option value="sdl">SDL</option>
+                            <option value="provisional_tax">Provisional tax</option>
+                            <option value="income_tax">Income tax</option>
+                            <option value="capital_gains">Capital gains tax</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tax-period-start">Period start</label>
+                            <input type="date" class="form-control" id="tax-period-start" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tax-period-end">Period end</label>
+                            <input type="date" class="form-control" id="tax-period-end" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tax-due-date">Due date</label>
+                        <input type="date" class="form-control" id="tax-due-date" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tax-taxable-amount">Taxable amount (ZAR)</label>
+                            <input type="number" class="form-control" id="tax-taxable-amount"
+                                   step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="tax-amount">Tax amount (ZAR)</label>
+                            <input type="number" class="form-control" id="tax-amount"
+                                   step="0.01" min="0" required value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tax-reference">Reference</label>
+                        <input type="text" class="form-control" id="tax-reference"
+                               placeholder="SARS reference number" maxlength="500">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('taxModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveTaxRecord()">
+                    <i data-lucide="save"></i> Save Obligation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payroll Modal -->
+    <div class="modal-overlay" id="payrollModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i data-lucide="users"></i> Add Payroll Run</h2>
+                <button class="close-modal" onclick="closeModal('payrollModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="hint-text">
+                    Record the payroll you ran, so PAYE and UIF remittance dates are tracked.
+                    Confirm the amounts with your payroll provider.
+                </p>
+                <form id="payroll-form" data-validate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payroll-period-start">Period start</label>
+                            <input type="date" class="form-control" id="payroll-period-start" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="payroll-period-end">Period end</label>
+                            <input type="date" class="form-control" id="payroll-period-end" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payroll-pay-date">Pay date</label>
+                            <input type="date" class="form-control" id="payroll-pay-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="payroll-employees">Employees</label>
+                            <input type="number" class="form-control" id="payroll-employees"
+                                   min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="payroll-gross">Gross pay (ZAR)</label>
+                        <input type="number" class="form-control" id="payroll-gross"
+                               step="0.01" min="0" required value="0">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payroll-paye">PAYE (ZAR)</label>
+                            <input type="number" class="form-control" id="payroll-paye"
+                                   step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="payroll-uif">UIF (ZAR)</label>
+                            <input type="number" class="form-control" id="payroll-uif"
+                                   step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payroll-sdl">SDL (ZAR)</label>
+                            <input type="number" class="form-control" id="payroll-sdl"
+                                   step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="payroll-employer-uif">Employer UIF (ZAR)</label>
+                            <input type="number" class="form-control" id="payroll-employer-uif"
+                                   step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="payroll-pension">Employer pension (ZAR)</label>
+                        <input type="number" class="form-control" id="payroll-pension"
+                               step="0.01" min="0" value="0">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('payrollModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="savePayrollRun()">
+                    <i data-lucide="save"></i> Save Payroll Run
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forecast Modal -->
+    <div class="modal-overlay" id="forecastModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i data-lucide="trending-up"></i> New Forecast Scenario</h2>
+                <button class="close-modal" onclick="closeModal('forecastModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="hint-text">
+                    Growth compounds month over month from your recent average. Try a pessimistic
+                    case as well as a hopeful one.
+                </p>
+                <form id="forecast-form" data-validate>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label for="forecast-name">Name</label>
+                        <input type="text" class="form-control" id="forecast-name"
+                               placeholder="Best case" required maxlength="150">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="forecast-months">Project for (months)</label>
+                            <input type="number" class="form-control" id="forecast-months"
+                                   min="1" max="60" value="12">
+                        </div>
+                        <div class="form-group">
+                            <label for="forecast-baseline">Average over (months)</label>
+                            <input type="number" class="form-control" id="forecast-baseline"
+                                   min="1" max="24" value="3">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="forecast-income-growth">Income growth (% / month)</label>
+                            <input type="number" class="form-control" id="forecast-income-growth"
+                                   step="0.1" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="forecast-expense-growth">Expense growth (% / month)</label>
+                            <input type="number" class="form-control" id="forecast-expense-growth"
+                                   step="0.1" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="forecast-one-off-income">One-off income (ZAR)</label>
+                            <input type="number" class="form-control" id="forecast-one-off-income"
+                                   step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="forecast-one-off-expenses">One-off expenses (ZAR)</label>
+                            <input type="number" class="form-control" id="forecast-one-off-expenses"
+                                   step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('forecastModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveForecastScenario()">
+                    <i data-lucide="save"></i> Save &amp; Project
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // API base URL
         const API_BASE = '/api/finance';
@@ -537,10 +1528,82 @@
                 lucide.createIcons();
             }
                 
+            // Section navigation: two tablists, one nav. The group row decides which
+            // tab row is on screen; the tab row decides which panel is visible.
+            // Bound by delegation on the nav itself so the two rows can be
+            // swapped without re-binding anything.
+            document.getElementById('financeGroups').addEventListener('click', function(e) {
+                const groupTab = e.target.closest('.finance-group');
+                if (groupTab) showGroup(groupTab.dataset.group);
+            });
+
+            document.getElementById('financeNav').addEventListener('click', function(e) {
+                const tab = e.target.closest('.section-tab');
+                if (tab) showSection(tab.dataset.section);
+            });
+
+            // Roving-tabindex arrow keys, per the WAI-ARIA tabs pattern. A tablist
+            // that only responds to clicks is unusable by keyboard.
+            document.getElementById('financeNav').addEventListener('keydown', function(e) {
+                const groupTab = e.target.closest('.finance-group');
+                const sectionTab = e.target.closest('.section-tab');
+                if (!groupTab && !sectionTab) return;
+
+                const row = groupTab
+                    ? Array.from(document.querySelectorAll('.finance-group'))
+                    : Array.from(sectionTab.closest('.section-tabs').querySelectorAll('.section-tab'));
+                const index = row.indexOf(groupTab || sectionTab);
+                let next = null;
+
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = row[(index + 1) % row.length];
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = row[(index - 1 + row.length) % row.length];
+                else if (e.key === 'Home') next = row[0];
+                else if (e.key === 'End') next = row[row.length - 1];
+                if (!next) return;
+
+                e.preventDefault();
+                if (groupTab) {
+                    showGroup(next.dataset.group);
+                } else {
+                    showSection(next.dataset.section);
+                }
+                next.focus();
+            });
+
+            // The header shortcut jumps straight to a section, so it has to move
+            // the group row too or the section opens under a tab row that is not
+            // the one describing it.
+            document.querySelectorAll('[data-section-jump]').forEach(button => {
+                button.addEventListener('click', function() {
+                    showSection(this.dataset.section);
+                });
+            });
+                
+            // Preset ranges on the money position section
+            document.querySelectorAll('[data-range]').forEach(button => {
+                button.addEventListener('click', function() {
+                    applyDateRange('position', this.dataset.range);
+                });
+            });
+                
             // Set today's date as default for transaction form
-            const today = new Date().toISOString().split('T')[0];
+            const today = isoDate();
             document.getElementById('transaction-date').value = today;
             document.getElementById('budget-start-date').value = today;
+                
+            // Default the new sections to the current month
+            applyDateRange('position', 'month');
+            applyDateRange('statement', 'month');
+            setDueDates();
+            document.getElementById('payroll-pay-date').value = today;
+            
+            // Payment terms drive the due date on both ledger forms
+            ['receivable-terms', 'payable-terms'].forEach(id => {
+                document.getElementById(id).addEventListener('change', setDueDates);
+            });
+            ['receivable-issue-date', 'payable-issue-date'].forEach(id => {
+                document.getElementById(id).addEventListener('change', setDueDates);
+            });
                 
             // Handle transaction type change to show/hide destination account
             const typeSelect = document.getElementById('transaction-type');
@@ -592,7 +1655,7 @@
         
         // Render dashboard stats and charts
         function renderDashboard() {
-            const data = financeData;
+            const data = financeData.dashboard || financeData;
                 
             // Update stat cards
             if (data.account_balances) {
@@ -613,6 +1676,69 @@
             if (typeof Chart !== 'undefined' && data.monthly_trends) {
                 renderCharts(data.monthly_trends, data.category_breakdown);
             }
+        }
+        
+        // Draw the dashboard charts
+        const financeCharts = {};
+        
+        function renderCharts(monthlyTrends, categoryBreakdown) {
+            const incomeCanvas = document.getElementById('incomeExpenseChart');
+            if (incomeCanvas) {
+                if (financeCharts.income) financeCharts.income.destroy();
+                const months = Object.keys(monthlyTrends || {}).sort();
+                financeCharts.income = new Chart(incomeCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: months.map(m => monthLabel(m)),
+                        datasets: [
+                            {
+                                label: 'Income',
+                                data: months.map(m => monthlyTrends[m].income || 0),
+                                backgroundColor: 'rgba(16, 185, 129, 0.75)'
+                            },
+                            {
+                                label: 'Expenses',
+                                data: months.map(m => monthlyTrends[m].expenses || 0),
+                                backgroundColor: 'rgba(239, 68, 68, 0.75)'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+            
+            const categoryCanvas = document.getElementById('categoryChart');
+            if (categoryCanvas) {
+                if (financeCharts.category) financeCharts.category.destroy();
+                const labels = Object.keys(categoryBreakdown || {});
+                const palette = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#ef4444', '#6366f1'];
+                financeCharts.category = new Chart(categoryCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: labels.map(l => categoryBreakdown[l]),
+                            backgroundColor: labels.map((_, i) => palette[i % palette.length])
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+        }
+        
+        function monthLabel(ym) {
+            const parts = String(ym).split('-');
+            const date = new Date(Number(parts[0]), Number(parts[1]) - 1, 1);
+            return date.toLocaleDateString('en-ZA', { month: 'short', year: '2-digit' });
         }
         
         // Render recent transactions on dashboard
@@ -819,17 +1945,217 @@
         }
         
         // Section navigation
-        function showSection(section) {
-            // Hide all sections
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // Show selected section
-            const target = document.getElementById(section + '-section');
-            if (target) target.classList.add('active');
-                
-            // Update active nav link
-            document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
-            const activeLink = document.querySelector(`.sidebar-nav a[href="#${section}"]`);
-            if (activeLink) activeLink.classList.add('active');
+        // Which group owns which section is read from the DOM rather than kept in
+        // a second list, so moving a tab between groups cannot desync the two.
+        function sectionGroup(section) {
+            const tab = document.querySelector(`.section-tab[data-section="${section}"]`);
+            if (!tab) return null;
+            const row = tab.closest('.section-tabs');
+            return row ? row.dataset.tabs : null;
+        }
+
+        // Reveal one group: its tab row replaces the others. `preferred` names the
+        // section to land on; without it the group's first section is selected, so
+        // jumping to a section in another group still opens that exact section.
+        function showGroup(group, preferred) {
+            if (!group) return;
+            let fallback = null;
+
+            document.querySelectorAll('.section-tabs').forEach(row => {
+                const on = row.dataset.tabs === group;
+                row.hidden = !on;
+                // The row that just came on screen needs a reachable tab, and it
+                // needs the section it describes to actually be on screen too.
+                if (on) {
+                    const first = row.querySelector('.section-tab');
+                    if (first) {
+                        first.tabIndex = 0;
+                        fallback = first.dataset.section;
+                    }
+                } else {
+                    row.querySelectorAll('.section-tab').forEach(tab => { tab.tabIndex = -1; });
+                }
+            });
+
+            document.querySelectorAll('.finance-group').forEach(tab => {
+                const on = tab.dataset.group === group;
+                tab.classList.toggle('active', on);
+                tab.setAttribute('aria-selected', on ? 'true' : 'false');
+                tab.tabIndex = on ? 0 : -1;
+            });
+
+            showSection(preferred || fallback, { skipScroll: true, skipGroup: true });
+        }
+
+        function showSection(section, options) {
+            const opts = options || {};
+            const group = section ? sectionGroup(section) : null;
+
+            // Coming from a shortcut or a card in another group: move the group row
+            // first so the tab row on screen is the one describing this section,
+            // then let showGroup land on the section that was asked for.
+            if (!opts.skipGroup && group) {
+                const currentGroup = document.querySelector('.finance-group.active');
+                if (currentGroup && currentGroup.dataset.group !== group) {
+                    showGroup(group, section);
+                    return;
+                }
+            }
+
+            document.querySelectorAll('.tab-content').forEach(el => {
+                const on = el.id === section + '-section';
+                el.classList.toggle('active', on);
+                // `hidden` has to come off the visible panel. The CSS .active rule
+                // outranks it visually, but assistive tech still reads it as hidden,
+                // so content on screen would be skipped by a screen reader.
+                el.hidden = !on;
+            });
+
+            document.querySelectorAll('.section-tab').forEach(tab => {
+                const on = tab.dataset.section === section;
+                tab.classList.toggle('active', on);
+                tab.setAttribute('aria-selected', on ? 'true' : 'false');
+                tab.tabIndex = on ? 0 : -1;
+            });
+
+            const target = section ? document.getElementById(section + '-section') : null;
+
+            // Bring the section into view without yanking the page around
+            if (target && !opts.skipScroll) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            if (section) loadSection(section);
+        }
+        
+        // Load the data behind a section the first time it is opened
+        const SECTION_LOADERS = {
+            position: loadMoneyPosition,
+            ledger: loadLedger,
+            compliance: loadCompliance,
+            statements: loadStatement,
+            records: loadRecords,
+            forecast: loadForecastScenarios
+        };
+        
+        const loadedSections = new Set();
+        
+        function loadSection(section) {
+            const loader = SECTION_LOADERS[section];
+            if (!loader) return;
+            if (loadedSections.has(section)) return;
+            loadedSections.add(section);
+            loader();
+        }
+        
+        // Force a reload of the current section after data changes
+        function refreshSections() {
+            loadedSections.forEach(section => {
+                const loader = SECTION_LOADERS[section];
+                if (loader) loader();
+            });
+        }
+        
+        // Edit an existing transaction: fill the modal and let saveTransaction update it
+        function editTransaction(id) {
+            const transaction = allTransactions.find(t => t.id === id);
+            if (!transaction) return;
+            
+            document.getElementById('transaction-id').value = transaction.id;
+            document.getElementById('transaction-type').value = transaction.type;
+            document.getElementById('transaction-amount').value = transaction.amount;
+            document.getElementById('transaction-date').value = transaction.date;
+            document.getElementById('transaction-account').value = transaction.account_id;
+            document.getElementById('transaction-category').value = transaction.category_id || '';
+            document.getElementById('transaction-description').value = transaction.description || '';
+            document.getElementById('transaction-payee').value = transaction.payee || '';
+            document.getElementById('transaction-notes').value = transaction.notes || '';
+            
+            const recurring = Boolean(transaction.is_recurring);
+            document.getElementById('transaction-recurring').checked = recurring;
+            document.getElementById('recurring-frequency-group').style.display = recurring ? 'block' : 'none';
+            if (recurring && transaction.recurring_frequency) {
+                document.getElementById('transaction-frequency').value = transaction.recurring_frequency;
+            }
+            
+            // Transfers need the destination account revealed and required
+            const isTransfer = transaction.type === 'transfer';
+            const destGroup = document.getElementById('destination-account-group');
+            const destSelect = document.getElementById('transaction-destination-account');
+            destGroup.style.display = isTransfer ? 'block' : 'none';
+            if (isTransfer) {
+                destSelect.setAttribute('required', 'required');
+                destSelect.value = transaction.destination_account_id || '';
+            } else {
+                destSelect.removeAttribute('required');
+            }
+            
+            document.querySelector('#transactionModal .modal-header h2').innerHTML =
+                '<i data-lucide="file-pen"></i> Edit Transaction';
+            openModal('transactionModal');
+            refreshIcons();
+        }
+        
+        // Edit an existing account
+        function editAccount(id) {
+            const account = (financeData.accounts || []).find(a => a.id === id);
+            if (!account) return;
+            
+            document.getElementById('account-id').value = account.id;
+            document.getElementById('account-name').value = account.name || '';
+            document.getElementById('account-type').value = account.type || 'checking';
+            document.getElementById('account-balance').value = number(account.balance);
+            document.getElementById('account-currency').value = account.currency || 'ZAR';
+            document.getElementById('account-institution').value = account.institution || '';
+            document.getElementById('account-number').value = account.account_number || '';
+            document.getElementById('account-notes').value = account.notes || '';
+            
+            document.querySelector('#accountModal .modal-header h2').innerHTML =
+                '<i data-lucide="file-pen"></i> Edit Account';
+            openModal('accountModal');
+            refreshIcons();
+        }
+        
+        // Import a previously exported JSON file
+        async function importData() {
+            const input = document.getElementById('import-file');
+            const file = input.files && input.files[0];
+            if (!file) {
+                showToast('Choose a JSON file to import first', 'warning');
+                return;
+            }
+            
+            let payload;
+            try {
+                payload = JSON.parse(await file.text());
+            } catch (error) {
+                showToast('That file is not valid JSON', 'error');
+                return;
+            }
+            
+            const confirmed = confirm(
+                'Importing merges this data into what you already have. Continue?'
+            );
+            if (!confirmed) return;
+            
+            try {
+                const response = await csrfFetch(`${API_BASE}/import`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Import complete', 'success');
+                    input.value = '';
+                    await loadFinanceData();
+                    await refreshSections();
+                } else {
+                    showToast(result.message || 'Import failed', 'error');
+                }
+            } catch (error) {
+                showToast('Import failed: ' + error.message, 'error');
+            }
         }
         
         // Modal functions
@@ -1066,6 +2392,1616 @@
             if (!financeData.accounts) return accountId;
             const acc = financeData.accounts.find(a => a.id === accountId);
             return acc ? acc.name : 'Unknown';
+        }
+        
+        // =====================================================================
+        // Financial statements
+        // =====================================================================
+        
+        async function loadStatement() {
+            const type = document.getElementById('statement-type').value;
+            const output = document.getElementById('statement-output');
+            output.innerHTML = '<div class="empty-state">Building your statement</div>';
+            
+            try {
+                const result = await apiRequest(
+                    '/statement?' + new URLSearchParams({ type: type, ...rangeFromInputs('statement') })
+                );
+                renderStatement(result.data);
+            } catch (error) {
+                output.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+            }
+        }
+        
+        function rangeFromInputs(prefix) {
+            const range = {};
+            const start = document.getElementById(prefix + '-start').value;
+            const end = document.getElementById(prefix + '-end').value;
+            if (start) range.start = start;
+            if (end) range.end = end;
+            return range;
+        }
+        
+        function renderStatement(data) {
+            const output = document.getElementById('statement-output');
+            const period = data.period ? data.period.label : formatDate(data.as_of);
+            
+            const renderers = {
+                profit_loss: renderProfitLoss,
+                balance_sheet: renderBalanceSheet,
+                cash_flow: renderCashFlow,
+                expense_analysis: renderExpenseAnalysis
+            };
+            const renderer = renderers[data.report_type];
+            
+            const heading = `<div class="statement-header">
+                <h3>${escapeHtml(statementTitle(data.report_type))}</h3>
+                <span class="statement-period">${escapeHtml(period)}</span>
+            </div>`;
+            const note = data.basis_note
+                ? `<p class="basis-note"><i data-lucide="info"></i> ${escapeHtml(data.basis_note)}</p>`
+                : '';
+            
+            output.innerHTML = heading + (renderer ? renderer(data) : '<div class="empty-state">Nothing to show</div>') + note;
+            refreshIcons();
+        }
+        
+        function statementTitle(type) {
+            return {
+                profit_loss: 'Profit and loss',
+                balance_sheet: 'Balance sheet',
+                cash_flow: 'Cash flow',
+                expense_analysis: 'Where the money goes'
+            }[type] || 'Statement';
+        }
+        
+        function line(label, value, opts) {
+            const options = opts || {};
+            const tone = options.tone ? ` ${options.tone}` : '';
+            const emphasis = options.emphasis ? ' emphasis' : '';
+            // Ratios and percentages are not money; callers opt out of currency.
+            const rendered = options.raw
+                ? escapeHtml(options.raw(value))
+                : formatCurrency(value);
+            return `<div class="statement-line${emphasis}">
+                <span class="statement-label">${escapeHtml(label)}${options.note ? ` <span class="line-note">${escapeHtml(options.note)}</span>` : ''}</span>
+                <span class="statement-value${tone}">${rendered}</span>
+            </div>`;
+        }
+        
+        function renderProfitLoss(data) {
+            const cash = data.cash_basis || {};
+            const accrual = data.accrual_basis || {};
+            const cogs = data.cogs_categories || [];
+            
+            return `
+                <div class="basis-comparison">
+                    <div class="basis-panel">
+                        <h4><i data-lucide="banknote"></i> Cash basis</h4>
+                        <p class="basis-sub">What actually moved through your bank</p>
+                        ${line('Income', cash.income)}
+                        ${number(cash.cost_of_sales) > 0 ? line('Cost of sales', cash.cost_of_sales) : ''}
+                        ${line('Operating expenses', cash.operating_expenses)}
+                        ${line('Gross profit', cash.gross_profit)}
+                        ${line('Net profit', cash.net_profit, { emphasis: true, tone: cash.net_profit < 0 ? 'negative' : 'positive' })}
+                        <p class="basis-margin">${number(cash.net_margin_pct).toFixed(1)}% margin</p>
+                        ${number(cash.transfers) > 0
+                            ? `<p class="hint-text">Transfers of ${formatCurrency(cash.transfers)} moved between your own accounts, so they are not counted as income or cost.</p>`
+                            : ''}
+                    </div>
+                    <div class="basis-panel accent">
+                        <h4><i data-lucide="file-text"></i> Accrual basis</h4>
+                        <p class="basis-sub">What you earned and what it cost you</p>
+                        ${line('Income earned', accrual.income_earned, { note: `${formatCurrency(accrual.from_cash_transactions)} cash + ${formatCurrency(accrual.from_customer_invoices)} invoiced` })}
+                        ${line('Costs incurred', accrual.costs_incurred, { note: `${formatCurrency(accrual.from_cash_expenses)} cash + ${formatCurrency(accrual.from_supplier_bills)} billed` })}
+                        ${line('Net profit', accrual.net_profit, { emphasis: true, tone: accrual.net_profit < 0 ? 'negative' : 'positive' })}
+                        <p class="basis-margin">${number(accrual.net_margin_pct).toFixed(1)}% margin</p>
+                    </div>
+                </div>
+                <div class="statement-gap">
+                    <i data-lucide="git-compare-arrows"></i>
+                    <div>
+                        <span class="gap-label">The difference between the two</span>
+                        <span class="gap-value">${formatCurrency(number(accrual.net_profit) - number(cash.net_profit))}</span>
+                        <span class="gap-hint">Money you have earned but not been paid yet, or costs you have incurred but not yet paid.</span>
+                    </div>
+                </div>
+                ${cogs.length ? `
+                    <h4 class="statement-subhead">Treated as cost of sales</h4>
+                    <p class="hint-text">${escapeHtml(cogs.join(', '))} sit here because they scale with what you sell. Recategorise them if that is not right for your business.</p>
+                ` : ''}
+            `;
+        }
+        
+        function renderBalanceSheet(data) {
+            const assets = data.assets || {};
+            const liabilities = data.liabilities || {};
+            const equity = data.equity || {};
+            const cashByType = assets.cash_by_type || {};
+            
+            return `
+                <div class="statement-columns">
+                    <div class="statement-panel">
+                        <h4><i data-lucide="trending-up"></i> What you have</h4>
+                        ${line('Cash in the bank', assets.cash_and_bank)}
+                        ${Object.entries(cashByType).map(([type, amount]) =>
+                            `<div class="sub-line"><span>${escapeHtml(type)}</span><span>${formatCurrency(amount)}</span></div>`
+                        ).join('')}
+                        ${line('Owed to you by customers', assets.accounts_receivable)}
+                        ${line('Total assets', assets.total_assets, { emphasis: true })}
+                    </div>
+                    <div class="statement-panel">
+                        <h4><i data-lucide="trending-down"></i> What you owe</h4>
+                        ${line('Owed to suppliers', liabilities.accounts_payable)}
+                        ${line('Tax you owe', liabilities.tax_payable)}
+                        ${number(liabilities.loans) > 0 ? line('Loans', liabilities.loans) : ''}
+                        ${line('Total liabilities', liabilities.total_liabilities, { emphasis: true })}
+                    </div>
+                </div>
+                <div class="statement-panel">
+                    <h4><i data-lucide="scale"></i> Your position</h4>
+                    ${line('Owner equity', equity.owners_equity, { emphasis: true, tone: equity.owners_equity < 0 ? 'negative' : 'positive' })}
+                    ${line('Working capital', equity.working_capital, { tone: equity.working_capital < 0 ? 'negative' : 'positive' })}
+                    ${line('Current ratio', number(equity.working_capital) / (number(liabilities.accounts_payable) + number(liabilities.tax_payable) || 1), {
+                        note: 'short-term assets against short-term debts',
+                        emphasis: false,
+                        raw: (v) => `${number(v).toFixed(2)}x`
+                    })}
+                </div>
+            `;
+        }
+        
+        function renderCashFlow(data) {
+            const operating = data.operating || {};
+            const investing = data.investing || {};
+            const financing = data.financing || {};
+            
+            return `
+                ${line('Opening cash', data.opening_cash)}
+                <div class="statement-panel">
+                    <h4><i data-lucide="repeat"></i> Operating</h4>
+                    <p class="basis-sub">Day to day trading</p>
+                    ${line('Cash in', operating.cash_in)}
+                    ${line('Cash out', operating.cash_out)}
+                    ${line('Net from trading', operating.net, { emphasis: true, tone: operating.net < 0 ? 'negative' : 'positive' })}
+                </div>
+                <div class="statement-columns">
+                    <div class="statement-panel">
+                        <h4><i data-lucide="trending-up"></i> Investing</h4>
+                        <p class="basis-sub">Buying things that last</p>
+                        ${line('Net investing', investing.net, { tone: investing.net < 0 ? 'negative' : 'positive' })}
+                    </div>
+                    <div class="statement-panel">
+                        <h4><i data-lucide="landmark"></i> Financing</h4>
+                        <p class="basis-sub">Borrowing, and owner money</p>
+                        ${line('Net financing', financing.net, { tone: financing.net < 0 ? 'negative' : 'positive' })}
+                    </div>
+                </div>
+                ${line('Net change in cash', data.net_change, { emphasis: true, tone: data.net_change < 0 ? 'negative' : 'positive' })}
+                ${line('Closing cash', data.closing_cash, { emphasis: true })}
+            `;
+        }
+        
+        function renderExpenseAnalysis(data) {
+            const lines = data.by_category || [];
+            const largest = data.largest_expense || {};
+            const top = lines.slice(0, 3).reduce((sum, l) => sum + number(l.amount), 0);
+            const topShare = number(data.total_expenses) > 0 ? (top / number(data.total_expenses) * 100) : 0;
+            
+            return `
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <span class="summary-label">Total spent in the period</span>
+                        <span class="summary-value">${formatCurrency(data.total_expenses)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Average per month</span>
+                        <span class="summary-value">${formatCurrency(data.avg_per_month)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Committed as a share</span>
+                        <span class="summary-value">${number(data.committed_share_pct).toFixed(1)}%</span>
+                    </div>
+                </div>
+                <div class="insight-box">
+                    <i data-lucide="lightbulb"></i>
+                    <div>
+                        <span class="insight-label">Where the pressure is</span>
+                        <span class="insight-text">
+                            ${lines.length
+                                ? `Your top ${Math.min(3, lines.length)} categor${lines.length === 1 ? 'y accounts' : 'ies account'} for ${topShare.toFixed(0)}% of what you spend.`
+                                : 'Nothing has been recorded as an expense in this period yet.'}
+                        </span>
+                        ${largest.description ? `
+                            <span class="insight-text">Your single largest expense was ${formatCurrency(largest.amount)} on ${escapeHtml(largest.description)}${largest.category ? ` (${escapeHtml(largest.category)})` : ''}.</span>
+                        ` : ''}
+                        ${number(data.committed_expenses) > 0 ? `<span class="insight-text">${formatCurrency(data.committed_expenses)} of that is committed and will keep costing you every month.</span>` : ''}
+                    </div>
+                </div>
+                <div class="breakdown-list">
+                    ${lines.map(line => `
+                        <div class="breakdown-row">
+                            <div class="breakdown-head">
+                                <span class="breakdown-name">${escapeHtml(line.category)}</span>
+                                <span class="breakdown-amount">${formatCurrency(line.amount)}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${number(line.share_pct).toFixed(1)}%"></div>
+                            </div>
+                            <div class="breakdown-meta">
+                                ${line.count} transaction${line.count === 1 ? '' : 's'} &middot;
+                                ${formatCurrency(line.avg_per_month)} per month &middot;
+                                ${number(line.share_pct).toFixed(1)}% of spend
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        // =====================================================================
+        // Records health and funding readiness
+        // =====================================================================
+        
+        async function loadRecords() {
+            setLoading('records-issues', 'Checking your records');
+            setLoading('funding-metrics', 'Measuring readiness');
+            
+            try {
+                const [health, funding] = await Promise.all([
+                    apiRequest('/statement?type=records_health'),
+                    apiRequest('/statement?type=funding_readiness')
+                ]);
+                renderRecordsHealth(health.data);
+                renderFunding(funding.data);
+            } catch (error) {
+                setLoading('records-issues', error.message);
+                setLoading('funding-metrics', error.message);
+            }
+        }
+        
+        function renderRecordsHealth(data) {
+            const score = number(data.score);
+            const band = data.band || 'unknown';
+            const tone = score >= 80 ? 'good' : score >= 50 ? 'warning' : 'critical';
+            
+            document.getElementById('records-score').innerHTML = `
+                <div class="score-ring" style="--score: ${score}">
+                    <span class="score-value">${score}</span>
+                    <span class="score-max">out of 100</span>
+                </div>
+                <div class="score-copy">
+                    <span class="score-band ${tone}">${escapeHtml(String(band).replace(/_/g, ' '))}</span>
+                    <span class="score-detail">${number(data.checks_passed)} of ${number(data.checks_total)} checks pass</span>
+                    <span class="score-detail">${number(data.transaction_count)} transactions reviewed</span>
+                    ${number(data.days_since_last_entry) > 30
+                        ? `<span class="score-detail warning">Nothing recorded for ${number(data.days_since_last_entry)} days</span>`
+                        : ''}
+                </div>
+            `;
+            
+            const issues = data.issues || [];
+            const el = document.getElementById('records-issues');
+            if (!issues.length) {
+                el.innerHTML = '<div class="checklist-clear"><i data-lucide="badge-check"></i> Nothing needs fixing right now</div>';
+                refreshIcons();
+                return;
+            }
+            
+            el.innerHTML = `
+                <p class="hint-text">Fix these and your records will stand up to an audit, a lender or SARS.</p>
+                ${issues.map(issue => `
+                    <div class="checklist-item issue ${escapeHtml(issue.severity || 'info')}">
+                        <i data-lucide="${issue.severity === 'critical' ? 'alert-octagon' : 'alert-triangle'}"></i>
+                        <div>
+                            <div class="checklist-label">${escapeHtml(issue.label)}</div>
+                            <div class="checklist-hint">${escapeHtml(issue.hint)}</div>
+                            ${number(issue.count) > 0
+                                ? `<div class="checklist-count">${number(issue.count)} item${number(issue.count) === 1 ? '' : 's'}</div>`
+                                : ''}
+                        </div>
+                    </div>
+                `).join('')}
+                <details class="all-checks">
+                    <summary>Show all ${number(data.checks_total)} checks</summary>
+                    ${(data.all_checks || []).map(check => `
+                        <div class="checklist-item ${check.ok ? 'done' : ''}">
+                            <i data-lucide="${check.ok ? 'check-circle-2' : 'circle-dashed'}"></i>
+                            <div>
+                                <div class="checklist-label">${escapeHtml(check.label)}</div>
+                                <div class="checklist-hint">${escapeHtml(check.hint)}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </details>
+            `;
+            refreshIcons();
+        }
+        
+        function renderFunding(data) {
+            const metrics = data.metrics || [];
+            const blockers = data.blockers || [];
+            const warnings = data.warnings || [];
+            
+            document.getElementById('funding-metrics').innerHTML = `
+                <div class="readiness-head ${data.ready ? 'ready' : 'not-ready'}">
+                    <i data-lucide="${data.ready ? 'badge-check' : 'building'}"></i>
+                    <div>
+                        <span class="readiness-label">${data.ready ? 'Ready for a funding conversation' : 'Not ready yet'}</span>
+                        <span class="readiness-hint">${data.ready
+                            ? 'Nothing here is a blocker. Bring these numbers to a lender.'
+                            : 'Clear the blockers below, then come back to this.'}</span>
+                    </div>
+                </div>
+                ${blockers.length ? `
+                    <div class="funding-blockers">
+                        <span class="funding-heading">Blockers</span>
+                        ${blockers.map(item => `<span class="status-badge danger">${escapeHtml(item)}</span>`).join(' ')}
+                    </div>
+                ` : ''}
+                ${warnings.length ? `
+                    <div class="funding-warnings">
+                        <span class="funding-heading">Worth improving</span>
+                        ${warnings.map(item => `<span class="status-badge warning">${escapeHtml(item)}</span>`).join(' ')}
+                    </div>
+                ` : ''}
+                <div class="metric-list">
+                    ${metrics.map(metric => `
+                        <div class="metric-row ${escapeHtml(metric.status)}">
+                            <div class="metric-main">
+                                <span class="metric-label">${escapeHtml(metric.label)}</span>
+                                <span class="metric-reading">${escapeHtml(metric.reading)}</span>
+                            </div>
+                            <span class="metric-value">${formatMetric(metric)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('funding-disclaimer').innerHTML =
+                `<i data-lucide="shield-alert"></i> ${escapeHtml(data.disclaimer || '')}`;
+            refreshIcons();
+        }
+        
+        function formatMetric(metric) {
+            if (metric.format === 'currency') return formatCurrency(metric.value);
+            if (metric.format === 'percent') return `${number(metric.value).toFixed(1)}%`;
+            if (metric.format === 'months') return `${number(metric.value).toFixed(1)} months`;
+            if (metric.format === 'days') return `${number(metric.value).toFixed(0)} days`;
+            if (metric.format === 'ratio') return `${number(metric.value).toFixed(2)}x`;
+            return String(metric.value ?? '-');
+        }
+        
+        // =====================================================================
+        // Forecast
+        // =====================================================================
+        
+        let scenarios = [];
+        let activeScenarioId = null;
+        
+        async function loadForecastScenarios() {
+            try {
+                const result = await apiRequest('/forecast');
+                scenarios = result.scenarios || [];
+                renderScenarioPicker();
+                if (scenarios.length) {
+                    const stillThere = scenarios.some(s => s.id === activeScenarioId);
+                    activeScenarioId = stillThere ? activeScenarioId : scenarios[0].id;
+                    await runForecast();
+                } else {
+                    document.getElementById('forecast-reading').innerHTML = '';
+                    document.getElementById('forecast-table').innerHTML =
+                        '<tr><td colspan="6" class="empty-state">Create a scenario to see a projection</td></tr>';
+                }
+            } catch (error) {
+                document.getElementById('forecast-reading').innerHTML =
+                    `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+            }
+        }
+        
+        function renderScenarioPicker() {
+            const select = document.getElementById('forecast-scenario');
+            if (!scenarios.length) {
+                select.innerHTML = '<option value="">No scenarios yet</option>';
+                return;
+            }
+            select.innerHTML = scenarios.map(s =>
+                `<option value="${s.id}">${escapeHtml(s.name)}</option>`
+            ).join('');
+            select.value = activeScenarioId || scenarios[0].id;
+            activeScenarioId = select.value;
+        }
+        
+        async function runForecast() {
+            const select = document.getElementById('forecast-scenario');
+            activeScenarioId = select.value;
+            if (!activeScenarioId) return;
+            
+            const reading = document.getElementById('forecast-reading');
+            reading.innerHTML = '<div class="empty-state">Projecting</div>';
+            
+            try {
+                const result = await postJson('/forecast/' + activeScenarioId + '/project', {});
+                renderForecast(result.data);
+            } catch (error) {
+                reading.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+            }
+        }
+        
+        function renderForecast(data) {
+            const scenario = data.scenario || {};
+            const baseline = data.baseline || {};
+            const summary = data.summary || {};
+            const months = data.months || [];
+            
+            document.getElementById('forecast-reading').innerHTML = `
+                <div class="reading-main">
+                    <i data-lucide="${summary.goes_negative ? 'alert-triangle' : 'trending-up'}"></i>
+                    <div>
+                        <span class="reading-text">${escapeHtml(summary.reading || 'Not enough data to project yet')}</span>
+                        <span class="reading-basis">${escapeHtml(scenario.name || '')} &middot; built on ${number(baseline.months_with_data)} month${number(baseline.months_with_data) === 1 ? '' : 's'} of averages from ${number(baseline.transaction_count)} transactions</span>
+                        <span class="reading-basis">Your averages: ${formatCurrency(baseline.avg_monthly_income)} in, ${formatCurrency(baseline.avg_monthly_expenses)} out, ${formatCurrency(baseline.avg_monthly_profit)} profit per month</span>
+                    </div>
+                </div>
+                <div class="reading-grid">
+                    <div class="reading-stat">
+                        <span class="reading-stat-label">Closes on</span>
+                        <span class="reading-stat-value">${formatCurrency(summary.closing_cash)}</span>
+                    </div>
+                    <div class="reading-stat">
+                        <span class="reading-stat-label">Lowest point</span>
+                        <span class="reading-stat-value ${number(summary.lowest_cash) < 0 ? 'negative' : ''}">${formatCurrency(summary.lowest_cash)}</span>
+                    </div>
+                    <div class="reading-stat">
+                        <span class="reading-stat-label">First profitable month</span>
+                        <span class="reading-stat-value">${summary.first_profit_month ? escapeHtml(monthLabelFor(summary.first_profit_month)) : 'Not in this period'}</span>
+                    </div>
+                    <div class="reading-stat">
+                        <span class="reading-stat-label">Recovers a loss by</span>
+                        <span class="reading-stat-value">${summary.break_even_month ? escapeHtml(monthLabelFor(summary.break_even_month)) : 'No loss to recover'}</span>
+                    </div>
+                </div>
+                <p class="basis-note"><i data-lucide="info"></i> ${escapeHtml(data.disclaimer || '')}</p>
+            `;
+            
+            const tbody = document.getElementById('forecast-table');
+            if (!months.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Not enough recorded history to build an average</td></tr>';
+            } else {
+                tbody.innerHTML = months.map(month => `
+                    <tr class="${number(month.net) < 0 ? 'row-overdue' : ''}">
+                        <td>${escapeHtml(month.label)}</td>
+                        <td class="text-right">${formatCurrency(month.income)}</td>
+                        <td class="text-right">${formatCurrency(month.expenses)}</td>
+                        <td class="text-right ${number(month.net) < 0 ? 'amount-negative' : 'amount-positive'}">${formatCurrency(month.net)}</td>
+                        <td class="text-right">${formatCurrency(month.cumulative_net)}</td>
+                        <td class="text-right ${number(month.closing_cash) < 0 ? 'amount-negative' : ''}">${formatCurrency(month.closing_cash)}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            renderForecastChart(months, number(data.opening_cash));
+            refreshIcons();
+        }
+        
+        function monthLabelFor(ym) {
+            const parts = String(ym).split('-');
+            const date = new Date(Number(parts[0]), Number(parts[1]) - 1, 1);
+            return date.toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' });
+        }
+        
+        function renderForecastChart(months, openingCash) {
+            const canvas = document.getElementById('forecastChart');
+            if (!canvas || typeof Chart === 'undefined') return;
+            
+            if (financeCharts.forecast) {
+                financeCharts.forecast.destroy();
+                financeCharts.forecast = null;
+            }
+            if (!months.length) return;
+            
+            financeCharts.forecast = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: months.map(m => m.label),
+                    datasets: [
+                        {
+                            label: 'Cash at month end',
+                            data: months.map(m => number(m.closing_cash)),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Monthly net',
+                            data: months.map(m => number(m.net)),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+        
+        async function saveForecastScenario() {
+            const form = document.getElementById('forecast-form');
+            if (!validateForm(form)) return;
+            
+            const data = {
+                name: document.getElementById('forecast-name').value.trim(),
+                projection_months: number(document.getElementById('forecast-months').value),
+                baseline_months: number(document.getElementById('forecast-baseline').value),
+                income_growth_pct: number(document.getElementById('forecast-income-growth').value),
+                expense_growth_pct: number(document.getElementById('forecast-expense-growth').value),
+                one_off_income: number(document.getElementById('forecast-one-off-income').value),
+                one_off_expenses: number(document.getElementById('forecast-one-off-expenses').value)
+            };
+            
+            try {
+                const result = await postJson('/forecast', data);
+                activeScenarioId = result.scenario.id;
+                closeModal('forecastModal');
+                form.reset();
+                showToast('Scenario created', 'success');
+                await loadForecastScenarios();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        // =====================================================================
+        // Tax, payroll and business profile
+        // =====================================================================
+        
+        let complianceData = null;
+        
+        async function loadCompliance() {
+            setLoading('structuring-checklist', 'Loading your profile');
+            try {
+                const result = await apiRequest('/compliance');
+                complianceData = result.data;
+                renderCompliance(complianceData);
+            } catch (error) {
+                setLoading('structuring-checklist', error.message);
+            }
+        }
+        
+        function renderCompliance(data) {
+            renderProfileForm(data.profile);
+            renderStructuring(data.structuring);
+            renderTax(data.tax);
+            renderPayroll(data.payroll);
+        }
+        
+        function renderProfileForm(profile) {
+            if (!profile) return;
+            const set = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.value = value ?? '';
+            };
+            set('profile-registered-name', profile.registered_name);
+            set('profile-trading-name', profile.trading_name);
+            set('profile-entity-type', profile.entity_type);
+            set('profile-registration-number', profile.registration_number);
+            set('profile-tax-number', profile.tax_number);
+            set('profile-vat-number', profile.vat_number);
+            set('profile-year-end', String(profile.financial_year_end_month));
+            set('profile-accountant', profile.accountant_name);
+            
+            const vatRegistered = document.getElementById('profile-vat-registered');
+            if (vatRegistered) vatRegistered.checked = Boolean(profile.vat_registered);
+        }
+        
+        function renderStructuring(items) {
+            const el = document.getElementById('structuring-checklist');
+            if (!items || !items.length) {
+                el.innerHTML = '<div class="empty-state">No checklist items available</div>';
+                return;
+            }
+            const done = items.filter(i => i.done).length;
+            el.innerHTML = `
+                <div class="checklist-progress">
+                    <span>${done} of ${items.length} in place</span>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${(done / items.length * 100).toFixed(0)}%"></div></div>
+                </div>
+                ${items.map(item => `
+                    <div class="checklist-item ${item.done ? 'done' : ''}">
+                        <i data-lucide="${item.done ? 'check-circle-2' : 'circle-dashed'}"></i>
+                        <div>
+                            <div class="checklist-label">${escapeHtml(item.label)}</div>
+                            <div class="checklist-hint">${escapeHtml(item.hint)}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+            refreshIcons();
+        }
+        
+        function renderTax(tax) {
+            const records = tax?.records || [];
+            const vat = tax.vat_estimate || {};
+            const upcoming = tax.upcoming || [];
+            
+            const overdue = records.filter(r => r.status === 'overdue');
+            const overdueTotal = overdue.reduce((sum, r) => sum + number(r.tax_amount), 0);
+            const upcomingTotal = upcoming.reduce((sum, r) => sum + number(r.tax_amount), 0);
+            
+            document.getElementById('tax-summary').innerHTML = `
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <span class="summary-label">Overdue and unpaid</span>
+                        <span class="summary-value ${overdueTotal > 0 ? 'negative' : 'positive'}">${formatCurrency(overdueTotal)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Due in the next 30 days</span>
+                        <span class="summary-value">${formatCurrency(upcomingTotal)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Estimated net VAT for this month</span>
+                        <span class="summary-value">${formatCurrency(number(vat.net_vat_payable))}</span>
+                    </div>
+                </div>
+                ${vat.is_estimated ? `<p class="hint-text"><i data-lucide="info"></i> VAT estimate uses the ${Math.round(number(vat.vat_rate) * 100)}% rate on ${number(vat.transaction_count)} recorded transactions. It is a planning figure, not a calculation.</p>` : ''}
+                <p class="hint-text"><i data-lucide="shield-alert"></i> Confirm every amount and deadline with SARS or your registered tax practitioner before you file or pay.</p>
+            `;
+            
+            const tbody = document.getElementById('tax-table');
+            if (!records.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No tax obligations tracked yet</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = records.map(record => `
+                <tr class="${record.status === 'overdue' ? 'row-overdue' : ''}">
+                    <td>${escapeHtml(TAX_TYPE_LABELS[record.tax_type] || record.tax_type)}</td>
+                    <td>${escapeHtml(record.period_label || record.period_start)}</td>
+                    <td>${formatDate(record.due_date)}</td>
+                    <td class="text-right">${number(record.taxable_amount) ? formatCurrency(record.taxable_amount) : '-'}</td>
+                    <td class="text-right">${formatCurrency(number(record.tax_amount))}</td>
+                    <td>${statusBadge(record.status, record.paid_date ? 'paid ' + formatDate(record.paid_date) : '')}</td>
+                    <td class="actions">
+                        ${record.status !== 'paid' ? `<button class="btn btn-sm btn-primary" onclick="markTaxPaid('${record.id}')">Mark paid</button>` : ''}
+                        ${record.status !== 'estimated' && record.status !== 'paid' ? `<button class="btn btn-sm btn-secondary" onclick="setTaxStatus('${record.id}', 'estimated')">Re-estimate</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+            refreshIcons();
+        }
+        
+        async function markTaxPaid(recordId) {
+            const today = isoDate();
+            try {
+                await postJson(`/tax/${recordId}/status`, { status: 'paid', paid_date: today });
+                showToast('Marked as paid', 'success');
+                await loadCompliance();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        function editTaxRecord(recordId) {
+            const record = (complianceData?.tax?.records || []).find(r => r.id === recordId);
+            if (!record) return;
+            showToast(
+                `This obligation is ${TAX_TYPE_LABELS[record.tax_type] || record.tax_type} for ${record.period_label || record.period_start}, ` +
+                `${formatCurrency(number(record.tax_amount))} due ${formatDate(record.due_date)}. ` +
+                'Only the status can be changed here, so a filed or paid obligation keeps the figure you filed.',
+                'info'
+            );
+        }
+        
+        async function setTaxStatus(recordId, status) {
+            try {
+                await postJson(`/tax/${recordId}/status`, { status: status });
+                showToast('Status updated', 'success');
+                await loadCompliance();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        async function saveTaxRecord() {
+            const form = document.getElementById('tax-form');
+            if (!validateForm(form)) return;
+            
+            const data = {
+                tax_type: document.getElementById('tax-type').value,
+                period_start: document.getElementById('tax-period-start').value,
+                period_end: document.getElementById('tax-period-end').value,
+                due_date: document.getElementById('tax-due-date').value,
+                taxable_amount: number(document.getElementById('tax-taxable-amount').value),
+                tax_amount: number(document.getElementById('tax-amount').value),
+                reference: document.getElementById('tax-reference').value.trim()
+            };
+            
+            try {
+                await postJson('/tax', data);
+                closeModal('taxModal');
+                form.reset();
+                document.getElementById('tax-modal-title').innerHTML = '<i data-lucide="receipt"></i> Add Tax Obligation';
+                showToast('Tax obligation saved', 'success');
+                await loadCompliance();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        async function seedTaxSchedule() {
+            try {
+                const result = await postJson('/tax-schedule/seed', {});
+                const created = number(result.data?.created);
+                const skipped = number(result.data?.skipped);
+                showToast(
+                    created ? `Added ${created} period${created === 1 ? '' : 's'}` +
+                              (skipped ? `, ${skipped} already tracked` : '')
+                            : 'Every period in this schedule is already tracked',
+                    created ? 'success' : 'info'
+                );
+                await loadCompliance();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        function renderPayroll(payroll) {
+            const runs = payroll?.runs || [];
+            const totals = payroll?.totals || {};
+            const flags = payroll?.flags || [];
+            
+            const flagsEl = document.getElementById('payroll-flags');
+            flagsEl.textContent = flags.length ? `${flags.length} flag${flags.length === 1 ? '' : 's'}` : 'No flags';
+            flagsEl.className = 'badge ' + (flags.length ? 'badge-warning' : 'badge-success');
+            
+            document.getElementById('payroll-summary').innerHTML = `
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <span class="summary-label">Gross paid this year</span>
+                        <span class="summary-value">${formatCurrency(number(totals.gross_pay))}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">PAYE to pay SARS</span>
+                        <span class="summary-value">${formatCurrency(number(totals.paye))}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Total cost to you</span>
+                        <span class="summary-value">${formatCurrency(number(totals.employer_cost))}</span>
+                    </div>
+                </div>
+                ${flags.length ? `
+                    <ul class="flag-list">
+                        ${flags.map(flag => `
+                            <li>
+                                <i data-lucide="alert-triangle"></i>
+                                <div>
+                                    <span class="flag-label">${escapeHtml(flag.label || flag.key)}</span>
+                                    <span class="flag-hint">${escapeHtml(flag.hint || '')}</span>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                ` : ''}
+            `;
+            
+            const tbody = document.getElementById('payroll-table');
+            if (!runs.length) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No payroll runs recorded yet</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = runs.map(run => `
+                <tr>
+                    <td>${escapeHtml(run.period_label || run.period_start)}</td>
+                    <td>${formatDate(run.pay_date)}</td>
+                    <td class="text-right">${formatCurrency(number(run.gross_pay))}</td>
+                    <td class="text-right">${formatCurrency(number(run.paye))}</td>
+                    <td class="text-right">${formatCurrency(number(run.net_pay))}</td>
+                    <td class="text-right">${formatCurrency(number(run.employer_cost))}</td>
+                    <td>${statusBadge(run.status)}</td>
+                    <td class="actions">
+                        <button class="btn btn-sm btn-secondary" onclick="updatePayrollStatus('${run.id}', 'paid')">Mark paid</button>
+                        <button class="btn btn-sm btn-danger" onclick="removePayrollRun('${run.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+            refreshIcons();
+        }
+        
+        async function savePayrollRun() {
+            const form = document.getElementById('payroll-form');
+            if (!validateForm(form)) return;
+            
+            const data = {
+                period_start: document.getElementById('payroll-period-start').value,
+                period_end: document.getElementById('payroll-period-end').value,
+                pay_date: document.getElementById('payroll-pay-date').value,
+                gross_pay: number(document.getElementById('payroll-gross').value),
+                paye: number(document.getElementById('payroll-paye').value),
+                uif: number(document.getElementById('payroll-uif').value),
+                sdl: number(document.getElementById('payroll-sdl').value),
+                employer_uif: number(document.getElementById('payroll-employer-uif').value),
+                employer_pension: number(document.getElementById('payroll-pension').value),
+                employee_count: number(document.getElementById('payroll-employees').value)
+            };
+            
+            if (data.gross_pay <= 0) {
+                showToast('Enter a gross pay amount greater than zero', 'error');
+                return;
+            }
+            
+            const deductions = data.paye + data.uif;
+            if (deductions > data.gross_pay) {
+                showToast('PAYE and UIF cannot add up to more than gross pay', 'error');
+                return;
+            }
+            
+            try {
+                await postJson('/payroll', data);
+                closeModal('payrollModal');
+                form.reset();
+                showToast('Payroll run saved', 'success');
+                await loadCompliance();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        async function updatePayrollStatus(runId, status) {
+            try {
+                await putJson('/payroll/' + runId, { status: status });
+                showToast('Payroll run updated', 'success');
+                await loadCompliance();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        async function removePayrollRun(runId) {
+            confirmDelete('Delete this payroll run?', async () => {
+                try {
+                    await deleteAt('/payroll/' + runId);
+                    showToast('Payroll run deleted', 'success');
+                    await loadCompliance();
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            });
+        }
+        
+        async function saveEntityProfile() {
+            const form = document.getElementById('entity-profile-form');
+            if (!validateForm(form)) return;
+            
+            const data = {
+                registered_name: document.getElementById('profile-registered-name').value.trim(),
+                trading_name: document.getElementById('profile-trading-name').value.trim(),
+                entity_type: document.getElementById('profile-entity-type').value,
+                registration_number: document.getElementById('profile-registration-number').value.trim(),
+                tax_number: document.getElementById('profile-tax-number').value.trim(),
+                vat_number: document.getElementById('profile-vat-number').value.trim(),
+                financial_year_end_month: number(document.getElementById('profile-year-end').value),
+                vat_registered: document.getElementById('profile-vat-registered').checked,
+                accountant_name: document.getElementById('profile-accountant').value.trim()
+            };
+            
+            try {
+                await postJson('/entity-profile', data);
+                showToast('Business profile saved', 'success');
+                await loadCompliance();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        // =====================================================================
+        // Shared helpers for the accounting sections
+        // =====================================================================
+        
+        // User-entered text goes through here before it reaches innerHTML
+        function escapeHtml(value) {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        
+        function number(value) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : 0;
+        }
+        
+        // Local calendar date as YYYY-MM-DD.
+        // Deliberately avoids toISOString(): that converts to UTC, so in SAST
+        // (UTC+2) any moment before 02:00 reports yesterday's date, which
+        // silently shifted invoice due dates and statement ranges a day back.
+        function isoDate(date) {
+            const d = date || new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function formatDate(iso) {
+            if (!iso) return '-';
+            const date = new Date(iso.length === 10 ? iso + 'T00:00:00' : iso);
+            if (Number.isNaN(date.getTime())) return iso;
+            return date.toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+        
+        function shiftDate(iso, days) {
+            const date = new Date((iso || isoDate()) + 'T00:00:00');
+            date.setDate(date.getDate() + days);
+            return isoDate(date);
+        }
+        
+        // One place to call the API, so failures surface as a message
+        async function apiRequest(path, options) {
+            const response = await csrfFetch(API_BASE + path, options);
+            let result;
+            try {
+                result = await response.json();
+            } catch (e) {
+                throw new Error('The server returned an unreadable response');
+            }
+            if (!response.ok || result.success === false) {
+                throw new Error(result.message || 'Request failed');
+            }
+            return result;
+        }
+        
+        function postJson(path, body) {
+            return apiRequest(path, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body || {})
+            });
+        }
+        
+        function putJson(path, body) {
+            return apiRequest(path, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body || {})
+            });
+        }
+        
+        function deleteAt(path) {
+            return apiRequest(path, { method: 'DELETE' });
+        }
+        
+        // Fill in a start/end pair for a section from a named range
+        function applyDateRange(prefix, range) {
+            const today = new Date();
+            const end = isoDate(today);
+            let start;
+            
+            if (range === 'month') {
+                start = isoDate(new Date(today.getFullYear(), today.getMonth(), 1));
+            } else if (range === 'quarter') {
+                start = isoDate(new Date(today.getFullYear(), today.getMonth() - 2, 1));
+            } else {
+                start = isoDate(new Date(today.getFullYear() - 1, today.getMonth(), 1));
+            }
+            
+            const startInput = document.getElementById(prefix + '-start');
+            const endInput = document.getElementById(prefix + '-end');
+            if (startInput) startInput.value = start;
+            if (endInput) endInput.value = end;
+        }
+        
+        function dateRangeQuery(prefix) {
+            const start = document.getElementById(prefix + '-start').value;
+            const end = document.getElementById(prefix + '-end').value;
+            const params = new URLSearchParams();
+            if (start) params.set('start', start);
+            if (end) params.set('end', end);
+            return params.toString();
+        }
+        
+        function setDueDates() {
+            const today = isoDate();
+            [['receivable', 'receivable-terms'], ['payable', 'payable-terms']].forEach(([prefix, termsId]) => {
+                const issue = document.getElementById(prefix + '-issue-date');
+                const terms = document.getElementById(termsId);
+                const due = document.getElementById(prefix + '-due-date');
+                if (!issue || !terms || !due) return;
+                issue.value = today;
+                due.value = shiftDate(today, number(terms.value));
+            });
+        }
+        
+        function refreshIcons() {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+        
+        function setLoading(containerId, message) {
+            const el = document.getElementById(containerId);
+            if (el) el.innerHTML = `<div class="empty-state">${escapeHtml(message)}</div>`;
+        }
+        
+        // Map a status string onto the badge classes used across the app
+        function statusBadge(status, extra) {
+            const key = String(status || '').toLowerCase();
+            let tone = 'neutral';
+            if (['paid', 'settled', 'filed', 'reconciled', 'good', 'ready'].includes(key)) tone = 'success';
+            else if (['overdue', 'critical', 'blocked'].includes(key)) tone = 'danger';
+            else if (['partial', 'warning', 'estimated', 'draft', 'needs_work', 'due_soon'].includes(key)) tone = 'warning';
+            return `<span class="status-badge ${tone}">${escapeHtml(key.replace(/_/g, ' '))}</span>` +
+                   (extra ? ` <span class="badge-note">${escapeHtml(extra)}</span>` : '');
+        }
+        
+        const AGING_LABELS = {
+            current: 'Not yet due',
+            days_1_30: '1 to 30 days',
+            days_31_60: '31 to 60 days',
+            days_61_90: '61 to 90 days',
+            days_90_plus: 'Over 90 days'
+        };
+        
+        const TAX_TYPE_LABELS = {
+            vat: 'VAT',
+            paye: 'PAYE',
+            uif: 'UIF',
+            sdl: 'SDL',
+            provisional_tax: 'Provisional tax',
+            income_tax: 'Income tax',
+            capital_gains: 'Capital gains tax',
+            other: 'Other'
+        };
+        
+        // =====================================================================
+        // Money In / Out
+        // =====================================================================
+        
+        let positionData = null;
+        
+        async function loadMoneyPosition() {
+            setLoading('position-cards', 'Working out your position');
+            try {
+                const result = await apiRequest('/money-position?' + dateRangeQuery('position'));
+                positionData = result.data;
+                renderMoneyPosition(positionData);
+            } catch (error) {
+                setLoading('position-cards', error.message);
+                document.getElementById('position-summary').innerHTML = '';
+                document.getElementById('position-basis-note').innerHTML = '';
+            }
+        }
+        
+        function renderMoneyPosition(data) {
+            const cards = document.getElementById('position-cards');
+            const basisHint = {
+                cash: 'Money that actually moved through your accounts',
+                accrual: 'What you earned, whether or not you have been paid',
+                ledger: 'From invoices and bills you have recorded'
+            };
+            
+            cards.innerHTML = data.questions.map(q => `
+                <div class="position-card tone-${q.key === 'actual_profit' ? 'profit' : (q.key === 'owe' || q.key === 'owed' ? 'ledger' : 'cash')}">
+                    <div class="position-card-label">
+                        <i data-lucide="${q.key === 'owe' ? 'credit-card' : q.key === 'owed' ? 'hand-coins' : q.key === 'actual_profit' ? 'badge-check' : q.key === 'came_in' ? 'arrow-down' : 'arrow-up'}"></i>
+                        ${escapeHtml(q.label)}
+                    </div>
+                    <div class="position-card-amount">${formatCurrency(q.amount)}</div>
+                    <div class="position-card-basis">${escapeHtml(basisHint[q.basis] || q.basis || '')}</div>
+                    ${q.help ? `<div class="position-card-help">${escapeHtml(q.help)}</div>` : ''}
+                </div>
+            `).join('');
+            
+            document.getElementById('position-basis-note').innerHTML =
+                `<p class="hint-text">${escapeHtml(data.period.label)} &middot; figures as at ${escapeHtml(formatDate(data.as_of))}</p>`;
+            
+            const sign = value => value < 0 ? 'negative' : 'positive';
+            document.getElementById('position-summary').innerHTML = `
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <span class="summary-label">Net cash position for the period</span>
+                        <span class="summary-value ${sign(number(data.net_cash_position))}">${formatCurrency(data.net_cash_position)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Cash sitting in your accounts</span>
+                        <span class="summary-value">${formatCurrency(data.cash_in_bank)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Margin on what you earned</span>
+                        <span class="summary-value ${sign(number(data.net_margin_pct))}">${number(data.net_margin_pct).toFixed(1)}%</span>
+                    </div>
+                </div>
+            `;
+            refreshIcons();
+        }
+        
+        // =====================================================================
+        // Customers, suppliers, invoices and bills
+        // =====================================================================
+        
+        let ledgerData = null;
+        
+        async function loadLedger() {
+            setLoading('aging-cards', 'Loading what is owed');
+            try {
+                const result = await apiRequest('/ledger');
+                ledgerData = result.data;
+                renderLedger();
+            } catch (error) {
+                setLoading('aging-cards', error.message);
+            }
+        }
+        
+        function renderLedger() {
+            if (!ledgerData) return;
+            populateLedgerSelects();
+            renderAging('aging-cards', ledgerData.receivable_aging, ledgerData.payable_aging,
+                        ledgerData.receivable_totals, ledgerData.payable_totals);
+            renderContacts();
+            renderLedgerTables();
+        }
+        
+        function renderAging(containerId, receivableAging, payableAging, recTotals, payTotals) {
+            const el = document.getElementById(containerId);
+            const buckets = (receivableAging?.buckets || []).map(b => b.bucket);
+            const recByBucket = Object.fromEntries((receivableAging?.buckets || []).map(b => [b.bucket, b]));
+            const payByBucket = Object.fromEntries((payableAging?.buckets || []).map(b => [b.bucket, b]));
+            
+            el.innerHTML = `
+                <div class="aging-card owed">
+                    <div class="aging-header">
+                        <h3><i data-lucide="hand-coins"></i> Owed to you</h3>
+                        <span class="aging-total">${formatCurrency(number(recTotals?.outstanding))}</span>
+                    </div>
+                    <ul class="aging-list">
+                        ${buckets.map(bucket => `
+                            <li class="${number(recByBucket[bucket]?.amount) > 0 ? 'has-amount' : ''}">
+                                <span>${escapeHtml(AGING_LABELS[bucket] || bucket)}</span>
+                                <span>${formatCurrency(number(recByBucket[bucket]?.amount))}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p class="aging-footer">
+                        ${number(recTotals?.overdue) > 0
+                            ? `<span class="status-badge danger">${formatCurrency(recTotals.overdue)} past its due date</span>`
+                            : '<span class="status-badge success">Nothing overdue</span>'}
+                    </p>
+                </div>
+                <div class="aging-card owe">
+                    <div class="aging-header">
+                        <h3><i data-lucide="credit-card"></i> You owe</h3>
+                        <span class="aging-total">${formatCurrency(number(payTotals?.outstanding))}</span>
+                    </div>
+                    <ul class="aging-list">
+                        ${buckets.map(bucket => `
+                            <li class="${number(payByBucket[bucket]?.amount) > 0 ? 'has-amount' : ''}">
+                                <span>${escapeHtml(AGING_LABELS[bucket] || bucket)}</span>
+                                <span>${formatCurrency(number(payByBucket[bucket]?.amount))}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p class="aging-footer">
+                        ${number(payTotals?.overdue) > 0
+                            ? `<span class="status-badge danger">${formatCurrency(payTotals.overdue)} past its due date</span>`
+                            : '<span class="status-badge success">Nothing overdue</span>'}
+                    </p>
+                </div>
+            `;
+            refreshIcons();
+        }
+        
+        function renderContacts() {
+            const tbody = document.getElementById('contacts-table');
+            const contacts = ledgerData.contacts || [];
+            document.getElementById('contact-count').textContent = contacts.length;
+            
+            if (!contacts.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No customers or suppliers yet</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = contacts.map(c => `
+                <tr>
+                    <td>${escapeHtml(c.name)}</td>
+                    <td>${escapeHtml(String(c.role).replace(/_/g, ' '))}</td>
+                    <td>${escapeHtml(c.contact_person) || '-'}</td>
+                    <td>${c.email ? `<a href="mailto:${escapeHtml(c.email)}">${escapeHtml(c.email)}</a>` : '-'}</td>
+                    <td>${escapeHtml(c.phone) || '-'}</td>
+                    <td>${escapeHtml(c.tax_number) || '-'}</td>
+                    <td class="actions">
+                        <button class="btn btn-sm btn-secondary" onclick="editContact('${c.id}')">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeContact('${c.id}', '${escapeHtml(c.name)}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function filterLedger() {
+            const term = document.getElementById('contact-search').value.trim().toLowerCase();
+            if (!term) {
+                renderContacts();
+                renderLedgerTables();
+                return;
+            }
+            const matches = ledgerData.contacts.filter(c =>
+                [c.name, c.contact_person, c.email, c.phone, c.tax_number]
+                    .some(field => String(field || '').toLowerCase().includes(term))
+            );
+            const allowed = new Set(matches.map(c => c.id));
+            const visible = entry => allowed.has(entry.contact_id) ||
+                String(entry.description || '').toLowerCase().includes(term);
+            
+            renderContactRows(matches);
+            renderEntryTable('receivables-table', (ledgerData.receivables || []).filter(visible), 'receivable');
+            renderEntryTable('payables-table', (ledgerData.payables || []).filter(visible), 'payable');
+        }
+        
+        function renderContactRows(contacts) {
+            const tbody = document.getElementById('contacts-table');
+            if (!contacts.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No customers or suppliers match that search</td></tr>';
+                return;
+            }
+            tbody.innerHTML = contacts.map(c => `
+                <tr>
+                    <td>${escapeHtml(c.name)}</td>
+                    <td>${escapeHtml(String(c.role).replace(/_/g, ' '))}</td>
+                    <td>${escapeHtml(c.contact_person) || '-'}</td>
+                    <td>${c.email ? `<a href="mailto:${escapeHtml(c.email)}">${escapeHtml(c.email)}</a>` : '-'}</td>
+                    <td>${escapeHtml(c.phone) || '-'}</td>
+                    <td>${escapeHtml(c.tax_number) || '-'}</td>
+                    <td class="actions">
+                        <button class="btn btn-sm btn-secondary" onclick="editContact('${c.id}')">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeContact('${c.id}', '${escapeHtml(c.name)}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function renderLedgerTables() {
+            renderEntryTable('receivables-table', ledgerData.receivables || [], 'receivable');
+            renderEntryTable('payables-table', ledgerData.payables || [], 'payable');
+        }
+        
+        function renderEntryTable(tbodyId, entries, kind) {
+            const tbody = document.getElementById(tbodyId);
+            const label = kind === 'receivable' ? 'invoices' : 'bills';
+            document.getElementById(kind + '-count').textContent = entries.length;
+            
+            if (!entries.length) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No ${label} yet</td></tr>`;
+                return;
+            }
+            
+            const sorted = [...entries].sort((a, b) => number(b.days_overdue) - number(a.days_overdue));
+            tbody.innerHTML = sorted.map(entry => {
+                const overdue = number(entry.days_overdue);
+                const outstanding = number(entry.outstanding);
+                const canSettle = outstanding > 0.005;
+                const paymentLabel = kind === 'receivable' ? 'Receive' : 'Pay';
+                return `
+                    <tr class="${overdue > 0 ? 'row-overdue' : ''}">
+                        <td>
+                            <div class="entry-contact">${escapeHtml(entry.contact_name)}</div>
+                            ${entry.description || entry.reference
+                                ? `<div class="entry-note">${escapeHtml(entry.description || '')}${entry.description && entry.reference ? ' &middot; ' : ''}${entry.reference ? escapeHtml(entry.reference) : ''}</div>`
+                                : ''}
+                        </td>
+                        <td>${formatDate(entry.issue_date)}</td>
+                        <td>${formatDate(entry.due_date)}</td>
+                        <td class="text-right">${formatCurrency(number(entry.amount))}</td>
+                        <td class="text-right">${outstanding > 0.005 ? formatCurrency(outstanding) : '-'}</td>
+                        <td>${statusBadge(entry.status, overdue > 0 ? overdue + ' days late' : '')}</td>
+                        <td class="actions">
+                            ${canSettle ? `<button class="btn btn-sm btn-primary" onclick="openPaymentModal('${entry.id}', '${kind}')">${paymentLabel}</button>` : ''}
+                            ${kind === 'receivable' && canSettle ? `<button class="btn btn-sm btn-secondary" onclick="writeOffReceivable('${entry.id}', '${escapeHtml(entry.contact_name)}')">Write off</button>` : ''}
+                            <button class="btn btn-sm btn-secondary" onclick="editEntry('${entry.id}', '${kind}')">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="removeEntry('${entry.id}', '${kind}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Populate the contact and account pickers in the ledger modals
+        function populateLedgerSelects() {
+            const contacts = ledgerData?.contacts || [];
+            const customers = contacts.filter(c => c.role === 'customer' || c.role === 'both');
+            const suppliers = contacts.filter(c => c.role === 'supplier' || c.role === 'both');
+            const accounts = (financeData.accounts || []).filter(a => a.is_active);
+            const accountOptions = accounts.map(a => `<option value="${a.id}">${escapeHtml(a.name)}</option>`).join('')
+                || '<option value="">No accounts yet</option>';
+            const expenseCategories = (financeData.categories || [])
+                .filter(c => c.type === 'expense')
+                .map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
+                .join('') || '<option value="">No expense categories yet</option>';
+            
+            const receivableSelect = document.getElementById('receivable-contact');
+            if (receivableSelect) {
+                receivableSelect.innerHTML = customers.length
+                    ? customers.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('')
+                    : '<option value="">Add a customer first</option>';
+            }
+            
+            const payableSelect = document.getElementById('payable-contact');
+            if (payableSelect) {
+                payableSelect.innerHTML = suppliers.length
+                    ? suppliers.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('')
+                    : '<option value="">Add a supplier first</option>';
+            }
+            
+            ['receivable-account', 'payable-account', 'payment-account'].forEach(id => {
+                const select = document.getElementById(id);
+                if (select) select.innerHTML = accountOptions;
+            });
+            
+            const categorySelect = document.getElementById('payable-category');
+            if (categorySelect) categorySelect.innerHTML = expenseCategories;
+            const paymentCategory = document.getElementById('payment-category');
+            if (paymentCategory) paymentCategory.innerHTML = expenseCategories;
+        }
+        
+        async function saveContact() {
+            const form = document.getElementById('contact-form');
+            if (!validateForm(form)) return;
+            
+            const id = form.dataset.contactId;
+            const data = {
+                name: document.getElementById('contact-name').value.trim(),
+                role: document.getElementById('contact-role').value,
+                contact_person: document.getElementById('contact-person').value.trim(),
+                email: document.getElementById('contact-email').value.trim(),
+                phone: document.getElementById('contact-phone').value.trim(),
+                tax_number: document.getElementById('contact-tax-number').value.trim(),
+                notes: document.getElementById('contact-notes').value.trim()
+            };
+            
+            try {
+                if (id) {
+                    await putJson('/contact/' + id, data);
+                } else {
+                    await postJson('/contact', data);
+                }
+                closeModal('contactModal');
+                form.reset();
+                delete form.dataset.contactId;
+                document.getElementById('contact-modal-title').innerHTML = '<i data-lucide="user-plus"></i> Add Contact';
+                showToast(id ? 'Contact updated' : 'Contact added', 'success');
+                await loadLedger();
+                refreshIcons();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        function editContact(id) {
+            const contact = (ledgerData?.contacts || []).find(c => c.id === id);
+            if (!contact) return;
+            
+            const form = document.getElementById('contact-form');
+            form.dataset.contactId = id;
+            document.getElementById('contact-name').value = contact.name || '';
+            document.getElementById('contact-role').value = contact.role || 'customer';
+            document.getElementById('contact-person').value = contact.contact_person || '';
+            document.getElementById('contact-email').value = contact.email || '';
+            document.getElementById('contact-phone').value = contact.phone || '';
+            document.getElementById('contact-tax-number').value = contact.tax_number || '';
+            document.getElementById('contact-notes').value = contact.notes || '';
+            document.getElementById('contact-modal-title').innerHTML = '<i data-lucide="user-pen"></i> Edit Contact';
+            openModal('contactModal');
+            refreshIcons();
+        }
+        
+        async function removeContact(id, name) {
+            confirmDelete(
+                `Delete ${name}? This only works if they have no invoices or bills, because their history has to stay intact.`,
+                async () => {
+                    try {
+                        await deleteAt('/contact/' + id);
+                        showToast('Contact deleted', 'success');
+                        await loadLedger();
+                    } catch (error) {
+                        showToast(error.message, 'error');
+                    }
+                }
+            );
+        }
+        
+        async function saveReceivable() {
+            const form = document.getElementById('receivable-form');
+            if (!validateForm(form)) return;
+            
+            const data = {
+                contact_id: document.getElementById('receivable-contact').value,
+                amount: number(document.getElementById('receivable-amount').value),
+                terms_days: number(document.getElementById('receivable-terms').value),
+                issue_date: document.getElementById('receivable-issue-date').value,
+                due_date: document.getElementById('receivable-due-date').value,
+                account_id: document.getElementById('receivable-account').value,
+                description: document.getElementById('receivable-description').value.trim(),
+                reference: document.getElementById('receivable-reference').value.trim()
+            };
+            if (!data.contact_id) {
+                showToast('Add a customer before billing one', 'error');
+                return;
+            }
+            
+            // Editing an existing invoice must PUT it back, not POST a second one.
+            // The old behaviour quietly duplicated the invoice and inflated the
+            // amount owed to you.
+            const editingId = form.dataset.entryId || '';
+            
+            try {
+                if (editingId) {
+                    await putJson(`/receivable/${editingId}`, data);
+                } else {
+                    await postJson('/receivable', data);
+                }
+                closeModal('receivableModal');
+                form.reset();
+                delete form.dataset.entryId;
+                setDueDates();
+                showToast(editingId ? 'Customer invoice updated' : 'Customer invoice saved', 'success');
+                await loadLedger();
+                await loadMoneyPosition();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        async function savePayable() {
+            const form = document.getElementById('payable-form');
+            if (!validateForm(form)) return;
+            
+            const data = {
+                contact_id: document.getElementById('payable-contact').value,
+                amount: number(document.getElementById('payable-amount').value),
+                terms_days: number(document.getElementById('payable-terms').value),
+                issue_date: document.getElementById('payable-issue-date').value,
+                due_date: document.getElementById('payable-due-date').value,
+                account_id: document.getElementById('payable-account').value,
+                category_id: document.getElementById('payable-category').value,
+                description: document.getElementById('payable-description').value.trim()
+            };
+            if (!data.contact_id) {
+                showToast('Add a supplier before recording a bill', 'error');
+                return;
+            }
+            
+            const editingId = form.dataset.entryId || '';
+            
+            try {
+                if (editingId) {
+                    await putJson(`/payable/${editingId}`, data);
+                } else {
+                    await postJson('/payable', data);
+                }
+                closeModal('payableModal');
+                form.reset();
+                delete form.dataset.entryId;
+                setDueDates();
+                showToast(editingId ? 'Supplier bill updated' : 'Supplier bill saved', 'success');
+                await loadLedger();
+                await loadMoneyPosition();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        function openPaymentModal(entryId, kind) {
+            const list = kind === 'receivable' ? (ledgerData?.receivables || []) : (ledgerData?.payables || []);
+            const entry = list.find(e => e.id === entryId);
+            if (!entry) return;
+            
+            document.getElementById('payment-entry-id').value = entryId;
+            document.getElementById('payment-kind').value = kind;
+            document.getElementById('payment-amount').value = number(entry.outstanding).toFixed(2);
+            document.getElementById('payment-date').value = isoDate();
+            document.getElementById('payment-reference').value = entry.reference || '';
+            
+            const verb = kind === 'receivable' ? 'received from' : 'paid to';
+            document.getElementById('payment-context').textContent =
+                `Money ${verb} ${entry.contact_name} for ${formatCurrency(number(entry.outstanding))} still outstanding on a ${formatCurrency(number(entry.amount))} ${kind === 'receivable' ? 'invoice' : 'bill'}. Recording it here also updates the account balance.`;
+            
+            // Only a payment to a supplier needs an expense category
+            document.getElementById('payment-category-group').style.display = kind === 'receivable' ? 'none' : 'block';
+            
+            openModal('paymentModal');
+        }
+        
+        async function savePayment() {
+            const form = document.getElementById('payment-form');
+            if (!validateForm(form)) return;
+            
+            const kind = document.getElementById('payment-kind').value;
+            const entryId = document.getElementById('payment-entry-id').value;
+            const data = {
+                amount: number(document.getElementById('payment-amount').value),
+                date: document.getElementById('payment-date').value,
+                account_id: document.getElementById('payment-account').value,
+                category_id: document.getElementById('payment-category').value,
+                reference: document.getElementById('payment-reference').value.trim(),
+                create_transaction: true
+            };
+            
+            if (data.amount <= 0) {
+                showToast('Enter an amount greater than zero', 'error');
+                return;
+            }
+            
+            try {
+                await postJson(`/${kind}/${entryId}/payment`, data);
+                closeModal('paymentModal');
+                form.reset();
+                showToast('Payment recorded', 'success');
+                await loadLedger();
+                await loadFinanceData();
+                await loadMoneyPosition();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        function editEntry(entryId, kind) {
+            const list = kind === 'receivable' ? (ledgerData?.receivables || []) : (ledgerData?.payables || []);
+            const entry = list.find(e => e.id === entryId);
+            if (!entry) return;
+            
+            const modal = document.getElementById(kind + 'Modal');
+            const form = document.getElementById(kind + '-form');
+            form.dataset.entryId = entryId;
+            
+            document.getElementById(kind + '-amount').value = number(entry.amount).toFixed(2);
+            document.getElementById(kind + '-terms').value = number(entry.terms_days);
+            document.getElementById(kind + '-issue-date').value = entry.issue_date || '';
+            document.getElementById(kind + '-due-date').value = entry.due_date || '';
+            document.getElementById(kind + '-account').value = entry.account_id || '';
+            document.getElementById(kind + '-description').value = entry.description || '';
+            if (kind === 'receivable') {
+                document.getElementById('receivable-reference').value = entry.reference || '';
+            } else {
+                document.getElementById('payable-category').value = entry.category_id || '';
+            }
+            
+            modal.querySelector('.modal-header h2').innerHTML = kind === 'receivable'
+                ? '<i data-lucide="file-pen"></i> Edit Customer Invoice'
+                : '<i data-lucide="file-pen"></i> Edit Supplier Bill';
+            
+            openModal(kind + 'Modal');
+            refreshIcons();
+        }
+        
+        async function writeOffReceivable(entryId, contactName) {
+            const reason = prompt(`Write off the invoice for ${contactName} as uncollectable?\n\nAdd a short reason so the history makes sense later.`);
+            if (reason === null) return;
+            
+            try {
+                await postJson(`/receivable/${entryId}/write-off`, { reason: reason.trim() });
+                showToast('Invoice written off', 'success');
+                await loadLedger();
+                await loadMoneyPosition();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        async function removeEntry(entryId, kind) {
+            const label = kind === 'receivable' ? 'invoice' : 'bill';
+            confirmDelete(`Delete this ${label}? Only unsettled ${label}s can be deleted.`, async () => {
+                try {
+                    await deleteAt(`/${kind}/${entryId}`);
+                    showToast(`${label === 'invoice' ? 'Invoice' : 'Bill'} deleted`, 'success');
+                    await loadLedger();
+                    await loadMoneyPosition();
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            });
         }
         
         // Close modal on overlay click
