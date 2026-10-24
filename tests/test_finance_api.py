@@ -127,3 +127,42 @@ def test_transactions_are_isolated_between_users(client, app_instance):
     authenticate(other, 'fin_api_user11')
     txns = other.get("/api/finance/data").get_json()['data']['transactions']
     assert txns == []
+
+
+def test_transfer_moves_money_between_accounts(client, app_instance):
+    authenticate(client, 'fin_api_user12')
+    src = create_account_authenticated(client, "Source")
+    dst = create_account_authenticated(client, "Dest")
+
+    resp = _post(client, "/api/finance/transaction",
+                 {"account_id": src['id'], "type": "transfer", "amount": 50,
+                  "destination_account_id": dst['id'], "description": "Move"})
+    assert resp.status_code == 200, resp.get_json()
+    assert resp.get_json()['transaction']['destination_account_id'] == dst['id']
+
+    accounts = client.get("/api/finance/data").get_json()['data']['accounts']
+    balances = {a['id']: a['balance'] for a in accounts}
+    assert balances[src['id']] == 450
+    assert balances[dst['id']] == 550
+
+
+def test_transfer_without_destination_rejected(client, app_instance):
+    authenticate(client, 'fin_api_user13')
+    acct = create_account_authenticated(client, "Only Account")
+    resp = _post(client, "/api/finance/transaction",
+                 {"account_id": acct['id'], "type": "transfer", "amount": 50})
+    assert resp.status_code == 400
+    assert 'destination' in resp.get_json()['message'].lower()
+
+
+def test_recurring_transaction_is_persisted(client, app_instance):
+    authenticate(client, 'fin_api_user14')
+    acct = create_account_authenticated(client, "Recurring Acct")
+    resp = _post(client, "/api/finance/transaction",
+                 {"account_id": acct['id'], "type": "expense", "amount": 20,
+                  "description": "Rent", "is_recurring": True,
+                  "recurring_frequency": "monthly"})
+    assert resp.status_code == 200, resp.get_json()
+    txn = resp.get_json()['transaction']
+    assert txn['is_recurring'] is True
+    assert txn['recurring_frequency'] == "monthly"

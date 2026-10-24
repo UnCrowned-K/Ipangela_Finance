@@ -5,9 +5,10 @@ transactions, budgets and reporting.
 
 import os
 
-from flask import Blueprint, render_template, request, session, current_app
+from flask import Blueprint, g, render_template, request, session, current_app
 
 from config import Config
+from finance_core.storage import lock_for
 
 finance_bp = Blueprint('finance', __name__)
 
@@ -18,6 +19,23 @@ def _finance_storage_dir() -> str:
                                   os.path.join(Config.BASE_DIR, 'data', 'finance'))
     user_id = session.get('user_id') or 'anonymous'
     return os.path.join(root, str(user_id))
+
+
+@finance_bp.before_request
+def _lock_finance_writes():
+    """Serialise finance writes: JSON is read, mutated and saved whole."""
+    if request.method in ("GET", "HEAD", "OPTIONS"):
+        return None
+    g.finance_write_lock = lock_for(_finance_storage_dir())
+    g.finance_write_lock.acquire()
+    return None
+
+
+@finance_bp.teardown_request
+def _unlock_finance_writes(exception):
+    lock = g.pop('finance_write_lock', None)
+    if lock is not None:
+        lock.release()
 
 
 @finance_bp.route("/finance", methods=["GET"])
@@ -58,11 +76,14 @@ def create_transaction():
             account_id=data['account_id'],
             type_str=data['type'],
             amount=data['amount'],
-            category_id=data.get('category_id'),
+            category_id=data.get('category_id') or None,
             description=data.get('description', ''),
             date_str=data.get('date'),
             payee=data.get('payee', ''),
-            notes=data.get('notes', '')
+            notes=data.get('notes', ''),
+            is_recurring=bool(data.get('is_recurring', False)),
+            recurring_frequency=data.get('recurring_frequency') or None,
+            destination_account_id=data.get('destination_account_id') or None
         )
         return {'success': True, 'transaction': transaction.to_dict()}
     except Exception as e:

@@ -9,10 +9,18 @@ from finance_core.storage import DataStorage as _DS
 
 _orig_init = _DS.__init__
 
+_TEST_DATA_DIR = os.path.join('/tmp/profit_optimizer_tests', 'data')
+_ATTEMPTS_FILE = os.path.join(_TEST_DATA_DIR, 'login_attempts.json')
+
+
+def _clear_persisted_attempts():
+    if os.path.exists(_ATTEMPTS_FILE):
+        os.remove(_ATTEMPTS_FILE)
+
 
 def _patched_init(self, storage_dir=None):
     if storage_dir is None:
-        storage_dir = os.path.join('/tmp/profit_optimizer_tests', 'data')
+        storage_dir = _TEST_DATA_DIR
     _orig_init(self, storage_dir)
 
 
@@ -38,8 +46,10 @@ def app_instance(tmp_path):
     for name in ('uploads', 'exports', 'saved', 'finance_data', 'invoices',
                  'messages'):
         os.makedirs(str(tmp_path / name), exist_ok=True)
+    _clear_persisted_attempts()
     yield app
     _login_attempts.clear()
+    _clear_persisted_attempts()
 
 
 @pytest.fixture()

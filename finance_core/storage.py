@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import threading
 from datetime import datetime
 from typing import Any, List, Optional, Tuple, Dict
 
@@ -9,6 +10,21 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Loading, mutating and saving a file is one read-modify-write cycle spread
+# over several calls, so the lock has to span the whole cycle in the caller.
+# lock_for() hands out one lock per storage directory.
+# shortcut: in-process only. Multiple worker processes can still lose updates;
+# move to SQLite when that matters.
+_dir_locks: Dict[str, threading.Lock] = {}
+_dir_locks_guard = threading.Lock()
+
+
+def lock_for(storage_dir: str) -> threading.Lock:
+    """Return the process-wide lock guarding a storage directory."""
+    key = os.path.normpath(storage_dir)
+    with _dir_locks_guard:
+        return _dir_locks.setdefault(key, threading.Lock())
 
 
 class DataStorage:
@@ -41,6 +57,7 @@ class DataStorage:
         self.payroll_runs_file = os.path.join(self.storage_dir, 'payroll_runs.json')
         self.entity_profile_file = os.path.join(self.storage_dir, 'entity_profile.json')
         self.forecasts_file = os.path.join(self.storage_dir, 'forecasts.json')
+        self.login_attempts_file = os.path.join(self.storage_dir, 'login_attempts.json')
     
     def _ensure_directories(self):
         """Ensure storage directories exist."""
@@ -51,45 +68,32 @@ class DataStorage:
             raise Exception(f"Storage initialization failed: {e}")
     
     def _read_json(self, filepath: str, default: Any = None) -> Any:
-        """Read JSON data from file with locking."""
-        try:
-            if os.path.exists(filepath):
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    # Acquire shared lock for reading
-                    try:
-                        import fcntl
-                        fcntl.flock(f, fcntl.LOCK_SH)
-                    except (ImportError, OSError):
-                        pass  # Windows doesn't support fcntl
-                    data = json.load(f)
-                    try:
-                        import fcntl
-                        fcntl.flock(f, fcntl.LOCK_UN)
-                    except (ImportError, OSError):
-                        pass
-                    return data
+        """Read JSON from a file, or return `default` when it does not exist.
+
+        A file that exists but cannot be parsed is reported rather than
+        treated as empty: returning the default would let the next save
+        overwrite whatever the user had.
+        """
+        if not os.path.exists(filepath):
             return default
-        except (IOError, json.JSONDecodeError) as e:
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except json.JSONDecodeError as e:
+            logger.error(f"Corrupt JSON in {filepath}: {e}")
+            raise ValueError(f"Corrupt data file: {os.path.basename(filepath)}") from e
+        except IOError as e:
             logger.error(f"Error reading {filepath}: {e}")
             return default
     
     def _write_json(self, filepath: str, data: Any) -> bool:
-        """Write JSON data to file with locking."""
+        """Write JSON atomically so an interrupted write cannot corrupt it."""
         try:
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
-            with open(filepath, 'w', encoding='utf-8') as f:
-                # Acquire exclusive lock for writing
-                try:
-                    import fcntl
-                    fcntl.flock(f, fcntl.LOCK_EX)
-                except (ImportError, OSError):
-                    pass  # Windows doesn't support fcntl
+            tmp = f"{filepath}.tmp"
+            with open(tmp, 'w', encoding='utf-8') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-                try:
-                    import fcntl
-                    fcntl.flock(f, fcntl.LOCK_UN)
-                except (ImportError, OSError):
-                    pass
+            os.replace(tmp, filepath)
             return True
         except IOError as e:
             logger.error(f"Error writing {filepath}: {e}")
@@ -182,6 +186,13 @@ class DataStorage:
 
     def save_forecasts(self, forecasts: List[Dict]) -> bool:
         return self._write_json(self.forecasts_file, forecasts)
+
+    # Login rate limiting
+    def get_login_attempts(self) -> Dict[str, List[float]]:
+        return self._read_json(self.login_attempts_file, {})
+
+    def save_login_attempts(self, attempts: Dict[str, List[float]]) -> bool:
+        return self._write_json(self.login_attempts_file, attempts)
 
     #: Every file written by :class:`DataStorage`, used by backup and wipe.
     DATA_FILES = (

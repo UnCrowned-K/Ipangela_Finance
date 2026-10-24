@@ -155,6 +155,8 @@ def send_invoice_email():
     from invoice_core import InvoiceEmailSender
 
     try:
+        from utils import ValidationUtils
+
         data = json.loads(request.form.get('invoice_data', '{}'))
         to_email = request.form.get('to_email', '')
         subject = request.form.get('subject', '')
@@ -162,6 +164,14 @@ def send_invoice_email():
 
         if not to_email:
             return {'success': False, 'message': 'Recipient email required'}, 400
+
+        # Values reach mail headers below, so reject anything that is not a
+        # plain address rather than letting it inject headers via newlines.
+        try:
+            to_email = ValidationUtils.validate_email(to_email, 'recipient email')
+        except ValueError as e:
+            return {'success': False, 'message': str(e)}, 400
+        subject = subject.replace('\r', ' ').replace('\n', ' ').strip()
 
         # Create a minimal invoice object for email sending
         from invoice_core import Currency
@@ -187,9 +197,18 @@ def send_invoice_email():
 
         invoice = MinimalInvoice(data)
 
+        # Sender comes from configuration when set; a user-supplied address is
+        # only a fallback and is validated too.
+        from_email = current_app.config.get('INVOICE_FROM_EMAIL') or \
+            data.get('business', {}).get('email', '')
+        try:
+            from_email = ValidationUtils.validate_email(from_email)
+        except ValueError:
+            return {'success': False, 'message': 'Invalid sender email address'}, 400
+
         # Initialize email sender
         email_sender = InvoiceEmailSender(
-            from_email=data.get('business', {}).get('email', 'noreply@example.com'),
+            from_email=from_email or 'noreply@example.com',
             from_name=data.get('business', {}).get('name', 'Invoice System')
         )
 

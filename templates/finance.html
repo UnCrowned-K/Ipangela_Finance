@@ -144,11 +144,15 @@
             <div class="charts-grid">
                 <div class="chart-card">
                     <h3><i data-lucide="bar-chart-2"></i> Income vs Expenses</h3>
-                    <canvas id="incomeExpenseChart"></canvas>
+                    <div class="chart-container">
+                        <canvas id="incomeExpenseChart"></canvas>
+                    </div>
                 </div>
                 <div class="chart-card">
                     <h3><i data-lucide="pie-chart"></i> Spending by Category</h3>
-                    <canvas id="categoryChart"></canvas>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -2183,9 +2187,10 @@
 
             const form = document.getElementById('transaction-form');
             const id = document.getElementById('transaction-id').value;
+            const type = document.getElementById('transaction-type').value;
             const data = {
                 account_id: document.getElementById('transaction-account').value,
-                type: document.getElementById('transaction-type').value,
+                type: type,
                 amount: parseFloat(document.getElementById('transaction-amount').value),
                 category_id: document.getElementById('transaction-category').value,
                 description: document.getElementById('transaction-description').value,
@@ -2194,7 +2199,9 @@
                 notes: document.getElementById('transaction-notes').value,
                 is_recurring: document.getElementById('transaction-recurring').checked,
                 recurring_frequency: document.getElementById('transaction-recurring').checked ? 
-                    document.getElementById('transaction-frequency').value : null
+                    document.getElementById('transaction-frequency').value : null,
+                destination_account_id: type === 'transfer' ?
+                    (document.getElementById('transaction-destination-account').value || null) : null
             };
                 
             const url = id ? `${API_BASE}/transaction/${id}` : `${API_BASE}/transaction`;

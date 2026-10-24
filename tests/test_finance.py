@@ -90,3 +90,27 @@ class TestManagers:
         cm, am, tm = managers
         csv_out = tm.export_transactions_csv()
         assert csv_out.startswith('id,date,type,amount,')
+
+
+def test_corrupt_json_is_reported_not_wiped(storage):
+    with open(storage.transactions_file, 'w') as f:
+        f.write('{ not valid json')
+    with pytest.raises(ValueError):
+        storage.get_transactions()
+
+
+def test_budget_alerts_are_deduplicated(managers, storage):
+    from finance_core import BudgetManager, AlertManager
+
+    cm, am, tm = managers
+    acc = am.create_account('Main', 'checking', 5000.0, 'ZAR')
+    tm.create_transaction(account_id=acc.id, type_str='expense', amount=600.0,
+                          category_id='exp_food', description='Blowout')
+    bm = BudgetManager(storage, tm)
+    bm.create_budget('Food', 'exp_food', 500.0)
+    alm = AlertManager(storage, bm)
+
+    first = alm.check_budget_alerts()
+    assert first, 'expected a budget breach alert'
+    assert alm.check_budget_alerts() == []
+    assert len(alm.alerts) == len(first)

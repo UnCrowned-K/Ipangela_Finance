@@ -934,12 +934,17 @@ class AlertManager:
         new_alerts = []
         for status in self.budget_manager.get_all_budgets_status():
             for alert_data in status.get('alerts', []):
+                budget_id = status['budget'].id
+                # Same dedupe rule as low-balance alerts: without it every
+                # check appends another copy of the same breach.
+                if self._has_recent_alert(alert_data['type'], {'budget_id': budget_id}):
+                    continue
                 new_alerts.append(
                     self.create_alert(
                         type_str=alert_data['type'],
                         message=alert_data['message'],
                         severity=alert_data['severity'],
-                        data={'budget_id': status['budget'].id}
+                        data={'budget_id': budget_id}
                     )
                 )
         return new_alerts

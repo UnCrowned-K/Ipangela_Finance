@@ -26,5 +26,15 @@
     "created_at": "2026-09-24T17:27:57.570629",
     "is_active": true,
     "profile": {}
+  },
+  {
+    "id": "658b8c83-8ed4-4923-892b-1c8db72e29ee",
+    "username": "jabu",
+    "email": null,
+    "password_hash": "39f24543966d7727d6a35fbf329553ec6ffbf235fdc99c3667c944c6da3e903d",
+    "salt": "325b97516865fea273e974209bd096ed",
+    "created_at": "2026-10-16T20:16:21.442098",
+    "is_active": true,
+    "profile": {}
   }
 ]

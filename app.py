@@ -16,6 +16,7 @@ Features:
 @date: 2025-06-14
 """
 
+import os
 import threading
 import time
 import webbrowser
@@ -91,8 +92,14 @@ def create_app(config_class=Config) -> Flask:
     app.config.from_object(config_class)
     config_class.init_app(app)
 
-    # Configure session
-    app.secret_key = app.config.get('SECRET_KEY', 'dev-secret-key')
+    # Configure session. Config always provides a key; without a real
+    # SECRET_KEY env var it is random per boot, so say so out loud.
+    app.secret_key = app.config['SECRET_KEY']
+    if not os.environ.get('SECRET_KEY'):
+        app.logger.warning(
+            "SECRET_KEY is not set; using a random key for this process. "
+            "Sessions will not survive a restart until SECRET_KEY is set."
+        )
 
     # CSRF protection for all state-changing requests.
     csrf = CSRFProtect()

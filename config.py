@@ -3,13 +3,18 @@ Configuration settings for the Flask application.
 """
 
 import os
+import secrets
 
 class Config:
     # Get the base directory of the application
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     
     # Flask Settings
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your_secret_key'
+    # No guessable fallback: a hardcoded default would let anyone sign their
+    # own session cookie. An unset key falls back to randomness per process -
+    # still unforgeable, but sessions then die on restart until SECRET_KEY is
+    # set, which create_app() warns about.
+    SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
     
     # File Upload Settings
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')

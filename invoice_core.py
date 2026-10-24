@@ -364,8 +364,12 @@ class InvoiceStorage:
         os.makedirs(self.storage_dir, exist_ok=True)
     
     def _get_filepath(self, invoice_id: str) -> str:
-        """Get file path for an invoice."""
-        return os.path.join(self.storage_dir, f"{invoice_id}.json")
+        """Get file path for an invoice.
+
+        Invoice ids are uuid4, so anything else (a path segment, say) raises
+        here before it can reach the filesystem.
+        """
+        return os.path.join(self.storage_dir, f"{uuid.UUID(str(invoice_id))}.json")
     
     def save(self, invoice: Invoice) -> Tuple[bool, str]:
         """Save invoice to storage."""

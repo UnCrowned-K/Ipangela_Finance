@@ -13,7 +13,7 @@ import pandas as pd
 
 from config import Config
 from optimizer_core import IntegerVariable, create_integer_variable, optimize, OptimizationError
-from .helpers import parse_variable_form, handle_file_operation, safe_filename
+from .helpers import parse_variable_form, handle_file_operation, safe_filename, _safe_filepath
 from . import optimizer_state
 
 optimizer_bp = Blueprint('optimizer', __name__)
@@ -97,7 +97,10 @@ def export_variables():
         # Ensure filename has correct extension
         if not filename.endswith(f".{format_type}"):
             filename = f"{filename}.{format_type}"
-        filepath = os.path.join(current_app.config['EXPORT_FOLDER'], filename)
+        filepath = _safe_filepath(current_app.config['EXPORT_FOLDER'], filename)
+        if not filepath:
+            flash("Invalid filename.", "error")
+            return redirect(url_for("optimizer.optimizer"))
         handle_file_operation('save', filepath)
         flash(f"Table exported successfully as {format_type.upper()}!", "success")
     except Exception as e:
@@ -138,9 +141,12 @@ def download_variables():
         # Ensure filename has correct extension
         if not filename.endswith(f".{format_type}"):
             filename = f"{filename}.{format_type}"
-        filepath = os.path.join(current_app.config['EXPORT_FOLDER'], filename)
+        filepath = _safe_filepath(current_app.config['EXPORT_FOLDER'], filename)
+        if not filepath:
+            flash("Invalid filename.", "error")
+            return redirect(url_for("optimizer.optimizer"))
         handle_file_operation('save', filepath)
-        return send_file(filepath, as_attachment=True, download_name=filename)
+        return send_file(filepath, as_attachment=True, download_name=os.path.basename(filepath))
     except Exception as e:
         flash(f"Download failed: {str(e)}", "error")
         return redirect(url_for("optimizer.optimizer"))
@@ -155,9 +161,12 @@ def save_variables():
         # Ensure filename has correct extension
         if not filename.endswith(f".{format_type}"):
             filename = f"{filename}.{format_type}"
-        filepath = os.path.join(current_app.config['SAVED_FOLDER'], filename)
+        filepath = _safe_filepath(current_app.config['SAVED_FOLDER'], filename)
+        if not filepath:
+            flash("Invalid filename.", "error")
+            return redirect(url_for("pages.saved"))
         handle_file_operation('save', filepath)
-        flash(f"File '{filename}' saved successfully to saved folder!", "success")
+        flash(f"File '{os.path.basename(filepath)}' saved successfully to saved folder!", "success")
     except Exception as e:
         flash(f"Save failed: {str(e)}", "error")
     return redirect(url_for("pages.saved"))
@@ -178,21 +187,22 @@ def save_results():
         if not filename.endswith(f".{format_type}"):
             filename = f"{filename}.{format_type}"
 
-        filepath = os.path.join(current_app.config['SAVED_FOLDER'], filename)
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        filepath = _safe_filepath(current_app.config['SAVED_FOLDER'], filename)
+        if not filepath:
+            return {'success': False, 'message': 'Invalid filename'}, 400
 
         # Create DataFrame from the data
         df = pd.DataFrame(data)
 
         # Save to file based on format
-        if format_type == 'csv':
+        if filepath.endswith('.csv'):
             df.to_csv(filepath, index=False)
-        elif format_type in ['xlsx', 'xls']:
+        elif filepath.endswith(('.xlsx', '.xls')):
             df.to_excel(filepath, index=False)
         else:
             raise ValueError(f"Unsupported format: {format_type}")
 
-        return {'success': True, 'message': f"Results saved as '{filename}'"}
+        return {'success': True, 'message': f"Results saved as '{os.path.basename(filepath)}'"}
     except Exception as e:
         return {'success': False, 'message': str(e)}, 500
 

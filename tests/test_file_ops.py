@@ -79,3 +79,33 @@ def test_save_results_without_session(client, app_instance):
     assert body['success'] is True
     path = os.path.join(app_instance.config['SAVED_FOLDER'], 'results.csv')
     assert os.path.exists(path)
+
+
+def test_save_contains_traversal_inside_saved_folder(client, app_instance):
+    _seed_session(client, app_instance)
+    saved = app_instance.config['SAVED_FOLDER']
+    r = client.post('/save', data={'filename': '../../outside', 'format': 'csv'})
+    assert r.status_code == 302
+    # secure_filename collapses the path, so it lands inside saved/ only.
+    assert os.path.exists(os.path.join(saved, 'outside.csv'))
+    assert not os.path.exists(os.path.join(os.path.dirname(saved), 'outside.csv'))
+
+
+def test_save_rejects_disallowed_extension(client, app_instance):
+    _seed_session(client, app_instance)
+    saved = app_instance.config['SAVED_FOLDER']
+    r = client.post('/save', data={'filename': 'payload', 'format': 'py'})
+    assert r.status_code == 302
+    assert not os.path.exists(os.path.join(saved, 'payload.py'))
+
+
+def test_save_results_contains_traversal(client, app_instance):
+    authenticate(client, 'resultsuser2')
+    saved = app_instance.config['SAVED_FOLDER']
+    r = client.post('/save_results', data={
+        'filename': '../../evil', 'format': 'csv', 'data': '[]',
+    })
+    assert r.status_code == 200
+    assert r.get_json()['success'] is True
+    assert os.path.exists(os.path.join(saved, 'evil.csv'))
+    assert not os.path.exists(os.path.join(os.path.dirname(saved), 'evil.csv'))

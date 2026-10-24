@@ -235,6 +235,37 @@ def test_email_with_custom_body(invoice_core):
     assert ok is True
 
 
+def test_invoice_id_with_path_segments_is_rejected(invoice_core):
+    # A file just outside the storage dir must not be reachable by id.
+    inv, _ = invoice_core.create_invoice(_basic_client_data(), _basic_line_items())
+    data = inv.to_dict()
+    outside = os.path.join(os.path.dirname(invoice_core.storage.storage_dir), 'victim.json')
+    with open(outside, 'w') as f:
+        json.dump(data, f)
+
+    loaded, _ = invoice_core.get_invoice("../victim")
+    assert loaded is None
+    assert os.path.exists(outside)
+
+
+def test_send_invoice_email_rejects_header_injection(client, app_instance):
+    authenticate(client, "email_api_user")
+    resp = client.post("/send_invoice_email", data={
+        "invoice_data": json.dumps({"invoice_number": "INV-1"}),
+        "to_email": "victim@example.com\r\nBcc: spam@evil.com",
+        "subject": "Hi",
+    })
+    assert resp.status_code == 400
+
+    ok = client.post("/send_invoice_email", data={
+        "invoice_data": json.dumps({"invoice_number": "INV-1"}),
+        "to_email": "jane@example.com",
+        "subject": "Hi\r\nBcc: spam@evil.com",
+    })
+    assert ok.status_code == 200
+    assert ok.get_json()['success'] is True
+
+
 # ---------------------------------------------------------------------------
 # Integration tests – blueprint /api/profile endpoint
 # ---------------------------------------------------------------------------
