@@ -36,5 +36,15 @@
     "created_at": "2026-10-16T20:16:21.442098",
     "is_active": true,
     "profile": {}
+  },
+  {
+    "id": "b9034ca8-3757-489e-a1ae-b3188d377bb3",
+    "username": "musa",
+    "email": null,
+    "password_hash": "ad6a0fa68c8801980eb07d92183c0990014ad20ee3b6485805ab510beb8830c7",
+    "salt": "eaf70e2f15bbdb27ec893dc8294d01fc",
+    "created_at": "2026-10-25T13:10:06.666355",
+    "is_active": true,
+    "profile": {}
   }
 ]
